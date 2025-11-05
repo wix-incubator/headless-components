@@ -20,7 +20,13 @@ import {
   EnhancedModifierGroup,
   EnhancedVariant,
 } from '@wix/headless-restaurants-menus/services';
+import {
+  AvailabilityStatus,
+  AvailabilityStatusMap,
+  AvailabilityStatusWithActionObject,
+} from '../../services/common-types.js';
 import { convertModifierToFormModifier } from '../../services/utils.js';
+
 // ========================================
 // ITEM DETAILS PRIMITIVE COMPONENTS
 // ========================================
@@ -239,5 +245,47 @@ export const ModifiersComponent: React.FC<ItemDetailsModifiersProps> = ({
     onToggle,
     modifierGroup,
     modifiers: modifierGroup.modifiers.map(convertModifierToFormModifier),
+  });
+};
+
+// ========================================
+// Availability COMPONENT
+// ========================================
+
+interface ItemDetailsAvailabilityProps {
+  availabilityStatusMap: AvailabilityStatusMap;
+  children: (props: {
+    availabilityStatus: AvailabilityStatus;
+    availabilityAction?: () => void;
+    availabilityStatusText?: string;
+    availabilityStatusButtonText?: string;
+  }) => React.ReactNode;
+}
+
+export const AvailabilityComponent: React.FC<ItemDetailsAvailabilityProps> = ({
+  children,
+  availabilityStatusMap,
+}) => {
+  const oloSettingsService = useService(OLOSettingsServiceDefinition);
+  const availabilityDispatchAction =
+    oloSettingsService.availabilityDispatchAction?.get?.();
+  const itemService = useService(ItemServiceDefinition);
+  const availabilityStatus: AvailabilityStatus =
+    itemService.availabilityStatus?.get?.() ?? AvailabilityStatus.AVAILABLE;
+  const availabilityStatusWithAction =
+    availabilityStatus === AvailabilityStatus.NEXT_AVAILABILITY_PICKUP ||
+    availabilityStatus === AvailabilityStatus.NEXT_AVAILABILITY_DELIVERY;
+  const availabilityStatusObject = availabilityStatusMap[availabilityStatus];
+  const availabilityStatusButtonText = availabilityStatusWithAction
+    ? (availabilityStatusObject as AvailabilityStatusWithActionObject)
+        ?.buttonText
+    : undefined;
+  return children({
+    availabilityStatus,
+    availabilityAction: availabilityStatusWithAction
+      ? availabilityDispatchAction
+      : undefined,
+    availabilityStatusText: availabilityStatusObject?.text,
+    availabilityStatusButtonText,
   });
 };

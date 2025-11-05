@@ -18,6 +18,10 @@ import {
   EnhancedModifierGroup,
   EnhancedVariant,
 } from '@wix/headless-restaurants-menus/services';
+import {
+  AvailabilityStatus,
+  AvailabilityStatusMap,
+} from '../services/common-types.js';
 
 enum TestIds {
   itemName = 'item-name',
@@ -29,6 +33,7 @@ enum TestIds {
   itemLabels = 'item-labels',
   itemVariants = 'item-variants',
   itemModifier = 'item-modifier',
+  itemAvailability = 'item-availability',
 }
 
 const CheckIcon = () => (
@@ -730,3 +735,83 @@ export const SpecialRequest = React.forwardRef<
 );
 
 SpecialRequest.displayName = 'SpecialRequest';
+
+export interface ItemDetailsAvailabilityProps {
+  asChild?: boolean;
+  textClassName?: string;
+  buttonClassName?: string;
+  availabilityStatusMap: AvailabilityStatusMap;
+  children: (props: {
+    availabilityStatus: AvailabilityStatus;
+    availabilityStatusText?: string;
+    availabilityStatusButtonText?: string;
+    availabilityAction?: () => void;
+  }) => React.ReactNode;
+}
+
+export const AvailabilityComponent = React.forwardRef<
+  HTMLElement,
+  ItemDetailsAvailabilityProps
+>(
+  (
+    {
+      asChild,
+      children,
+      textClassName,
+      buttonClassName,
+      availabilityStatusMap,
+      ...rest
+    },
+    ref,
+  ) => {
+    return (
+      <CoreItemDetails.AvailabilityComponent
+        availabilityStatusMap={availabilityStatusMap}
+      >
+        {({
+          availabilityStatus,
+          availabilityAction,
+          availabilityStatusText,
+          availabilityStatusButtonText,
+        }: {
+          availabilityStatus: AvailabilityStatus;
+          availabilityAction?: (() => void) | undefined;
+          availabilityStatusText?: string | undefined;
+          availabilityStatusButtonText?: string | undefined;
+        }) => {
+          if (availabilityStatus === AvailabilityStatus.AVAILABLE) {
+            return null;
+          }
+
+          return (
+            <AsChildSlot
+              asChild={asChild}
+              data-testid={TestIds.itemAvailability}
+              customElement={children}
+              customElementProps={{
+                availabilityStatus,
+                availabilityStatusText,
+                availabilityStatusButtonText,
+                availabilityAction,
+              }}
+              ref={ref}
+              {...rest}
+            >
+              <p className={textClassName}>{availabilityStatusText}</p>
+              {availabilityStatusButtonText && availabilityAction && (
+                <button
+                  className={buttonClassName}
+                  onClick={availabilityAction}
+                >
+                  {availabilityStatusButtonText}
+                </button>
+              )}
+            </AsChildSlot>
+          );
+        }}
+      </CoreItemDetails.AvailabilityComponent>
+    );
+  },
+);
+
+AvailabilityComponent.displayName = 'AvailabilityComponent';
