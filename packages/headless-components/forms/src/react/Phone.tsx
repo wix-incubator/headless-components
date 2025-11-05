@@ -6,19 +6,22 @@ export interface PhoneFieldProps {
   children: React.ReactNode;
   asChild?: boolean;
   className?: string;
+  description?: React.ReactNode;
 }
 
-const Root = React.forwardRef<HTMLDivElement, PhoneFieldProps>(
-  (props, ref) => {
-    const { id, children, asChild, className } = props;
+const Root = React.forwardRef<HTMLDivElement, PhoneFieldProps>((props, ref) => {
+  const { id, children, asChild, className, description } = props;
 
-    return (
-      <Form.Field ref={ref} id={id} asChild={asChild} className={className}>
-        {children}
-      </Form.Field>
-    );
-  },
-);
+  return (
+    <Form.Field ref={ref} id={id} asChild={asChild} className={className}>
+      <Form.Field.InputWrapper>
+        <Form.Field.Input description={description}>
+          {children}
+        </Form.Field.Input>
+      </Form.Field.InputWrapper>
+    </Form.Field>
+  );
+});
 
 Root.displayName = 'PhoneField';
 
