@@ -112,8 +112,8 @@ export default function CollectionPage({
                       <Filter.FilterOptionRepeater>
                         <div className="space-y-2">
                           <Filter.FilterOption.Label className="font-paragraph block text-sm font-medium text-foreground" />
-                          <Filter.FilterOption.MultiFilter className="space-y-2" />
-                          <Filter.FilterOption.SingleFilter className="space-y-2" />
+                          <Filter.FilterOption.MultiFilter className="flex flex-wrap gap-2 [&_button]:rounded-md [&_button]:border [&_button]:border-foreground/20 [&_button]:bg-background [&_button]:px-3 [&_button]:py-1.5 [&_button]:text-sm [&_button]:font-paragraph [&_button]:text-foreground [&_button]:transition-colors hover:[&_button]:bg-foreground/5 hover:[&_button]:border-foreground/30 [&_button[data-state='on']]:bg-primary [&_button[data-state='on']]:text-primary-foreground [&_button[data-state='on']]:border-primary hover:[&_button[data-state='on']]:bg-primary/90" />
+                          <Filter.FilterOption.SingleFilter className="flex flex-wrap gap-2 [&_button]:rounded-md [&_button]:border [&_button]:border-foreground/20 [&_button]:bg-background [&_button]:px-3 [&_button]:py-1.5 [&_button]:text-sm [&_button]:font-paragraph [&_button]:text-foreground [&_button]:transition-colors hover:[&_button]:bg-foreground/5 hover:[&_button]:border-foreground/30 [&_button[data-state='on']]:bg-primary [&_button[data-state='on']]:text-primary-foreground [&_button[data-state='on']]:border-primary hover:[&_button[data-state='on']]:bg-primary/90" />
                         </div>
                       </Filter.FilterOptionRepeater>
                     </Filter.FilterOptions>
