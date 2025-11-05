@@ -85,9 +85,9 @@ const Phone = ({
             />
           </div>
         </Form.Field.Input>
-        <Form.Field.Error className="text-destructive text-sm font-paragraph">
+        <PhoneField.Error className="text-destructive text-sm font-paragraph">
           {error}
-        </Form.Field.Error>
+        </PhoneField.Error>
       </Form.Field.InputWrapper>
     </PhoneField>
   );

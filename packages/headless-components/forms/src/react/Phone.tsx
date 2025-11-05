@@ -79,15 +79,31 @@ interface PhoneLabelComponent
 export const PhoneLabel = PhoneLabelRoot as PhoneLabelComponent;
 PhoneLabel.Required = PhoneLabelRequired;
 
+export interface PhoneErrorProps {
+  children: React.ReactNode;
+  asChild?: boolean;
+  className?: string;
+}
+
+const PhoneError = React.forwardRef<HTMLDivElement, PhoneErrorProps>(
+  (props, ref) => {
+    return <Form.Field.Error ref={ref} {...props} />;
+  },
+);
+
+PhoneError.displayName = 'PhoneField.Error';
+
 interface PhoneFieldComponent
   extends React.ForwardRefExoticComponent<
     PhoneFieldProps & React.RefAttributes<HTMLDivElement>
   > {
   Label: typeof PhoneLabel;
+  Error: typeof PhoneError;
 }
 
 export const PhoneField = PhoneFieldRoot as PhoneFieldComponent;
 PhoneField.Label = PhoneLabel;
+PhoneField.Error = PhoneError;
 
 // const Phone = ({
 //   id,
@@ -108,15 +124,6 @@ PhoneField.Label = PhoneLabel;
 //   const descriptionId = description ? `${id}-description` : undefined;
 
 //   return (
-//     <Form.Field id={id}>
-//       {showLabel && (
-//         <Form.Field.Label>
-//           <label htmlFor={id} className="text-foreground font-paragraph mb-2">
-//             {label}
-//             {required && <span className="text-destructive ml-1">*</span>}
-//           </label>
-//         </Form.Field.Label>
-//       )}
 //       <Form.Field.InputWrapper>
 //         <Form.Field.Input
 //           description={
@@ -166,8 +173,6 @@ PhoneField.Label = PhoneLabel;
 //         <Form.Field.Error className="text-destructive text-sm font-paragraph">
 //           {error}
 //         </Form.Field.Error>
-//       </Form.Field.InputWrapper>
-//     </Form.Field>
 //   );
 // };
 
