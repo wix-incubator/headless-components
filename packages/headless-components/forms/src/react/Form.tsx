@@ -998,6 +998,20 @@ export interface FieldLabelProps {
 }
 
 /**
+ * Props for Field.Label.Required component
+ */
+export interface FieldLabelRequiredProps {
+  /** Whether to show the required indicator */
+  required?: boolean;
+  /** Custom content to display (defaults to red asterisk) */
+  children?: React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** CSS classes to apply to the required indicator */
+  className?: string;
+}
+
+/**
  * Props for Field.InputWrapper component
  */
 export interface FieldInputWrapperProps {
@@ -1130,7 +1144,10 @@ FieldRoot.displayName = 'Form.Field';
  *
  * <Form.Field id="email">
  *   <Form.Field.Label>
- *     <label className="text-foreground font-paragraph">Email Address</label>
+ *     <label className="text-foreground font-paragraph">
+ *       Email Address
+ *       <Form.Field.Label.Required required={true} />
+ *     </label>
  *   </Form.Field.Label>
  *   <Form.Field.InputWrapper>
  *     <Form.Field.Input>
@@ -1140,7 +1157,7 @@ FieldRoot.displayName = 'Form.Field';
  * </Form.Field>
  * ```
  */
-export const FieldLabel = React.forwardRef<HTMLDivElement, FieldLabelProps>(
+const FieldLabelRoot = React.forwardRef<HTMLDivElement, FieldLabelProps>(
   (props, ref) => {
     const { children, asChild, className, ...otherProps } = props;
     const { gridStyles } = useFieldContext();
@@ -1162,7 +1179,87 @@ export const FieldLabel = React.forwardRef<HTMLDivElement, FieldLabelProps>(
   },
 );
 
-FieldLabel.displayName = 'Form.Field.Label';
+FieldLabelRoot.displayName = 'Form.Field.Label';
+
+/**
+ * Required indicator component for form field labels.
+ * Must be used within a Form.Field.Label component.
+ * Displays a red asterisk (*) by default to indicate required fields.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * // Basic usage with required prop
+ * <Form.Field.Label>
+ *   <label className="text-foreground font-paragraph">
+ *     Email Address
+ *     <Form.Field.Label.Required required={true} />
+ *   </label>
+ * </Form.Field.Label>
+ *
+ * // Custom styling
+ * <Form.Field.Label>
+ *   <label className="text-foreground font-paragraph">
+ *     Username
+ *     <Form.Field.Label.Required required={true} className="text-destructive ml-2" />
+ *   </label>
+ * </Form.Field.Label>
+ *
+ * // Custom content
+ * <Form.Field.Label>
+ *   <label className="text-foreground font-paragraph">
+ *     Password
+ *     <Form.Field.Label.Required required={true}>
+ *       (required)
+ *     </Form.Field.Label.Required>
+ *   </label>
+ * </Form.Field.Label>
+ * ```
+ */
+export const FieldLabelRequired = React.forwardRef<
+  HTMLSpanElement,
+  FieldLabelRequiredProps
+>((props, ref) => {
+  const {
+    required = false,
+    children,
+    asChild,
+    className,
+    ...otherProps
+  } = props;
+
+  if (!required) return null;
+
+  const defaultContent = <span className="text-destructive ml-1">*</span>;
+
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      customElement={children}
+      customElementProps={{}}
+      content={defaultContent}
+      {...otherProps}
+    >
+      {children || defaultContent}
+    </AsChildSlot>
+  );
+});
+
+FieldLabelRequired.displayName = 'Form.Field.Label.Required';
+
+interface FieldLabelComponent
+  extends React.ForwardRefExoticComponent<
+    FieldLabelProps & React.RefAttributes<HTMLDivElement>
+  > {
+  Required: typeof FieldLabelRequired;
+}
+
+export const FieldLabel = FieldLabelRoot as FieldLabelComponent;
+FieldLabel.Required = FieldLabelRequired;
 
 /**
  * InputWrapper component that wraps input and error elements with grid positioning.

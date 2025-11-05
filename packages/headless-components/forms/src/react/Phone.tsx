@@ -1,12 +1,5 @@
-import { Form, type PhoneInputProps } from '@wix/headless-forms/react';
-import {
-  quickStartViewerPlugins,
-  RicosViewer,
-  type RichContent,
-} from '@wix/ricos';
-import '@wix/ricos/css/all-plugins-viewer.css';
+import { Form } from '@wix/headless-forms/react';
 import React from 'react';
-
 
 export interface PhoneFieldProps {
   id: string;
@@ -15,19 +8,22 @@ export interface PhoneFieldProps {
   className?: string;
 }
 
-const PhoneFieldRoot = React.forwardRef<HTMLDivElement, PhoneFieldProps>((props, ref) => {
-  const { id, children, asChild, className } = props;
+const PhoneFieldRoot = React.forwardRef<HTMLDivElement, PhoneFieldProps>(
+  (props, ref) => {
+    const { id, children, asChild, className } = props;
 
-  return (
-    <Form.Field ref={ref} id={id} asChild={asChild} className={className}>
-      {children}
-    </Form.Field>
-  );
-});
+    return (
+      <Form.Field ref={ref} id={id} asChild={asChild} className={className}>
+        {children}
+      </Form.Field>
+    );
+  },
+);
 
 PhoneFieldRoot.displayName = 'PhoneField';
 
 export interface PhoneLabelProps {
+  children: React.ReactNode;
   asChild?: boolean;
   className?: string;
   id: string;
@@ -36,7 +32,7 @@ export interface PhoneLabelProps {
   showLabel: boolean;
 }
 
-export const PhoneLabel = React.forwardRef<HTMLDivElement, PhoneLabelProps>(
+const PhoneLabelRoot = React.forwardRef<HTMLDivElement, PhoneLabelProps>(
   (props, ref) => {
     const { id, label, required, showLabel, asChild, className } = props;
 
@@ -48,15 +44,40 @@ export const PhoneLabel = React.forwardRef<HTMLDivElement, PhoneLabelProps>(
       <Form.Field.Label ref={ref} asChild={asChild} className={className}>
         <label htmlFor={id}>
           {label}
-          {required && <span className="text-destructive ml-1">*</span>}
+          <Form.Field.Label.Required required={required} />
         </label>
-    </Form.Field.Label>
+      </Form.Field.Label>
     );
   },
 );
 
-PhoneLabel.displayName = 'PhoneField.Label';
+PhoneLabelRoot.displayName = 'PhoneField.Label';
 
+export interface PhoneLabelRequiredProps {
+  required?: boolean;
+  children?: React.ReactNode;
+  asChild?: boolean;
+  className?: string;
+}
+
+export const PhoneLabelRequired = React.forwardRef<
+  HTMLSpanElement,
+  PhoneLabelRequiredProps
+>((props, ref) => {
+  return <Form.Field.Label.Required ref={ref} {...props} />;
+});
+
+PhoneLabelRequired.displayName = 'PhoneField.Label.Required';
+
+interface PhoneLabelComponent
+  extends React.ForwardRefExoticComponent<
+    PhoneLabelProps & React.RefAttributes<HTMLDivElement>
+  > {
+  Required: typeof PhoneLabelRequired;
+}
+
+export const PhoneLabel = PhoneLabelRoot as PhoneLabelComponent;
+PhoneLabel.Required = PhoneLabelRequired;
 
 interface PhoneFieldComponent
   extends React.ForwardRefExoticComponent<

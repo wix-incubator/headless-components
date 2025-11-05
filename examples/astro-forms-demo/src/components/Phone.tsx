@@ -1,4 +1,8 @@
-import { PhoneField, type PhoneInputProps, Form } from '@wix/headless-forms/react';
+import {
+  PhoneField,
+  type PhoneInputProps,
+  Form,
+} from '@wix/headless-forms/react';
 import {
   quickStartViewerPlugins,
   RicosViewer,
@@ -26,7 +30,15 @@ const Phone = ({
 
   return (
     <PhoneField id={id}>
-      <PhoneField.Label className="text-foreground font-paragraph mb-2" showLabel={showLabel} id={id} label={label} required={required}/>
+      <PhoneField.Label
+        className="text-foreground font-paragraph mb-2"
+        showLabel={showLabel}
+        id={id}
+        label={label}
+        required={required}
+      >
+        <PhoneField.Label.Required />
+      </PhoneField.Label>
       <Form.Field.InputWrapper>
         <Form.Field.Input
           description={
