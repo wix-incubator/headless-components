@@ -1,0 +1,12 @@
+---
+import RootLayout from "../components/layout/layout.astro";
+import CreateItemExample from "../components/CreateItemExample";
+
+const collectionId = "Import1";
+---
+
+<RootLayout>
+  <CreateItemExample client:load collectionId={collectionId} />
+</RootLayout>
+
+
