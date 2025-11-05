@@ -6,7 +6,7 @@ import {
 } from '@wix/ricos';
 import '@wix/ricos/css/all-plugins-viewer.css';
 
-const ContactsPhone = ({
+const Phone = ({
   id,
   value,
   label,
@@ -88,4 +88,4 @@ const ContactsPhone = ({
   );
 };
 
-export default ContactsPhone;
+export default Phone;
