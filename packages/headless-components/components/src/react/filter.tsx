@@ -106,7 +106,6 @@ export type Filter = {
   [fieldPath: string]: FilterValue;
 } | null;
 
-
 type FilterOptionValueType = string | number | boolean;
 
 /**
@@ -937,10 +936,9 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
                     : undefined
                 }
                 style={{
-                  backgroundColor:
-                    option.valueBgColorFormatter
-                      ? option.valueBgColorFormatter(value)!
-                      : undefined,
+                  backgroundColor: option.valueBgColorFormatter
+                    ? option.valueBgColorFormatter(value)!
+                    : undefined,
                 }}
                 aria-label={formattedValue}
               >
