@@ -226,6 +226,37 @@ const SelectRenderer = React.forwardRef<HTMLSelectElement, SelectRendererProps>(
 SelectRenderer.displayName = 'Sort.SelectRenderer';
 
 /**
+ * Internal component for rendering list (ul) element with options
+ */
+interface ListRendererProps
+  extends Omit<React.HTMLAttributes<HTMLUListElement>, 'onChange'> {
+  currentSort: { fieldName?: string; order?: string };
+  options: SortOptionRenderable[];
+  onChange: (fieldName?: string, order?: string) => void;
+}
+
+const ListRenderer = React.forwardRef<HTMLUListElement, ListRendererProps>(
+  (props, ref) => {
+    const { currentSort, options, onChange, ...otherProps } = props;
+
+    return (
+      <ul ref={ref} {...otherProps}>
+        {options.map((option, index) => (
+          <Option
+            key={`${option?.fieldName ?? ''}-${option?.order ?? ''}-${index}`}
+            fieldName={option.fieldName!}
+            order={option.order!}
+            label={option.label}
+          />
+        ))}
+      </ul>
+    );
+  },
+);
+
+ListRenderer.displayName = 'Sort.ListRenderer';
+
+/**
  * Root component that provides sort context and can render as select or custom controls.
  * Supports both declarative (sortOptions prop) and programmatic (children) APIs.
  *
@@ -394,7 +425,8 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
         ...otherProps,
       };
     } else {
-      Comp = 'ul';
+      // as === 'list'
+      Comp = ListRenderer;
       compProps = {
         ref: ref as React.Ref<HTMLUListElement>,
         ...commonProps,
@@ -465,8 +497,8 @@ export const Option = React.forwardRef<HTMLElement, SortOptionProps>(
     };
 
     const isSelected =
-      (!fieldName || currentSort.fieldName === fieldName) &&
-      (!order || currentSort.order === order);
+      (!fieldName || currentSort?.fieldName === fieldName) &&
+      (!order || currentSort?.order === order);
 
     // When used in list mode (ul parent), render as li > button
     // When used with asChild, use Slot
@@ -493,6 +525,7 @@ export const Option = React.forwardRef<HTMLElement, SortOptionProps>(
         <button
           onClick={handleSelect}
           data-testid={TestIds.sortOption}
+          className="data-[selected=true]:text-[var(--theme-btn-primary-text)]"
           data-selected={isSelected}
           data-field-name={fieldName}
           data-order={order}
