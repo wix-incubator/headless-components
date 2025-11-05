@@ -1,4 +1,4 @@
-import { Form, type PhoneInputProps } from '@wix/headless-forms/react';
+import { PhoneField, type PhoneInputProps, Form } from '@wix/headless-forms/react';
 import {
   quickStartViewerPlugins,
   RicosViewer,
@@ -25,15 +25,8 @@ const Phone = ({
   const descriptionId = description ? `${id}-description` : undefined;
 
   return (
-    <Form.Field id={id}>
-      {showLabel && (
-        <Form.Field.Label>
-          <label htmlFor={id} className="text-foreground font-paragraph mb-2">
-            {label}
-            {required && <span className="text-destructive ml-1">*</span>}
-          </label>
-        </Form.Field.Label>
-      )}
+    <PhoneField id={id}>
+      <PhoneField.Label className="text-foreground font-paragraph mb-2" showLabel={showLabel} id={id} label={label} required={required}/>
       <Form.Field.InputWrapper>
         <Form.Field.Input
           description={
@@ -84,7 +77,7 @@ const Phone = ({
           {error}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
-    </Form.Field>
+    </PhoneField>
   );
 };
 
