@@ -1261,7 +1261,6 @@ FieldInput.displayName = 'Form.Field.Input';
 /**
  * Error component for displaying field-level validation errors.
  * Must be used within a Form.Field.InputWrapper component.
- * Renders error messages that flow naturally after the input field.
  * Only renders when there is an error for the current field.
  *
  * @component
@@ -1279,26 +1278,6 @@ FieldInput.displayName = 'Form.Field.Input';
  *     </Form.Field.Input>
  *     <Form.Field.Error path="email">
  *       <span className="text-destructive text-sm font-paragraph">Please enter a valid email address</span>
- *     </Form.Field.Error>
- *   </Form.Field.InputWrapper>
- * </Form.Field>
- *
- * // Render prop pattern for dynamic error messages
- * <Form.Field id="username">
- *   <Form.Field.Label>
- *     <label className="text-foreground font-paragraph">Username</label>
- *   </Form.Field.Label>
- *   <Form.Field.InputWrapper>
- *     <Form.Field.Input>
- *       <input className="bg-background border-foreground text-foreground" />
- *     </Form.Field.Input>
- *     <Form.Field.Error path="username">
- *       {({ type, message }) => {
- *         if (type === 'required') {
- *           return <span className="text-destructive text-sm font-paragraph">This field is required</span>;
- *         }
- *         return <span className="text-destructive text-sm font-paragraph">{message}</span>;
- *       }}
  *     </Form.Field.Error>
  *   </Form.Field.InputWrapper>
  * </Form.Field>
