@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import { AsChildSlot } from '@wix/headless-utils/react';
 import {
   type FormValues,
   type FormError,
@@ -1037,16 +1037,12 @@ export interface FieldErrorRenderProps {
  * Props for Field.Error component
  */
 export interface FieldErrorProps {
-  /** Error message content to display, or a render function that receives error details */
-  children:
-    | React.ReactNode
-    | AsChildChildren<{ type: FormError['errorType']; message: string }>;
   /** Whether to render as a child component */
   asChild?: boolean;
   /** CSS classes to apply to the error element */
   className?: string;
-  /** The path of the error */
-  path?: string;
+  /** The error message */
+  errorMessage?: string;
 }
 
 /**
@@ -1285,18 +1281,19 @@ FieldInput.displayName = 'Form.Field.Input';
  */
 export const FieldError = React.forwardRef<HTMLDivElement, FieldErrorProps>(
   (props, ref) => {
-    const { children, asChild, className, ...otherProps } = props;
+    const { errorMessage, asChild, className, ...otherProps } = props;
+
+    if (!errorMessage) return null;
 
     return (
       <AsChildSlot
+        data-testid={TestIds.fieldError}
         ref={ref}
         asChild={asChild}
         className={className}
-        data-testid={TestIds.fieldError}
-        customElement={children}
         {...otherProps}
       >
-        {children}
+        {errorMessage}
       </AsChildSlot>
     );
   },
