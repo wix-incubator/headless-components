@@ -1,9 +1,11 @@
 import React from 'react';
 import { AsChildSlot } from '@wix/headless-utils/react';
 
+/** List display variants */
+export type ListVariant = 'list' | 'grid';
+
 /** List item interface - generic item with id */
 export interface ListItem {
-  id: string | number;
   [key: string]: any;
 }
 
@@ -12,6 +14,7 @@ interface GenericListContextValue<T extends ListItem = ListItem> {
   hasMore: boolean;
   isLoading: boolean;
   loadMore?: () => void;
+  variant?: ListVariant;
 }
 
 const GenericListContext = React.createContext<GenericListContextValue | null>(
@@ -42,6 +45,8 @@ export interface GenericListRootProps<T extends ListItem = ListItem> {
   hasMore?: boolean;
   /** Whether items are currently loading */
   isLoading?: boolean;
+  /** Display variant - affects layout structure (default: 'list') */
+  variant?: ListVariant;
   /** Children components - required */
   children: React.ReactNode;
   /** CSS classes */
@@ -121,6 +126,7 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
       loadMore,
       hasMore = false,
       isLoading = false,
+      variant,
       children,
       className,
       ...otherProps
@@ -136,8 +142,9 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
         hasMore,
         isLoading,
         loadMore,
+        variant,
       }),
-      [items, hasMore, isLoading, loadMore],
+      [items, hasMore, isLoading, loadMore, variant],
     );
 
     return (
@@ -148,6 +155,7 @@ export const Root = React.forwardRef<HTMLElement, GenericListRootProps>(
           data-has-items={items.length > 0}
           data-is-loading={isLoading}
           data-has-more={hasMore}
+          data-variant={variant}
           customElement={children}
           {...otherProps}
         >
@@ -289,6 +297,96 @@ export const Totals = React.forwardRef<HTMLElement, GenericListTotalsProps>(
 
 Totals.displayName = 'GenericList.Totals';
 
+/**
+ * Props passed to itemWrapper function
+ */
+export interface GenericListItemWrapperProps<T extends ListItem = ListItem> {
+  item: T;
+  index: number;
+  children: React.ReactNode;
+}
+
+/**
+ * Render props for GenericList Repeater asChild pattern
+ */
+export interface GenericListRepeaterRenderProps<T extends ListItem = ListItem> {
+  items: T[];
+  variant?: ListVariant;
+  itemWrapper: (props: GenericListItemWrapperProps<T>) => React.ReactNode;
+}
+
+/**
+ * Props for the GenericList Repeater component
+ */
+export interface GenericListRepeaterProps<T extends ListItem = ListItem> {
+  /** Function that renders content for each item */
+  children:
+    | React.ReactNode
+    | ((
+        props: GenericListRepeaterRenderProps<T>,
+        ref: React.Ref<HTMLElement>,
+      ) => React.ReactNode);
+  /** Function that wraps each item with its container/root component */
+  itemWrapper?: (props: GenericListItemWrapperProps<T>) => React.ReactNode;
+  /** Whether to render as child component (asChild pattern) */
+  asChild?: boolean;
+  /** CSS classes */
+  className?: string;
+}
+
+/**
+ * Generic repeater component that maps over items from GenericList context.
+ * This component provides a reusable pattern for rendering lists of items
+ * where each item needs to be wrapped in a specific Root component.
+ * Supports asChild pattern for advanced layout components.
+ *
+ * @component
+ */
+export const Repeater = <T extends ListItem = ListItem>(
+  props: GenericListRepeaterProps<T> & { ref?: React.Ref<HTMLElement> },
+) => {
+  const {
+    ref,
+    children,
+    itemWrapper = ({ item, children }) => (
+      <React.Fragment key={item['id'] || item['_id']}>
+        {children}
+      </React.Fragment>
+    ),
+    asChild = false,
+    className,
+    ...otherProps
+  } = props;
+  const { items, variant } = useGenericListContext<T>();
+
+  if (items.length === 0) return null;
+
+  if (asChild) {
+    const asChildRenderProps: GenericListRepeaterRenderProps<T> = {
+      items,
+      variant,
+      itemWrapper,
+    };
+
+    return (
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        customElement={children}
+        customElementProps={asChildRenderProps}
+        {...otherProps}
+      />
+    );
+  }
+
+  return items.map((item, index) =>
+    itemWrapper({ item, index, children: children as React.ReactNode }),
+  );
+};
+
+Repeater.displayName = 'GenericList.Repeater';
+
 export const Actions = {
   LoadMore,
 };
@@ -296,6 +394,7 @@ export const Actions = {
 export const GenericList = {
   Root,
   Items,
+  Repeater,
   Actions,
   Totals,
 };

@@ -229,6 +229,8 @@ export interface LoadingProps {
   children?: AsChildChildren<{ loading: boolean }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Text to display when loading. If not provided, component renders nothing by default */
+  loadingText?: string;
 }
 
 export interface ErrorProps {
@@ -238,6 +240,8 @@ export interface ErrorProps {
   children?: AsChildChildren<{ error: string | null }>;
   /** CSS classes to apply to the default element */
   className?: string;
+  /** Prefix to prepend to error message. If not provided, only the error message is shown */
+  errorPrefix?: string;
 }
 
 /**
@@ -262,15 +266,19 @@ export interface ErrorProps {
  *     </p>
  *   ))}
  * </Menus.Loading>
+ *
+ * // With custom loading text
+ * <Menus.Loading loadingText="Please wait..." className="text-center" />
  * ```
  */
 export const Loading = React.forwardRef<HTMLElement, LoadingProps>(
   (props, ref) => {
-    const { asChild, children, className, ...otherProps } = props;
+    const { asChild, children, className, loadingText, ...otherProps } = props;
 
     return (
       <CoreLoading>
         {({ loading }) => {
+          const displayContent = loading && loadingText ? loadingText : null;
           return (
             <AsChildSlot
               ref={ref}
@@ -279,10 +287,10 @@ export const Loading = React.forwardRef<HTMLElement, LoadingProps>(
               data-testid={TestIds.menusLoading}
               customElement={children}
               customElementProps={{ loading }}
-              content={loading ? 'Loading...' : null}
+              content={displayContent}
               {...otherProps}
             >
-              <p>{loading ? 'Loading...' : null}</p>
+              <p>{displayContent}</p>
             </AsChildSlot>
           );
         }}
@@ -313,14 +321,25 @@ export const Loading = React.forwardRef<HTMLElement, LoadingProps>(
  *     </p>
  *   ))}
  * </Menus.Error>
+ *
+ * // With custom error prefix
+ * <Menus.Error errorPrefix="Error: " className="text-red-600" />
+ *
+ * // Without prefix (only error message)
+ * <Menus.Error className="text-red-600" />
  * ```
  */
 export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
-  const { asChild, children, className, ...otherProps } = props;
+  const { asChild, children, className, errorPrefix, ...otherProps } = props;
 
   return (
     <CoreErrorState>
       {({ error }) => {
+        const displayContent = error
+          ? errorPrefix
+            ? `${errorPrefix}${error}`
+            : error
+          : null;
         return (
           <AsChildSlot
             ref={ref}
@@ -329,10 +348,10 @@ export const Error = React.forwardRef<HTMLElement, ErrorProps>((props, ref) => {
             data-testid={TestIds.menusError}
             customElement={children}
             customElementProps={{ error }}
-            content={error ? `Error: ${error}` : null}
+            content={displayContent}
             {...otherProps}
           >
-            <p>{error ? `Error: ${error}` : null}</p>
+            <p>{displayContent}</p>
           </AsChildSlot>
         );
       }}
