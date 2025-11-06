@@ -106,9 +106,6 @@ export type Filter = {
   [fieldPath: string]: FilterValue;
 } | null;
 
-
-type FilterOptionValueType = string | number | boolean;
-
 /**
  * Filter option configuration
  */
@@ -132,17 +129,17 @@ export interface FilterOption {
    */
   fieldType?: 'array' | 'singular';
   /** Current filter value */
-  value?: any; // number[] (for range) | string[] (for multi) | string (for single) | boolean
+  value?: any; // number[] (for range) | string[] (for multi) | string (for single)
   /** Function to format values for display */
-  valueFormatter?: (value: FilterOptionValueType) => string;
+  valueFormatter?: (value: string | number) => string;
   /** Valid values for this filter (for validation and shared field logic) */
-  validValues?: Array<FilterOptionValueType>;
+  validValues?: Array<string | number>;
   /** Filter input type */
   type: 'single' | 'multi' | 'range';
   /** Display type for styling/rendering */
   displayType: 'color' | 'text' | 'range';
   /** Function to format background color for color filters */
-  valueBgColorFormatter?: (value: FilterOptionValueType) => string | null;
+  valueBgColorFormatter?: (value: string | number) => string | null;
 }
 
 /**
@@ -808,10 +805,8 @@ export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
         className={otherProps.className}
       >
         {option.validValues?.map((value) => (
-          <ToggleGroup.Item key={String(value)} value={String(value)}>
-            {option.valueFormatter
-              ? option.valueFormatter(value)
-              : String(value)}
+          <ToggleGroup.Item key={value} value={String(value)}>
+            {option.valueFormatter ? option.valueFormatter(value) : value}
           </ToggleGroup.Item>
         ))}
       </ToggleGroup.Root>
@@ -929,7 +924,7 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
               : String(value);
             return (
               <ToggleGroup.Item
-                key={String(value)}
+                key={value}
                 value={String(value)}
                 data-color={
                   option.displayType === 'color'
@@ -937,10 +932,9 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
                     : undefined
                 }
                 style={{
-                  backgroundColor:
-                    option.valueBgColorFormatter
-                      ? option.valueBgColorFormatter(value)!
-                      : undefined,
+                  backgroundColor: option.valueBgColorFormatter
+                    ? option.valueBgColorFormatter(value)!
+                    : undefined,
                 }}
                 aria-label={formattedValue}
               >
@@ -964,7 +958,7 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
         {children || (
           <>
             {option.validValues?.map((value) => (
-              <label key={String(value)}>
+              <label key={value}>
                 <input
                   type="checkbox"
                   checked={currentValue.includes(String(value))}
@@ -976,9 +970,7 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
                     updateFilter(newValue);
                   }}
                 />
-                {option.valueFormatter
-                  ? option.valueFormatter(value)
-                  : String(value)}
+                {option.valueFormatter ? option.valueFormatter(value) : value}
               </label>
             ))}
           </>
