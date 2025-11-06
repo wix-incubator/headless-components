@@ -1187,7 +1187,6 @@ FieldLabelRoot.displayName = 'Form.Field.Label';
 /**
  * Required indicator component for form field labels.
  * Must be used within a Form.Field.Label component.
- * Displays a red asterisk (*) by default to indicate required fields.
  *
  * @component
  * @example
@@ -1198,7 +1197,7 @@ FieldLabelRoot.displayName = 'Form.Field.Label';
  * <Form.Field.Label>
  *   <label className="text-foreground font-paragraph">
  *     Email Address
- *     <Form.Field.Label.Required required={true} />
+ *     <Form.Field.Label.Required  />
  *   </label>
  * </Form.Field.Label>
  *
@@ -1209,17 +1208,6 @@ FieldLabelRoot.displayName = 'Form.Field.Label';
  *     <Form.Field.Label.Required required={true} className="text-destructive ml-2" />
  *   </label>
  * </Form.Field.Label>
- *
- * // Custom content
- * <Form.Field.Label>
- *   <label className="text-foreground font-paragraph">
- *     Password
- *     <Form.Field.Label.Required required={true}>
- *       (required)
- *     </Form.Field.Label.Required>
- *   </label>
- * </Form.Field.Label>
- * ```
  */
 export const FieldLabelRequired = React.forwardRef<
   HTMLSpanElement,
