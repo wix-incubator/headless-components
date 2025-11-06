@@ -130,7 +130,7 @@ const CountryCode = React.forwardRef<HTMLDivElement, CountryCodeProps>(
     const { asChild, className, ...rest } = props;
     const {
       id,
-      allowedCountryCodes,
+      countryCodes,
       defaultCountryCode,
       readOnly,
       onChange,
@@ -153,7 +153,7 @@ const CountryCode = React.forwardRef<HTMLDivElement, CountryCodeProps>(
           onBlur={() => onBlur?.()}
           onFocus={() => onFocus?.()}
         >
-          {allowedCountryCodes?.map((code: string) => (
+          {countryCodes?.map((code: string) => (
             <option key={code} value={code}>
               {code}
             </option>
@@ -231,44 +231,3 @@ PhoneField.Label = Label;
 PhoneField.Error = Error;
 PhoneField.Input = Input;
 PhoneField.CountryCode = CountryCode;
-
-// const Phone = ({
-//   id,
-//   value,
-//   label,
-//   showLabel,
-//   placeholder,
-//   description,
-//   required,
-//   readOnly,
-//   allowedCountryCodes,
-//   defaultCountryCode,
-//   onChange,
-//   onBlur,
-//   onFocus,
-//   error,
-// }: PhoneInputProps) => {
-//   const descriptionId = description ? `${id}-description` : undefined;
-
-//   return (
-//       <Form.Field.InputWrapper>
-//         <Form.Field.Input
-//           description={
-//             description ? (
-//               <div
-//                 id={descriptionId}
-//                 className="mt-2 text-foreground/70 text-sm"
-//               >
-//                 <RicosViewer
-//                   content={description as RichContent}
-//                   plugins={quickStartViewerPlugins()}
-//                 />
-//               </div>
-//             ) : undefined
-//           }
-//         >
-//         </Form.Field.Input>
-//   );
-// };
-
-// export default Phone;
