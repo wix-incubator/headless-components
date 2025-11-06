@@ -1232,10 +1232,10 @@ export const FieldLabelRequired = React.forwardRef<
     className,
     ...otherProps
   } = props;
+  const requiredIndicator: 'asterisk' | 'text' | 'none' = 'asterisk';
 
-  if (!required) return null;
-
-  const defaultContent = <span className="text-destructive ml-1">*</span>;
+  // @ts-expect-error
+  if (!required || requiredIndicator === 'none') return null;
 
   return (
     <AsChildSlot
@@ -1243,11 +1243,15 @@ export const FieldLabelRequired = React.forwardRef<
       asChild={asChild}
       className={className}
       customElement={children}
-      customElementProps={{}}
-      content={defaultContent}
       {...otherProps}
     >
-      {children || defaultContent}
+      <span>
+        {requiredIndicator === 'asterisk'
+          ? '*'
+          : requiredIndicator === 'text'
+            ? '(Required)'
+            : null}
+      </span>
     </AsChildSlot>
   );
 });

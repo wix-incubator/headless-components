@@ -4,7 +4,7 @@ const Phone = ({ id }: { id: string }) => {
   return (
     <PhoneField id={id}>
       <PhoneField.Label className="text-foreground font-paragraph mb-2">
-        <PhoneField.Label.Required />
+        <PhoneField.Label.Required asChild className="text-destructive ml-1" />
       </PhoneField.Label>
       <div className="flex gap-2">
         <PhoneField.CountryCode

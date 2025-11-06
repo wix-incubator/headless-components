@@ -53,8 +53,8 @@ export interface PhoneLabelProps {
 
 const LabelRoot = React.forwardRef<HTMLDivElement, PhoneLabelProps>(
   (props, ref) => {
-    const { asChild, className } = props;
-    const { id, label, showLabel, required } = usePhoneFieldContext();
+    const { asChild, className, children } = props;
+    const { id, label, showLabel } = usePhoneFieldContext();
 
     if (!showLabel) {
       return null;
@@ -64,7 +64,7 @@ const LabelRoot = React.forwardRef<HTMLDivElement, PhoneLabelProps>(
       <Form.Field.Label ref={ref} asChild={asChild} className={className}>
         <label htmlFor={id}>
           {label}
-          <Form.Field.Label.Required required={required} />
+          {children}
         </label>
       </Form.Field.Label>
     );
@@ -84,7 +84,9 @@ export const Required = React.forwardRef<
   HTMLSpanElement,
   PhoneLabelRequiredProps
 >((props, ref) => {
-  return <Form.Field.Label.Required ref={ref} {...props} />;
+  const { required } = usePhoneFieldContext();
+
+  return <Form.Field.Label.Required {...props} ref={ref} required={required} />;
 });
 
 Required.displayName = 'PhoneField.Label.Required';
