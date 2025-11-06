@@ -54,6 +54,7 @@ import {
   FieldLayoutProvider,
   useFieldLayout,
 } from './context/FieldLayoutContext.js';
+import { FieldsPropsProvider } from './context/FieldsPropsContext.js';
 
 enum TestIds {
   formRoot = 'form-root',
@@ -924,37 +925,39 @@ const FieldsWithForm = ({
   });
 
   if (!formData) return null;
-  const { columnCount, fieldElements, fieldsLayout } = formData;
+  const { columnCount, fieldElements, fieldsLayout, fieldsProps } = formData;
 
   return (
     // TODO: use readOnly, isDisabled
     // TODO: step title a11y support
     // TODO: mobile support?
-    <FieldLayoutProvider value={fieldsLayout}>
-      <form onSubmit={(e) => e.preventDefault()}>
-        <fieldset
-          style={{ display: 'flex', flexDirection: 'column' }}
-          className={rowGapClassname}
-        >
-          {fieldElements.map((rowElements, index) => {
-            return (
-              <div
-                key={index}
-                style={{
-                  display: 'grid',
-                  width: '100%',
-                  gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
-                  gridAutoRows: 'minmax(min-content, max-content)',
-                }}
-                className={columnGapClassname}
-              >
-                {rowElements}
-              </div>
-            );
-          })}
-        </fieldset>
-      </form>
-    </FieldLayoutProvider>
+    <FieldsPropsProvider value={{ fieldsProps }}>
+      <FieldLayoutProvider value={fieldsLayout}>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <fieldset
+            style={{ display: 'flex', flexDirection: 'column' }}
+            className={rowGapClassname}
+          >
+            {fieldElements.map((rowElements, index) => {
+              return (
+                <div
+                  key={index}
+                  style={{
+                    display: 'grid',
+                    width: '100%',
+                    gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
+                    gridAutoRows: 'minmax(min-content, max-content)',
+                  }}
+                  className={columnGapClassname}
+                >
+                  {rowElements}
+                </div>
+              );
+            })}
+          </fieldset>
+        </form>
+      </FieldLayoutProvider>
+    </FieldsPropsProvider>
   );
 };
 

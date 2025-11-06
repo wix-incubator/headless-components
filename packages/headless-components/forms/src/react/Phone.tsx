@@ -1,25 +1,45 @@
-import { Form } from '@wix/headless-forms/react';
 import React from 'react';
+import { Form, PhoneInputProps } from '@wix/headless-forms/react';
+import { useFieldsProps } from './context/FieldsPropsContext.js';
+
+const PhoneFieldContext = React.createContext<PhoneInputProps | undefined>(
+  undefined,
+);
+
+function usePhoneFieldContext(): PhoneInputProps {
+  const context = React.useContext(PhoneFieldContext);
+
+  if (!context) {
+    throw new globalThis.Error(
+      'PhoneField components must be used within PhoneField.Root',
+    );
+  }
+
+  return context;
+}
 
 export interface PhoneFieldProps {
   id: string;
   children: React.ReactNode;
   asChild?: boolean;
   className?: string;
-  description?: React.ReactNode;
 }
 
 const Root = React.forwardRef<HTMLDivElement, PhoneFieldProps>((props, ref) => {
-  const { id, children, asChild, className, description } = props;
+  const { id, children, asChild, className } = props;
+  const { fieldsProps } = useFieldsProps();
+  const fieldProps = fieldsProps[id];
 
   return (
-    <Form.Field ref={ref} id={id} asChild={asChild} className={className}>
-      <Form.Field.InputWrapper>
-        <Form.Field.Input description={description}>
-          {children}
-        </Form.Field.Input>
-      </Form.Field.InputWrapper>
-    </Form.Field>
+    <PhoneFieldContext.Provider value={fieldProps}>
+      <Form.Field ref={ref} id={id} asChild={asChild} className={className}>
+        <Form.Field.InputWrapper>
+          <Form.Field.Input description={fieldProps?.description}>
+            {children}
+          </Form.Field.Input>
+        </Form.Field.InputWrapper>
+      </Form.Field>
+    </PhoneFieldContext.Provider>
   );
 });
 
@@ -29,15 +49,12 @@ export interface PhoneLabelProps {
   children: React.ReactNode;
   asChild?: boolean;
   className?: string;
-  id: string;
-  label: string;
-  required: boolean;
-  showLabel: boolean;
 }
 
 const LabelRoot = React.forwardRef<HTMLDivElement, PhoneLabelProps>(
   (props, ref) => {
-    const { id, label, required, showLabel, asChild, className } = props;
+    const { asChild, className } = props;
+    const { id, label, showLabel, required } = usePhoneFieldContext();
 
     if (!showLabel) {
       return null;
@@ -83,14 +100,21 @@ export const Label = LabelRoot as PhoneLabelComponent;
 Label.Required = Required;
 
 export interface PhoneErrorProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   asChild?: boolean;
   className?: string;
 }
 
 const Error = React.forwardRef<HTMLDivElement, PhoneErrorProps>(
   (props, ref) => {
-    return <Form.Field.Error ref={ref} {...props} />;
+    const { children, ...rest } = props;
+    const { error } = usePhoneFieldContext();
+
+    return (
+      <Form.Field.Error ref={ref} {...rest}>
+        {error}
+      </Form.Field.Error>
+    );
   },
 );
 
@@ -99,39 +123,35 @@ Error.displayName = 'PhoneField.Error';
 export interface CountryCodeProps {
   asChild?: boolean;
   className?: string;
-  id: string;
-  value: string | null | undefined;
-  required: boolean;
-  onChange: (value: string) => void;
-  onBlur: () => void;
-  onFocus: () => void;
-  allowedCountryCodes: string[];
-  defaultCountryCode: string | null | undefined;
-  readOnly: boolean;
 }
 
 const CountryCode = React.forwardRef<HTMLDivElement, CountryCodeProps>(
-  (
-    {
+  (props, ref) => {
+    const { asChild, className, ...rest } = props;
+    const {
       id,
-      value,
-      required,
-      onChange,
-      onBlur,
-      onFocus,
       allowedCountryCodes,
       defaultCountryCode,
       readOnly,
-      ...rest
-    },
-    ref,
-  ) => {
+      onChange,
+      onBlur,
+      onFocus,
+    } = usePhoneFieldContext();
+
     return (
-      <Form.Field.Input ref={ref} {...rest} asChild>
+      <Form.Field.Input
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        {...rest}
+      >
         <select
           id={`${id}-country`}
           defaultValue={defaultCountryCode || ''}
           disabled={readOnly}
+          onChange={(e) => onChange?.(e.target.value)}
+          onBlur={() => onBlur?.()}
+          onFocus={() => onFocus?.()}
         >
           {allowedCountryCodes?.map((code: string) => (
             <option key={code} value={code}>
@@ -149,35 +169,32 @@ CountryCode.displayName = 'PhoneField.CountryCode';
 export interface PhoneFieldInputProps {
   asChild?: boolean;
   className?: string;
-  id: string;
-  value: string | null | undefined;
-  required: boolean;
-  readOnly: boolean;
-  placeholder?: string;
-  descriptionId?: string;
-  onChange: (value: string) => void;
-  onBlur: () => void;
-  onFocus: () => void;
 }
 
 const Input = React.forwardRef<HTMLDivElement, PhoneFieldInputProps>(
-  (
-    {
+  (props, ref) => {
+    const { asChild, className, ...rest } = props;
+    const {
       id,
       value,
       required,
       readOnly,
       placeholder,
-      descriptionId,
       onChange,
       onBlur,
       onFocus,
-      ...rest
-    },
-    ref,
-  ) => {
+      description,
+    } = usePhoneFieldContext();
+
+    const descriptionId = description ? `${id}-description` : undefined;
+
     return (
-      <Form.Field.Input ref={ref} {...rest} asChild>
+      <Form.Field.Input
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        {...rest}
+      >
         <input
           id={id}
           type="tel"
@@ -188,9 +205,9 @@ const Input = React.forwardRef<HTMLDivElement, PhoneFieldInputProps>(
           aria-describedby={descriptionId}
           aria-invalid={!!(required && !value)}
           aria-required={required}
-          onChange={(e) => onChange(e.target.value)}
-          onBlur={() => onBlur()}
-          onFocus={() => onFocus()}
+          onChange={(e) => onChange?.(e.target.value)}
+          onBlur={() => onBlur?.()}
+          onFocus={() => onFocus?.()}
         />
       </Form.Field.Input>
     );
@@ -250,39 +267,7 @@ PhoneField.CountryCode = CountryCode;
 //             ) : undefined
 //           }
 //         >
-//           <div className="flex gap-2">
-//             <select
-//               id={`${id}-country`}
-//               defaultValue={defaultCountryCode}
-//               disabled={readOnly}
-//               className="px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
-//             >
-//               {allowedCountryCodes?.map((code: string) => (
-//                 <option key={code} value={code}>
-//                   {code}
-//                 </option>
-//               ))}
-//             </select>
-//             <input
-//               id={id}
-//               type="tel"
-//               value={value || ''}
-//               required={required}
-//               readOnly={readOnly}
-//               placeholder={placeholder}
-//               aria-describedby={descriptionId}
-//               aria-invalid={!!(required && !value)}
-//               aria-required={required}
-//               onChange={e => onChange(e.target.value)}
-//               onBlur={() => onBlur()}
-//               onFocus={() => onFocus()}
-//               className="flex-1 px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
-//             />
-//           </div>
 //         </Form.Field.Input>
-//         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-//           {error}
-//         </Form.Field.Error>
 //   );
 // };
 
