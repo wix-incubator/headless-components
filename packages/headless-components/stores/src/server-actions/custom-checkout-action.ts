@@ -68,7 +68,7 @@ export function getCustomLineItemCheckoutURLFactory(
             price: factoryOpts.price,
             quantity: factoryOpts.quantity || 1,
             itemType: {
-              preset: checkout.ItemTypeItemType.PHYSICAL,
+              preset: checkout.ItemTypePreset.PHYSICAL,
             },
             priceDescription: {
               original: factoryOpts.priceDescription,

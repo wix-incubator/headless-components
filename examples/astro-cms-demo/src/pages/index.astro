@@ -1,0 +1,11 @@
+---
+import RootLayout from "../components/layout/layout.astro";
+import CollectionPage from "../components/CollectionPage";
+
+// Fetch collection data server-side
+const collectionId = "Import1";
+---
+
+<RootLayout>
+  <CollectionPage client:load collectionId={collectionId} />
+</RootLayout>
