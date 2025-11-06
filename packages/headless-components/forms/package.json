@@ -41,9 +41,11 @@
     "vitest": "^3.1.4"
   },
   "dependencies": {
-    "@wix/form-public": "^0.40.0",
+    "@wix/business-tools": "^1.0.199",
+    "@wix/form-public": "^0.48.0",
     "@wix/forms": "^1.0.331",
     "@wix/headless-utils": "workspace:*",
+    "@wix/sdk": "^1.17.1",
     "@wix/services-definitions": "^0.1.4",
     "@wix/services-manager-react": "^0.1.26"
   }

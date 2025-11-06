@@ -6,6 +6,8 @@ import {
   useForm,
   FormProvider,
 } from '@wix/form-public';
+import { forms } from '@wix/forms';
+
 import {
   type CheckboxGroupProps,
   type CheckboxProps,
@@ -34,6 +36,8 @@ import {
   type ImageChoiceProps,
 } from './types.js';
 
+
+
 import { type FormServiceConfig } from '../services/form-service.js';
 import {
   Root as CoreRoot,
@@ -45,7 +49,7 @@ import {
   Field as CoreField,
   type Layout,
 } from './core/Form.js';
-import { forms } from '@wix/forms';
+
 
 enum TestIds {
   formRoot = 'form-root',
@@ -861,7 +865,12 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
 
           return (
             <div ref={ref}>
-              <FormProvider>
+              <FormProvider
+                currency={{
+                  sign: "$",
+                  code: 'USD',
+                }}
+              >
                 <FieldsWithForm
                   form={form}
                   values={formValues}
@@ -1180,7 +1189,7 @@ export const FieldLabel = React.forwardRef<HTMLDivElement, FieldLabelProps>(
         customElementProps={{}}
         {...otherProps}
       >
-        <div>{children}</div>
+        {/* <div>{children}</div> */}
       </AsChildSlot>
     );
   },
@@ -1210,6 +1219,7 @@ FieldLabel.displayName = 'Form.Field.Label';
  */
 export const FieldInput = React.forwardRef<HTMLDivElement, FieldInputProps>(
   (props, ref) => {
+
     const { children, description, asChild, className, ...otherProps } = props;
     const { gridStyles } = useFieldContext();
 
