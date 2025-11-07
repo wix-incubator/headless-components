@@ -1,7 +1,7 @@
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import React from 'react';
 import { useCategoryItemRepeaterContext } from './Categories.js';
-import { isActiveCategory } from './helpers.js';
+import { isActiveCategory } from './helpers/category.js';
 
 const enum TestIds {
   blogCategoryLabel = 'blog-category-label',

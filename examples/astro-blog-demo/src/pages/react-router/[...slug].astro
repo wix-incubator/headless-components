@@ -5,8 +5,6 @@ import { loadSEOTagsServiceConfig } from "@wix/seo/services";
 
 import "@/styles/global.css";
 
-export const prerender = false;
-
 const seoTagsServiceConfig = await loadSEOTagsServiceConfig({
   pageUrl: Astro.url.href,
   itemData: {

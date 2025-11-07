@@ -12,10 +12,11 @@ export default defineConfig({
   site: process.env.WIX_PUBLIC_URL || "http://localhost:4321/",
   integrations: [
     react(),
-    wix({ enableAuthRoutes: true, enableHtmlEmbeds: false }),
+    wix({ enableAuthRoutes: true, enableHtmlEmbeds: true }),
     sitemap(),
     tailwind({ applyBaseStyles: false }),
   ],
+  output: 'server',
   vite: {
     server: {
       https: hasCertificates
