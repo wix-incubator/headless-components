@@ -55,26 +55,26 @@ export const MenusPage: React.FC<MenusPageProps> = ({ menusServiceConfig }) => {
                             className="w-full h-48 object-cover"
                             previousClassName="absolute left-2 top-1/2 -translate-y-1/2 bg-primary/90 text-primary-foreground p-2 rounded-full hover:bg-primary transition-all duration-200 opacity-100 md:opacity-0 md:group-hover:opacity-100 z-20 shadow-lg disabled:cursor-not-allowed disabled:bg-foreground/20 disabled:text-foreground/40 disabled:hover:bg-foreground/20 disabled:pointer-events-none"
                             nextClassName="absolute right-2 top-1/2 -translate-y-1/2 bg-primary/90 text-primary-foreground p-2 rounded-full hover:bg-primary transition-all duration-200 opacity-100 md:opacity-0 md:group-hover:opacity-100 z-20 shadow-lg disabled:cursor-not-allowed disabled:bg-foreground/20 disabled:text-foreground/40 disabled:hover:bg-foreground/20 disabled:pointer-events-none"
-                            indicatorClassName="absolute top-2 right-2 bg-secondary text-foreground px-3 py-1 rounded-full text-sm font-medium shadow-sm z-20"
+                            indicatorClassName="absolute top-2 right-2 bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm font-medium shadow-sm z-20"
                           />
                         </div>
                         <div className="p-4">
                           <div className="flex items-center gap-2 mb-2">
-                            <Item.Featured className="w-4 h-4 text-foreground" />
-                            <Item.Name className="text-lg text-foreground font-heading group-data-[featured=true]:font-medium" />
+                            <Item.Featured className="w-4 h-4 text-secondary-foreground" />
+                            <Item.Name className="text-lg text-secondary-foreground font-heading group-data-[featured=true]:font-medium" />
                           </div>
-                          <Item.Description className="text-sm text-foreground mb-3 font-paragraph" />
+                          <Item.Description className="text-sm text-secondary-foreground mb-3 font-paragraph" />
 
                           <Item.VariantsRepeater>
                             <div className="flex justify-between items-center mb-3">
-                              <Variant.Name className="text-sm text-foreground font-heading" />
-                              <Variant.Price className="text-sm text-foreground font-paragraph" />
+                              <Variant.Name className="text-sm text-secondary-foreground font-heading" />
+                              <Variant.Price className="text-sm text-secondary-foreground font-paragraph" />
                             </div>
                           </Item.VariantsRepeater>
 
                           <div className="flex flex-wrap gap-1 mb-3">
                             <Item.LabelsRepeater>
-                              <span className="inline-flex items-center gap-1 bg-primary/10 text-foreground text-xs px-2 py-1 rounded-full">
+                              <span className="inline-flex items-center gap-1 bg-primary/10 text-secondary-foreground text-xs px-2 py-1 rounded-full">
                                 <Label.Icon className="w-4 h-4 object-contain" />
                                 <Label.Name />
                               </span>
@@ -83,12 +83,12 @@ export const MenusPage: React.FC<MenusPageProps> = ({ menusServiceConfig }) => {
 
                           <Item.ModifierGroupsRepeater>
                             <div className="mb-2">
-                              <ModifierGroup.Name className="text-sm text-foreground font-heading" />
+                              <ModifierGroup.Name className="text-sm text-secondary-foreground font-heading" />
                               <div className="mt-2">
                                 <ModifierGroup.ModifiersRepeater>
                                   <div className="flex justify-between items-center py-1">
-                                    <Modifier.Name className="text-sm text-foreground font-paragraph" />
-                                    <Modifier.Price className="text-sm text-foreground font-paragraph" />
+                                    <Modifier.Name className="text-sm text-secondary-foreground font-paragraph" />
+                                    <Modifier.Price className="text-sm text-secondary-foreground font-paragraph" />
                                   </div>
                                 </ModifierGroup.ModifiersRepeater>
                               </div>
