@@ -54,7 +54,6 @@ import {
   FieldLayoutProvider,
   useFieldLayout,
 } from './context/FieldLayoutContext.js';
-import { FieldsPropsProvider } from './context/FieldsPropsContext.js';
 
 enum TestIds {
   formRoot = 'form-root',
@@ -872,7 +871,7 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
 
           return (
             <div ref={ref}>
-              <FormProvider>
+              <FormProvider currency={'USD' as any} locale={'en'}>
                 <FieldsWithForm
                   form={form}
                   values={formValues}
@@ -925,13 +924,13 @@ const FieldsWithForm = ({
   });
 
   if (!formData) return null;
-  const { columnCount, fieldElements, fieldsLayout, fieldsProps } = formData;
+  const { columnCount, fieldElements, fieldsLayout } = formData;
 
   return (
     // TODO: use readOnly, isDisabled
     // TODO: step title a11y support
     // TODO: mobile support?
-    <FieldsPropsProvider value={{ fieldsProps }}>
+    // <FieldsPropsProvider value={undefined}>
       <FieldLayoutProvider value={fieldsLayout}>
         <form onSubmit={(e) => e.preventDefault()}>
           <fieldset
@@ -957,7 +956,7 @@ const FieldsWithForm = ({
           </fieldset>
         </form>
       </FieldLayoutProvider>
-    </FieldsPropsProvider>
+    // </FieldsPropsProvider>
   );
 };
 

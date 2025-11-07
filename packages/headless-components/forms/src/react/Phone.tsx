@@ -1,22 +1,7 @@
 import React from 'react';
 import { Form, PhoneInputProps } from '@wix/headless-forms/react';
-import { useFieldsProps } from './context/FieldsPropsContext.js';
-
-const PhoneFieldContext = React.createContext<PhoneInputProps | undefined>(
-  undefined,
-);
-
-function usePhoneFieldContext(): PhoneInputProps {
-  const context = React.useContext(PhoneFieldContext);
-
-  if (!context) {
-    throw new globalThis.Error(
-      'PhoneField components must be used within PhoneField.Root',
-    );
-  }
-
-  return context;
-}
+// import { useFieldsProps } from './context/FieldsPropsContext.js';
+import { useFieldProps } from '@wix/form-public';
 
 export interface PhoneFieldProps {
   id: string;
@@ -27,19 +12,20 @@ export interface PhoneFieldProps {
 
 const Root = React.forwardRef<HTMLDivElement, PhoneFieldProps>((props, ref) => {
   const { id, children, asChild, className } = props;
-  const { fieldsProps } = useFieldsProps();
-  const fieldProps = fieldsProps[id];
+  const fieldProps = useFieldProps<PhoneInputProps>();
+  // const fieldProps = fieldsProps[id];
+  console.log('fieldProps', fieldProps);
 
   return (
-    <PhoneFieldContext.Provider value={fieldProps}>
+    // <PhoneFieldContext.Provider value={fieldProps}>
       <Form.Field ref={ref} id={id} asChild={asChild} className={className}>
         <Form.Field.InputWrapper>
-          <Form.Field.Input description={fieldProps?.description}>
+          <Form.Field.Input description={'fieldProps?.description'}>
             {children}
           </Form.Field.Input>
         </Form.Field.InputWrapper>
       </Form.Field>
-    </PhoneFieldContext.Provider>
+    // </PhoneFieldContext.Provider>
   );
 });
 
@@ -54,7 +40,7 @@ export interface PhoneLabelProps {
 const LabelRoot = React.forwardRef<HTMLDivElement, PhoneLabelProps>(
   (props, ref) => {
     const { asChild, className, children } = props;
-    const { id, label, showLabel } = usePhoneFieldContext();
+    const { id, label, showLabel } = useFieldProps();
 
     if (!showLabel) {
       return null;
@@ -84,7 +70,7 @@ export const Required = React.forwardRef<
   HTMLSpanElement,
   PhoneLabelRequiredProps
 >((props, ref) => {
-  const { required } = usePhoneFieldContext();
+  const { required } = useFieldProps();
 
   return <Form.Field.Label.Required {...props} ref={ref} required={required} />;
 });
@@ -110,7 +96,7 @@ export interface PhoneErrorProps {
 const Error = React.forwardRef<HTMLDivElement, PhoneErrorProps>(
   (props, ref) => {
     const { children, ...rest } = props;
-    const { error } = usePhoneFieldContext();
+    const { error } = useFieldProps();
 
     return (
       <Form.Field.Error ref={ref} {...rest}>
@@ -132,13 +118,13 @@ const CountryCode = React.forwardRef<HTMLDivElement, CountryCodeProps>(
     const { asChild, className, ...rest } = props;
     const {
       id,
-      countryCodes,
+      // countryCodes,
       defaultCountryCode,
       readOnly,
       onChange,
       onBlur,
       onFocus,
-    } = usePhoneFieldContext();
+    } = useFieldProps();
 
     return (
       <Form.Field.Input
@@ -155,11 +141,11 @@ const CountryCode = React.forwardRef<HTMLDivElement, CountryCodeProps>(
           onBlur={() => onBlur?.()}
           onFocus={() => onFocus?.()}
         >
-          {countryCodes?.map((code: string) => (
+          {/* {countryCodes?.map((code: string) => (
             <option key={code} value={code}>
               {code}
             </option>
-          ))}
+          ))} */}
         </select>
       </Form.Field.Input>
     );
@@ -186,7 +172,7 @@ const Input = React.forwardRef<HTMLDivElement, PhoneFieldInputProps>(
       onBlur,
       onFocus,
       description,
-    } = usePhoneFieldContext();
+    } = useFieldProps();
 
     const descriptionId = description ? `${id}-description` : undefined;
 
