@@ -33,7 +33,6 @@ export interface ModifierPriceProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    price: number;
     additionalCharge?: string;
     formattedAdditionalCharge?: string;
     hasAdditionalCharge: boolean;
