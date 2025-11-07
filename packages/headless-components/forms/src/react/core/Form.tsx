@@ -9,6 +9,11 @@ import {
 } from '../../services/form-service.js';
 import { FormValues } from '../types.js';
 import { calculateGridStyles } from '../utils.js';
+import {
+  SiteProperties,
+  SitePropertiesDefinition,
+  SitePropertiesService
+} from '../../services/site-properties-service.js';
 
 const DEFAULT_SUCCESS_MESSAGE = 'Your form has been submitted successfully.';
 
@@ -69,14 +74,20 @@ export function Root({
   formServiceConfig,
   children,
 }: RootProps): React.ReactNode {
+
+  const serviceMap = createServicesMap()
+    .addService(
+      FormServiceDefinition,
+      FormService,
+      formServiceConfig,
+    )
+    .addService(
+      SitePropertiesDefinition,
+      SitePropertiesService,
+    );
+
   return (
-    <WixServices
-      servicesMap={createServicesMap().addService(
-        FormServiceDefinition,
-        FormService,
-        formServiceConfig,
-      )}
-    >
+    <WixServices servicesMap={serviceMap}>
       {children}
     </WixServices>
   );
@@ -454,4 +465,21 @@ export function Field(props: FieldProps) {
     layout,
     gridStyles,
   });
+}
+
+interface SitePropertiesPoviderProps {
+  children: (properties: SiteProperties) => React.ReactNode,
+}
+
+export const SitePropertiesPovider = (
+  { children }: SitePropertiesPoviderProps
+) => {
+  const { sitePropertiesSignal } = useService(SitePropertiesDefinition);
+  const properties = sitePropertiesSignal.get();
+
+  if (properties === null) {
+    return;
+  }
+
+  return children(properties);
 }

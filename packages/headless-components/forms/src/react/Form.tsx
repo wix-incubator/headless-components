@@ -48,6 +48,7 @@ import {
   Fields as CoreFields,
   Field as CoreField,
   type Layout,
+  SitePropertiesPovider,
 } from './core/Form.js';
 
 
@@ -859,34 +860,42 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
     }, []);
 
     return (
-      <CoreFields>
-        {({ form, submitForm }) => {
-          if (!form) return null;
+      <SitePropertiesPovider>
+        {(properties) => (
+          <CoreFields>
+            {({ form, submitForm }) => {
+              if (!form) {
+                return;
+              }
 
-          return (
-            <div ref={ref}>
-              <FormProvider
-                currency={{
-                  sign: "$",
-                  code: 'USD',
-                }}
-              >
-                <FieldsWithForm
-                  form={form}
-                  values={formValues}
-                  onChange={handleFormChange}
-                  errors={formErrors}
-                  onValidate={handleFormValidate}
-                  fields={props.fieldMap}
-                  submitForm={() => submitForm(formValues)}
-                  rowGapClassname={props.rowGapClassname}
-                  columnGapClassname={props.columnGapClassname}
-                />
-              </FormProvider>
-            </div>
-          );
-        }}
-      </CoreFields>
+              console.log(properties);
+
+              return (
+                <div ref={ref}>
+                  <FormProvider
+                    currency={{
+                      sign: "$",
+                      code: 'USD',
+                    }}
+                  >
+                    <FieldsWithForm
+                      form={form}
+                      values={formValues}
+                      onChange={handleFormChange}
+                      errors={formErrors}
+                      onValidate={handleFormValidate}
+                      fields={props.fieldMap}
+                      submitForm={() => submitForm(formValues)}
+                      rowGapClassname={props.rowGapClassname}
+                      columnGapClassname={props.columnGapClassname}
+                    />
+                  </FormProvider>
+                </div>
+              );
+            }}
+          </CoreFields>
+        )}
+      </SitePropertiesPovider>
     );
   },
 );

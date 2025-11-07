@@ -188,7 +188,6 @@ async function fetchForm(id: string): Promise<forms.Form> {
     if (!result) {
       throw new Error(`Form ${id} not found`);
     }
-
     return result;
   } catch (err) {
     console.error('Failed to load form:', id, err);

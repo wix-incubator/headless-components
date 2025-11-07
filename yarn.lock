@@ -5513,6 +5513,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/auto_sdk_business-tools_locations@npm:1.0.34":
+  version: 1.0.34
+  resolution: "@wix/auto_sdk_business-tools_locations@npm:1.0.34"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.5.0"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/a77a5d1de4c3e491d7260731d0c0854b8f516f5f3a627adfb62bed78157258900c17ab9083e574c43b04d949cbee7de4408852a464a40cd367d9d2869c6396e6
+  languageName: node
+  linkType: hard
+
+"@wix/auto_sdk_business-tools_site-properties@npm:1.0.95":
+  version: 1.0.95
+  resolution: "@wix/auto_sdk_business-tools_site-properties@npm:1.0.95"
+  dependencies:
+    "@wix/sdk-runtime": "npm:^0.5.0"
+    "@wix/sdk-types": "npm:^1.13.35"
+  checksum: 10c0/af324754951024e4271e855eb8e92d8e363367ce46d9f78581379f7a8ee2b1a003baa1027db656a51e4f2d28bb51897399517040b4f2c8ffad511c6d44fb3862
+  languageName: node
+  linkType: hard
+
 "@wix/auto_sdk_categories_categories@npm:1.0.74, @wix/auto_sdk_categories_categories@npm:^1.0.62":
   version: 1.0.74
   resolution: "@wix/auto_sdk_categories_categories@npm:1.0.74"
@@ -7318,6 +7338,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wix/business-tools@npm:^1.0.199":
+  version: 1.0.199
+  resolution: "@wix/business-tools@npm:1.0.199"
+  dependencies:
+    "@wix/auto_sdk_business-tools_locations": "npm:1.0.34"
+    "@wix/auto_sdk_business-tools_site-properties": "npm:1.0.95"
+  checksum: 10c0/5b3e9144a77f83f479a6ab93530b77b37d93945d91e1c38679453edbfbe79f2d522b7d26a95cd0906b114d4fd6ae31f69bca83a1a39a79e7db1d663e613d14e1
+  languageName: node
+  linkType: hard
+
 "@wix/categories@npm:^1.0.133":
   version: 1.0.152
   resolution: "@wix/categories@npm:1.0.152"
@@ -7737,15 +7767,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/form-public@npm:^0.40.0":
-  version: 0.40.0
-  resolution: "@wix/form-public@npm:0.40.0"
+"@wix/form-public@npm:^0.48.0":
+  version: 0.48.0
+  resolution: "@wix/form-public@npm:0.48.0"
   dependencies:
     lodash.camelcase: "npm:^4.3.0"
     lodash.mapkeys: "npm:^4.6.0"
   peerDependencies:
     react: ^18.3.1
-  checksum: 10c0/93986a968222ca83bf542799b2027f3e68b8f1b335132e8807170255eb9d58b0f53a9eb62f2fbe86e2fc4bbfc38a2245a6b6694af1eebc167768fd53be09e0cb
+  checksum: 10c0/ce6f3c0275668a116c42e184bb3c3093bca22abe6161d5786d6b241928a40cfda8099f74932819a06c6e3f1feb05596f07b1bbe731de9a6167c27160af104de2
   languageName: node
   linkType: hard
 
@@ -8080,7 +8110,8 @@ __metadata:
     "@testing-library/react": "npm:^16.3.0"
     "@types/node": "npm:^20.9.0"
     "@vitest/ui": "npm:^3.1.4"
-    "@wix/form-public": "npm:^0.40.0"
+    "@wix/business-tools": "npm:^1.0.199"
+    "@wix/form-public": "npm:^0.48.0"
     "@wix/forms": "npm:^1.0.331"
     "@wix/headless-utils": "workspace:*"
     "@wix/services-definitions": "npm:^0.1.4"
