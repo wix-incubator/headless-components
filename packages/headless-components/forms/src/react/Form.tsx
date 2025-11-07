@@ -871,7 +871,7 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
 
           return (
             <div ref={ref}>
-              <FormProvider>
+              <FormProvider currency={'USD' as any} locale={'en'}>
                 <FieldsWithForm
                   form={form}
                   values={formValues}
@@ -1043,6 +1043,8 @@ export interface FieldErrorProps {
   className?: string;
   /** The error message */
   errorMessage?: string;
+  /** Child components to render */
+  children?: React.ReactNode;
 }
 
 /**
@@ -1281,9 +1283,9 @@ FieldInput.displayName = 'Form.Field.Input';
  */
 export const FieldError = React.forwardRef<HTMLDivElement, FieldErrorProps>(
   (props, ref) => {
-    const { errorMessage, asChild, className, ...otherProps } = props;
+    const { errorMessage, asChild, className, children, ...otherProps } = props;
 
-    if (!errorMessage) return null;
+    if (!errorMessage && !children) return null;
 
     return (
       <AsChildSlot
@@ -1293,7 +1295,7 @@ export const FieldError = React.forwardRef<HTMLDivElement, FieldErrorProps>(
         className={className}
         {...otherProps}
       >
-        {errorMessage}
+        {children || errorMessage}
       </AsChildSlot>
     );
   },

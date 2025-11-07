@@ -20,7 +20,7 @@ const ContactsPhone = ({
   onChange,
   onBlur,
   onFocus,
-  error,
+  errorMessage,
 }: PhoneInputProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
@@ -81,7 +81,7 @@ const ContactsPhone = ({
           </div>
         </Form.Field.Input>
         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-          {error}
+          {errorMessage}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>

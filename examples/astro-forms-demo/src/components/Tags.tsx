@@ -9,7 +9,7 @@ const Tags = ({
   onChange,
   onBlur,
   onFocus,
-  error,
+  errorMessage,
 }: TagsProps) => {
   const currentValues = value || [];
 
@@ -61,7 +61,7 @@ const Tags = ({
           </div>
         </Form.Field.Input>
         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-          {error}
+          {errorMessage}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>

@@ -11,7 +11,7 @@ const MultilineAddress = ({
   onChange,
   onBlur,
   onFocus,
-  error,
+  errorMessage,
 }: MultilineAddressProps) => {
   const handleFieldChange = (field: keyof typeof value, fieldValue: string) => {
     const newValue = { ...value, [field]: fieldValue };
@@ -223,7 +223,7 @@ const MultilineAddress = ({
           </fieldset>
         </Form.Field.Input>
         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-          {error}
+          {errorMessage}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>

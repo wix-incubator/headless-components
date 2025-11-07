@@ -21,7 +21,7 @@ const FileUpload = ({
   onChange,
   onBlur,
   onFocus,
-  error,
+  errorMessage,
 }: FileUploadProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
@@ -124,7 +124,7 @@ const FileUpload = ({
           )}
         </Form.Field.Input>
         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-          {error}
+          {errorMessage}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>

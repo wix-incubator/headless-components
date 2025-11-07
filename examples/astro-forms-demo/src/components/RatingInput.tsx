@@ -12,7 +12,7 @@ const RatingInput = ({
   onChange,
   onBlur,
   onFocus,
-  error,
+  errorMessage,
 }: RatingInputProps) => {
   return (
     <Form.Field id={id}>
@@ -53,7 +53,7 @@ const RatingInput = ({
           </div>
         </Form.Field.Input>
         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-          {error}
+          {errorMessage}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>

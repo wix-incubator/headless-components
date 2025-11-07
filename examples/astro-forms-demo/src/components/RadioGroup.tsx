@@ -14,7 +14,7 @@ const RadioGroup = ({
   onChange,
   onBlur,
   onFocus,
-  error,
+  errorMessage,
 }: RadioGroupProps) => {
   return (
     <Form.Field id={id}>
@@ -53,7 +53,7 @@ const RadioGroup = ({
           </div>
         </Form.Field.Input>
         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-          {error}
+          {errorMessage}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>

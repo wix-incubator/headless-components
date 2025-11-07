@@ -19,7 +19,7 @@ const TimeInput = ({
   onChange,
   onBlur,
   onFocus,
-  error,
+  errorMessage,
 }: TimeInputProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
@@ -72,7 +72,7 @@ const TimeInput = ({
           />
         </Form.Field.Input>
         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-          {error}
+          {errorMessage}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>

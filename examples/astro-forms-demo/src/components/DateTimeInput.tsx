@@ -21,7 +21,7 @@ const DateTimeInput = ({
   onChange,
   onBlur,
   onFocus,
-  error,
+  errorMessage,
 }: DateTimeInputProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
@@ -68,7 +68,7 @@ const DateTimeInput = ({
           />
         </Form.Field.Input>
         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-          {error}
+          {errorMessage}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>

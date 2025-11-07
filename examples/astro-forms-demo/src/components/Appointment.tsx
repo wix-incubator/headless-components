@@ -12,7 +12,7 @@ export default function Appointment({
   onChange,
   onBlur,
   onFocus,
-  error,
+  errorMessage,
 }: AppointmentProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
@@ -47,7 +47,7 @@ export default function Appointment({
           />
         </Form.Field.Input>
         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-          {error}
+          {errorMessage}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>

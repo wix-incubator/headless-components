@@ -18,7 +18,7 @@ const NumberInput = ({
   onChange,
   onBlur,
   onFocus,
-  error,
+  errorMessage,
 }: NumberInputProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
@@ -66,7 +66,7 @@ const NumberInput = ({
           />
         </Form.Field.Input>
         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-          {error}
+          {errorMessage}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>
