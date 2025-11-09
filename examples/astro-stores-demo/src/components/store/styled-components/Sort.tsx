@@ -57,7 +57,7 @@ export const StyledProductListSortSplit = (
   props: StyledProductListSortSplitProps
 ) => {
   return (
-    <ProductListPrimitive.Sort>
+    <ProductListPrimitive.Sort {...props}>
       {({ currentSort, sortFieldOptions, sortOrderOptions, setSort }) => (
         <>
           <Root
