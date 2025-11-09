@@ -271,7 +271,7 @@ export const Items = React.forwardRef<HTMLElement, ItemsProps>((props, ref) => {
               customElement={children}
               {...otherProps}
             >
-              {children}
+              <div>{children}</div>
             </AsChildSlot>
 
             {/* Infinite scroll sentinel - only render when infinite scroll is enabled and there are more items */}
