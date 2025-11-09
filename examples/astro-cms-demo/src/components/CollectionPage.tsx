@@ -29,7 +29,7 @@ export default function CollectionPage({
       type: 'single',
       displayType: 'text',
       fieldName: 'isAvailable',
-      validValues: ['true', 'false'],
+      validValues: [true, false],
     },
   ];
 
