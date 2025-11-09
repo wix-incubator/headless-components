@@ -338,7 +338,6 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
       ...otherProps
     } = props;
 
-
     const currentValue = value?.[0];
 
     // Handle change events - create Wix SDK array format
@@ -394,8 +393,8 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
       });
     }
 
-     // Get current sort from sortOptions directly
-     const currentSortOption = getCurrentSort(value, completeOptions);
+    // Get current sort from sortOptions directly
+    const currentSortOption = getCurrentSort(value, completeOptions);
 
     const contextValue: SortContextValue = {
       currentSort: currentSortOption,
