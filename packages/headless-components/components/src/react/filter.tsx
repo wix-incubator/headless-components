@@ -808,13 +808,21 @@ export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
         data-display-type={option.displayType}
         className={otherProps.className}
       >
-        {option.validValues?.map((value) => (
-          <ToggleGroup.Item key={String(value)} value={String(value)}>
-            {option.valueFormatter
-              ? option.valueFormatter(value as any)
-              : value}
-          </ToggleGroup.Item>
-        ))}
+        {option.validValues?.map((value) => {
+          const stringValue = String(value);
+          // Convert boolean to string for display, otherwise use valueFormatter or value as-is
+          const displayText = option.valueFormatter
+            ? option.valueFormatter(value as any)
+            : typeof value === 'boolean'
+              ? String(value)
+              : value;
+
+          return (
+            <ToggleGroup.Item key={stringValue} value={stringValue}>
+              {displayText}
+            </ToggleGroup.Item>
+          );
+        })}
       </ToggleGroup.Root>
     );
   },
@@ -1157,7 +1165,14 @@ function singleFilterUiValueToFilter(
     typeof option.fieldName === 'string' ? option.fieldName : option.key;
 
   if (uiValue && uiValue.trim() !== '') {
-    newFilter[fieldName] = uiValue;
+    // Find the original value in validValues to preserve type (boolean, number, etc.)
+    const originalValue = option.validValues?.find(
+      (v) => String(v) === uiValue,
+    );
+
+    // Use original value if found (preserves boolean/number types), otherwise use string
+    newFilter[fieldName] =
+      originalValue !== undefined ? originalValue : uiValue;
   } else {
     delete newFilter[fieldName];
   }
@@ -1282,12 +1297,20 @@ function multiFilterUiValueToFilter(
   } else {
     // Standard logic for non-shared fields
     if (Array.isArray(uiValue) && uiValue.length > 0) {
+      // Convert string values back to original types from validValues
+      const convertedValues = uiValue.map((stringVal) => {
+        const originalValue = option.validValues?.find(
+          (v) => String(v) === stringVal,
+        );
+        return originalValue !== undefined ? originalValue : stringVal;
+      });
+
       // Use operator based on fieldType
       if (option.fieldType === 'array') {
-        newFilter[fieldName] = { $hasSome: uiValue };
+        newFilter[fieldName] = { $hasSome: convertedValues };
       } else {
         // Default to $in for 'singular' or undefined fieldType
-        newFilter[fieldName] = { $in: uiValue };
+        newFilter[fieldName] = { $in: convertedValues };
       }
     } else {
       delete newFilter[fieldName];
