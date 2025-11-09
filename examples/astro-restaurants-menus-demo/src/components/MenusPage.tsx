@@ -63,6 +63,7 @@ export const MenusPage: React.FC<MenusPageProps> = ({ menusServiceConfig }) => {
                             <Item.Featured className="w-4 h-4 text-secondary-foreground" />
                             <Item.Name className="text-lg text-secondary-foreground font-heading group-data-[featured=true]:font-medium" />
                           </div>
+                          <Item.Price className="text-sm text-secondary-foreground mb-2 font-paragraph" />
                           <Item.Description className="text-sm text-secondary-foreground mb-3 font-paragraph" />
 
                           <Item.VariantsRepeater>
