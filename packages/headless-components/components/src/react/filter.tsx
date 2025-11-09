@@ -812,7 +812,7 @@ export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
           <ToggleGroup.Item key={String(value)} value={String(value)}>
             {option.valueFormatter
               ? option.valueFormatter(value as any)
-              : value}
+              : String(value)}
           </ToggleGroup.Item>
         ))}
       </ToggleGroup.Root>
@@ -978,7 +978,7 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
                 />
                 {option.valueFormatter
                   ? option.valueFormatter(value as any)
-                  : value}
+                  : String(value)}
               </label>
             ))}
           </>
@@ -1157,7 +1157,13 @@ function singleFilterUiValueToFilter(
     typeof option.fieldName === 'string' ? option.fieldName : option.key;
 
   if (uiValue && uiValue.trim() !== '') {
-    newFilter[fieldName] = uiValue;
+    // Find the valid value in validValues to preserve type (boolean, number, etc.)
+    const validValueOption = option.validValues?.find(
+      (v) => String(v) === uiValue,
+    );
+
+    newFilter[fieldName] =
+      validValueOption !== undefined ? validValueOption : uiValue;
   } else {
     delete newFilter[fieldName];
   }
@@ -1282,12 +1288,20 @@ function multiFilterUiValueToFilter(
   } else {
     // Standard logic for non-shared fields
     if (Array.isArray(uiValue) && uiValue.length > 0) {
+      // Convert to original types values (number, boolean, etc.)
+      const valuesWithTypes = uiValue.map((stringVal) => {
+        const validValueOption = option.validValues?.find(
+          (v) => String(v) === stringVal,
+        );
+        return validValueOption !== undefined ? validValueOption : stringVal;
+      });
+
       // Use operator based on fieldType
       if (option.fieldType === 'array') {
-        newFilter[fieldName] = { $hasSome: uiValue };
+        newFilter[fieldName] = { $hasSome: valuesWithTypes };
       } else {
         // Default to $in for 'singular' or undefined fieldType
-        newFilter[fieldName] = { $in: uiValue };
+        newFilter[fieldName] = { $in: valuesWithTypes };
       }
     } else {
       delete newFilter[fieldName];
