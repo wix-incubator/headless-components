@@ -303,7 +303,7 @@ ListRenderer.displayName = 'Sort.ListRenderer';
 // Helper function to get current sort from array or default to first option
 const getCurrentSort = (
   sortArray: SortValue | undefined,
-  options: Array<SortOption>,
+  options: Array<SortOptionRenderable>,
 ): { fieldName?: string; order?: string } => {
   const currentSort = sortArray?.find((sort) => sort);
 
@@ -338,8 +338,6 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
       ...otherProps
     } = props;
 
-    // Get current sort from sortOptions directly
-    const currentSortOption = getCurrentSort(value, sortOptions);
     const currentValue = value?.[0];
 
     // Handle change events - create Wix SDK array format
@@ -394,6 +392,9 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
         }
       });
     }
+
+    // Get current sort from sortOptions directly
+    const currentSortOption = getCurrentSort(value, completeOptions);
 
     const contextValue: SortContextValue = {
       currentSort: currentSortOption,
