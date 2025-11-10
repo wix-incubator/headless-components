@@ -17,6 +17,13 @@ export interface ModifierGroupRootProps {
   children: React.ReactNode;
 }
 
+/**
+ * Root component that provides modifier group context to its children.
+ *
+ * @warning Do not use this component directly if it's inside a repeater.
+ * Use the repeater component (e.g., Item.ModifierGroupsRepeater) instead, which will
+ * automatically render this Root component for each modifier group.
+ */
 export const Root = (props: ModifierGroupRootProps) => {
   if (!props.modifierGroup) {
     return null;
