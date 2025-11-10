@@ -1,6 +1,5 @@
 import React from 'react';
 import { Form, PhoneInputProps } from '@wix/headless-forms/react';
-// import { useFieldsProps } from './context/FieldsPropsContext.js';
 import { useFieldProps } from '@wix/form-public';
 
 export interface PhoneFieldProps {
@@ -12,20 +11,16 @@ export interface PhoneFieldProps {
 
 const Root = React.forwardRef<HTMLDivElement, PhoneFieldProps>((props, ref) => {
   const { id, children, asChild, className } = props;
-  const fieldProps = useFieldProps<PhoneInputProps>();
-  // const fieldProps = fieldsProps[id];
-  console.log('fieldProps', fieldProps);
+  const { description } = useFieldProps<PhoneInputProps>();
 
   return (
-    // <PhoneFieldContext.Provider value={fieldProps}>
-      <Form.Field ref={ref} id={id} asChild={asChild} className={className}>
-        <Form.Field.InputWrapper>
-          <Form.Field.Input description={'fieldProps?.description'}>
-            {children}
-          </Form.Field.Input>
-        </Form.Field.InputWrapper>
-      </Form.Field>
-    // </PhoneFieldContext.Provider>
+    <Form.Field ref={ref} id={id} asChild={asChild} className={className}>
+      <Form.Field.InputWrapper>
+        <Form.Field.Input description={description}>
+          {children}
+        </Form.Field.Input>
+      </Form.Field.InputWrapper>
+    </Form.Field>
   );
 });
 
@@ -118,7 +113,7 @@ const CountryCode = React.forwardRef<HTMLDivElement, CountryCodeProps>(
     const { asChild, className, ...rest } = props;
     const {
       id,
-      // countryCodes,
+      countryCodes,
       defaultCountryCode,
       readOnly,
       onChange,
@@ -141,11 +136,11 @@ const CountryCode = React.forwardRef<HTMLDivElement, CountryCodeProps>(
           onBlur={() => onBlur?.()}
           onFocus={() => onFocus?.()}
         >
-          {/* {countryCodes?.map((code: string) => (
+          {countryCodes?.map((code: string) => (
             <option key={code} value={code}>
               {code}
             </option>
-          ))} */}
+          ))}
         </select>
       </Form.Field.Input>
     );

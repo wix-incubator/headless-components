@@ -12,7 +12,6 @@ export default function Appointment({
   onChange,
   onBlur,
   onFocus,
-  error,
   errorMessage,
 }: AppointmentProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -930,33 +930,31 @@ const FieldsWithForm = ({
     // TODO: use readOnly, isDisabled
     // TODO: step title a11y support
     // TODO: mobile support?
-    // <FieldsPropsProvider value={undefined}>
-      <FieldLayoutProvider value={fieldsLayout}>
-        <form onSubmit={(e) => e.preventDefault()}>
-          <fieldset
-            style={{ display: 'flex', flexDirection: 'column' }}
-            className={rowGapClassname}
-          >
-            {fieldElements.map((rowElements, index) => {
-              return (
-                <div
-                  key={index}
-                  style={{
-                    display: 'grid',
-                    width: '100%',
-                    gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
-                    gridAutoRows: 'minmax(min-content, max-content)',
-                  }}
-                  className={columnGapClassname}
-                >
-                  {rowElements}
-                </div>
-              );
-            })}
-          </fieldset>
-        </form>
-      </FieldLayoutProvider>
-    // </FieldsPropsProvider>
+    <FieldLayoutProvider value={fieldsLayout}>
+      <form onSubmit={(e) => e.preventDefault()}>
+        <fieldset
+          style={{ display: 'flex', flexDirection: 'column' }}
+          className={rowGapClassname}
+        >
+          {fieldElements.map((rowElements, index) => {
+            return (
+              <div
+                key={index}
+                style={{
+                  display: 'grid',
+                  width: '100%',
+                  gridTemplateColumns: `repeat(${columnCount}, 1fr)`,
+                  gridAutoRows: 'minmax(min-content, max-content)',
+                }}
+                className={columnGapClassname}
+              >
+                {rowElements}
+              </div>
+            );
+          })}
+        </fieldset>
+      </form>
+    </FieldLayoutProvider>
   );
 };
 
