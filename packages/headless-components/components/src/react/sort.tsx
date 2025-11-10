@@ -104,6 +104,10 @@ interface SortOptionRenderable {
   onSelect: () => void;
   /** Whether this option is currently selected */
   isSelected: boolean;
+
+}
+
+interface SortOptionRenderableWithChildren extends SortOptionRenderable {
   /** Whether this option is rendered as a child */
   asChild?: boolean;
   /** Children components */
@@ -222,7 +226,7 @@ SelectRenderer.displayName = 'Sort.SelectRenderer';
 interface ListRendererProps
   extends Omit<React.HTMLAttributes<HTMLUListElement>, 'onChange'> {
   currentSort: { fieldName?: string; order?: string };
-  options: SortOptionRenderable[];
+  options: SortOptionRenderableWithChildren[];
 }
 
 const ListRenderer = React.forwardRef<HTMLUListElement, ListRendererProps>(
@@ -344,7 +348,7 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
     };
 
     // Use EITHER sortOptions prop OR extract from children - not both
-    let completeOptions: SortOptionRenderable[] = [];
+    let completeOptions: SortOptionRenderableWithChildren[] = [];
 
     if (sortOptions.length > 0) {
       // Use sortOptions prop (declarative API)
@@ -361,7 +365,7 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
           order,
           isSelected,
           onSelect: () => handleChange(fieldName, order),
-        } as SortOptionRenderable;
+        } as SortOptionRenderableWithChildren;
       });
     } else if (children) {
       // Extract options from children (programmatic API)
