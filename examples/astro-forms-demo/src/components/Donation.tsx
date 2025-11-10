@@ -31,14 +31,12 @@ export default function Donation({
 
   return (
     <Form.Field id={id}>
-      {showLabel && (
         <Form.Field.Label>
           <label className="text-foreground font-paragraph mb-3">
             {label}
             {required && <span className="text-destructive ml-1">*</span>}
           </label>
         </Form.Field.Label>
-      )}
       <Form.Field.InputWrapper>
         <Form.Field.Input>
           <div className="flex flex-wrap gap-3">

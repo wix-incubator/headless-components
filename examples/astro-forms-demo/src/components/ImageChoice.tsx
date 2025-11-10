@@ -18,7 +18,6 @@ const ImageChoice = ({
 }: ImageChoiceProps) => {
   return (
     <Form.Field id={id}>
-      {showLabel && (
         <Form.Field.Label>
           <label
             htmlFor={id}
@@ -28,7 +27,6 @@ const ImageChoice = ({
             {required && <span className="text-destructive ml-1">*</span>}
           </label>
         </Form.Field.Label>
-      )}
       <Form.Field.InputWrapper>
         <Form.Field.Input>
           <div

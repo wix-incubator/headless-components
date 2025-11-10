@@ -31,7 +31,6 @@ const Checkbox = ({
               id={id}
               type="checkbox"
               checked={value}
-              defaultChecked={defaultValue}
               required={required}
               readOnly={readOnly}
               className="mt-1 w-4 h-4 text-primary bg-background border-foreground/20 rounded focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed"

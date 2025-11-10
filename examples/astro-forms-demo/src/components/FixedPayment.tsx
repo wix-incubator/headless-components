@@ -19,11 +19,9 @@ export default function FixedPayment({
 }: FixedPaymentProps) {
   return (
     <Form.Field id={id}>
-      {showLabel && (
         <Form.Field.Label asChild>
           <label className="text-foreground font-paragraph mb-2">{label}</label>
         </Form.Field.Label>
-      )}
       <Form.Field.InputWrapper>
         <Form.Field.Input
           asChild
