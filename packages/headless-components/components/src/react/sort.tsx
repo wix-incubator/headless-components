@@ -104,6 +104,10 @@ interface SortOptionRenderable {
   onSelect: () => void;
   /** Whether this option is currently selected */
   isSelected: boolean;
+  /** Whether this option is rendered as a child */
+  asChild?: boolean;
+  /** Children components */
+  children?: React.ReactNode;
 }
 
 /**
@@ -232,6 +236,8 @@ const ListRenderer = React.forwardRef<HTMLUListElement, ListRendererProps>(
             key={`${option?.fieldName ?? ''}-${option?.order ?? ''}-${index}`}
             className={otherProps.className}
             fieldName={option.fieldName!}
+            asChild={option.asChild}
+            children={option.children}
             order={option.order!}
             label={option.label}
           />
@@ -369,7 +375,7 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
               child.props?.fieldName !== undefined);
 
           if (isOption) {
-            const { fieldName, order, label } = child.props;
+            const { fieldName, order, label, asChild, children } = child.props;
             if (fieldName && label) {
               const isSelected = isSelectedHelper(
                 fieldName,
@@ -379,6 +385,8 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
 
               completeOptions.push({
                 fieldName,
+                asChild,
+                children,
                 order,
                 label,
                 onSelect: () => handleChange(fieldName, order),
