@@ -9,6 +9,7 @@ const Tags = ({
   onChange,
   onBlur,
   onFocus,
+  errorMessage,
 }: TagsProps) => {
   const currentValues = value || [];
 
@@ -35,29 +36,34 @@ const Tags = ({
           </label>
         </Form.Field.Label>
       )}
-      <Form.Field.Input>
-        <div className="flex flex-wrap gap-2" role="group">
-          {options.map(option => {
-            const isSelected = currentValues.includes(option.value);
-            return (
-              <button
-                key={option.id}
-                type="button"
-                onClick={() => handleTagToggle(option.value)}
-                onFocus={onFocus}
-                aria-pressed={isSelected}
-                className={`px-4 py-2 rounded-full font-paragraph transition-all ${
-                  isSelected
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-background text-foreground border border-foreground/20 hover:border-primary/50'
-                }`}
-              >
-                {option.label}
-              </button>
-            );
-          })}
-        </div>
-      </Form.Field.Input>
+      <Form.Field.InputWrapper>
+        <Form.Field.Input>
+          <div className="flex flex-wrap gap-2" role="group">
+            {options.map(option => {
+              const isSelected = currentValues.includes(option.value);
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => handleTagToggle(option.value)}
+                  onFocus={onFocus}
+                  aria-pressed={isSelected}
+                  className={`px-4 py-2 rounded-full font-paragraph transition-all ${
+                    isSelected
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-background text-foreground border border-foreground/20 hover:border-primary/50'
+                  }`}
+                >
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
+        </Form.Field.Input>
+        <Form.Field.Error className="text-destructive text-sm font-paragraph">
+          {errorMessage}
+        </Form.Field.Error>
+      </Form.Field.InputWrapper>
     </Form.Field>
   );
 };

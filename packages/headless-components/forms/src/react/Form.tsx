@@ -43,9 +43,17 @@ import {
   Submitted as CoreSubmitted,
   Fields as CoreFields,
   Field as CoreField,
-  type Layout,
 } from './core/Form.js';
 import { forms } from '@wix/forms';
+import {
+  FieldContext,
+  useFieldContext,
+  type FieldContextValue,
+} from './context/FieldContext.js';
+import {
+  FieldLayoutProvider,
+  useFieldLayout,
+} from './context/FieldLayoutContext.js';
 
 enum TestIds {
   formRoot = 'form-root',
@@ -56,7 +64,9 @@ enum TestIds {
   formSubmitted = 'form-submitted',
   fieldRoot = 'field-root',
   fieldLabel = 'field-label',
+  fieldInputWrapper = 'field-input-wrapper',
   fieldInput = 'field-input',
+  fieldError = 'field-error',
 }
 
 /**
@@ -861,7 +871,7 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
 
           return (
             <div ref={ref}>
-              <FormProvider>
+              <FormProvider currency={'USD' as any} locale={'en'}>
                 <FieldsWithForm
                   form={form}
                   values={formValues}
@@ -906,15 +916,14 @@ const FieldsWithForm = ({
   const formData = useForm({
     form,
     values,
-    onChange,
     errors,
+    onChange,
     onValidate,
     submitForm,
     fieldMap,
   });
 
   if (!formData) return null;
-  console.log('formData', formData);
   const { columnCount, fieldElements, fieldsLayout } = formData;
 
   return (
@@ -950,86 +959,6 @@ const FieldsWithForm = ({
 };
 
 /**
- * Mapping of field IDs to their layout configurations
- */
-interface FieldLayoutMap {
-  [fieldId: string]: Layout;
-}
-
-/**
- * Context for sharing field layout data across the form
- * @internal
- */
-const FieldLayoutContext = React.createContext<FieldLayoutMap | null>(null);
-
-/**
- * Props for FieldLayoutProvider component
- * @internal
- */
-interface FieldLayoutProviderProps {
-  /** The layout map to provide to children */
-  value: FieldLayoutMap;
-  /** Child components that need access to layout data */
-  children: React.ReactNode;
-}
-
-/**
- * Provider component that makes field layout data available to child components
- * @internal
- */
-const FieldLayoutProvider: React.FC<FieldLayoutProviderProps> = ({
-  value,
-  children,
-}) => {
-  return (
-    <FieldLayoutContext.Provider value={value}>
-      {children}
-    </FieldLayoutContext.Provider>
-  );
-};
-
-/**
- * Hook to access layout configuration for a specific field
- * @internal
- * @param {string} fieldId - The unique identifier of the field
- * @returns {Layout | null} The layout configuration for the field, or null if not found
- */
-function useFieldLayout(fieldId: string): Layout | null {
-  const layoutMap = React.useContext(FieldLayoutContext);
-  if (!layoutMap) {
-    return null;
-  }
-  return layoutMap[fieldId] || null;
-}
-
-/**
- * Context for sharing field data between Field container and its children
- */
-interface FieldContextValue {
-  id: string;
-  layout: Layout;
-  gridStyles: {
-    label: React.CSSProperties;
-    input: React.CSSProperties;
-  };
-}
-
-const FieldContext = React.createContext<FieldContextValue | null>(null);
-
-/**
- * Hook to access field context
- */
-function useFieldContext(): FieldContextValue {
-  const context = React.useContext(FieldContext);
-  if (!context) {
-    throw new globalThis.Error(
-      'Field components must be used within a Form.Field component',
-    );
-  }
-  return context;
-}
-
-/**
  * Props for Field container component
  */
 export interface FieldProps {
@@ -1051,7 +980,9 @@ interface FieldComponent
     FieldProps & React.RefAttributes<HTMLDivElement>
   > {
   Label: typeof FieldLabel;
+  InputWrapper: typeof FieldInputWrapper;
   Input: typeof FieldInput;
+  Error: typeof FieldError;
 }
 
 /**
@@ -1063,6 +994,18 @@ export interface FieldLabelProps {
   /** Whether to render as a child component */
   asChild?: boolean;
   /** CSS classes to apply to the label element */
+  className?: string;
+}
+
+/**
+ * Props for Field.InputWrapper component
+ */
+export interface FieldInputWrapperProps {
+  /** Child components (typically Field.Input and Field.Error) */
+  children: React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** CSS classes to apply to the wrapper element */
   className?: string;
 }
 
@@ -1081,8 +1024,32 @@ export interface FieldInputProps {
 }
 
 /**
+ * Render props for Field.Error component
+ */
+export interface FieldErrorRenderProps {
+  /** The error type */
+  type: FormError['errorType'];
+  /** The error message */
+  message: string;
+}
+
+/**
+ * Props for Field.Error component
+ */
+export interface FieldErrorProps {
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** CSS classes to apply to the error element */
+  className?: string;
+  /** The error message */
+  errorMessage?: string;
+  /** Child components to render */
+  children?: React.ReactNode;
+}
+
+/**
  * Container component for a form field with grid layout support.
- * Provides context to Field.Label and Field.Input child components.
+ * Provides context to Field.Label, Field.InputWrapper, Field.Input, and Field.Error child components.
  * Based on the default-field-layout functionality.
  *
  * @component
@@ -1096,9 +1063,14 @@ export interface FieldInputProps {
  *       <Form.Field.Label>
  *         <label className="text-foreground font-paragraph">Username</label>
  *       </Form.Field.Label>
- *       <Form.Field.Input description={<span className="text-secondary-foreground">Required</span>}>
- *         <input className="bg-background border-foreground text-foreground" />
- *       </Form.Field.Input>
+ *       <Form.Field.InputWrapper>
+ *         <Form.Field.Input description={<span className="text-secondary-foreground">Required</span>}>
+ *           <input className="bg-background border-foreground text-foreground" />
+ *         </Form.Field.Input>
+ *         <Form.Field.Error>
+ *           <span className="text-destructive text-sm font-paragraph">Username is required</span>
+ *         </Form.Field.Error>
+ *       </Form.Field.InputWrapper>
  *     </Form.Field>
  *   );
  * }
@@ -1158,9 +1130,11 @@ FieldRoot.displayName = 'Form.Field';
  *   <Form.Field.Label>
  *     <label className="text-foreground font-paragraph">Email Address</label>
  *   </Form.Field.Label>
- *   <Form.Field.Input>
- *     <input type="email" className="bg-background border-foreground" />
- *   </Form.Field.Input>
+ *   <Form.Field.InputWrapper>
+ *     <Form.Field.Input>
+ *       <input type="email" className="bg-background border-foreground text-foreground" />
+ *     </Form.Field.Input>
+ *   </Form.Field.InputWrapper>
  * </Form.Field>
  * ```
  */
@@ -1189,9 +1163,59 @@ export const FieldLabel = React.forwardRef<HTMLDivElement, FieldLabelProps>(
 FieldLabel.displayName = 'Form.Field.Label';
 
 /**
- * Input component for a form field with automatic grid positioning.
+ * InputWrapper component that wraps input and error elements with grid positioning.
  * Must be used within a Form.Field component.
- * Renders in the input row of the field's grid layout with optional description.
+ * This wrapper applies the grid positioning styles to contain both the input and error.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * <Form.Field id="email">
+ *   <Form.Field.Label>
+ *     <label className="text-foreground font-paragraph">Email Address</label>
+ *   </Form.Field.Label>
+ *   <Form.Field.InputWrapper>
+ *     <Form.Field.Input>
+ *       <input type="email" className="bg-background border-foreground text-foreground" />
+ *     </Form.Field.Input>
+ *     <Form.Field.Error>
+ *       <span className="text-destructive text-sm font-paragraph">Please enter a valid email</span>
+ *     </Form.Field.Error>
+ *   </Form.Field.InputWrapper>
+ * </Form.Field>
+ * ```
+ */
+export const FieldInputWrapper = React.forwardRef<
+  HTMLDivElement,
+  FieldInputWrapperProps
+>((props, ref) => {
+  const { children, asChild, className, ...otherProps } = props;
+  const { gridStyles } = useFieldContext();
+
+  return (
+    <AsChildSlot
+      ref={ref}
+      asChild={asChild}
+      className={className}
+      style={gridStyles.input}
+      data-testid={TestIds.fieldInputWrapper}
+      customElement={children}
+      customElementProps={{}}
+      {...otherProps}
+    >
+      <div>{children}</div>
+    </AsChildSlot>
+  );
+});
+
+FieldInputWrapper.displayName = 'Form.Field.InputWrapper';
+
+/**
+ * Input component for a form field.
+ * Must be used within a Form.Field.InputWrapper component.
+ * Renders the actual input element without grid positioning.
  *
  * @component
  * @example
@@ -1202,23 +1226,23 @@ FieldLabel.displayName = 'Form.Field.Label';
  *   <Form.Field.Label>
  *     <label className="text-foreground font-paragraph">Password</label>
  *   </Form.Field.Label>
- *   <Form.Field.Input description={<span className="text-secondary-foreground">Min 8 characters</span>}>
- *     <input type="password" className="bg-background border-foreground text-foreground" />
- *   </Form.Field.Input>
+ *   <Form.Field.InputWrapper>
+ *     <Form.Field.Input description={<span className="text-secondary-foreground">Min 8 characters</span>}>
+ *       <input type="password" className="bg-background border-foreground text-foreground" />
+ *     </Form.Field.Input>
+ *   </Form.Field.InputWrapper>
  * </Form.Field>
  * ```
  */
 export const FieldInput = React.forwardRef<HTMLDivElement, FieldInputProps>(
   (props, ref) => {
     const { children, description, asChild, className, ...otherProps } = props;
-    const { gridStyles } = useFieldContext();
 
     return (
       <AsChildSlot
         ref={ref}
         asChild={asChild}
         className={className}
-        style={gridStyles.input}
         data-testid={TestIds.fieldInput}
         customElement={children}
         customElementProps={{}}
@@ -1232,6 +1256,55 @@ export const FieldInput = React.forwardRef<HTMLDivElement, FieldInputProps>(
 
 FieldInput.displayName = 'Form.Field.Input';
 
+/**
+ * Error component for displaying field-level validation errors.
+ * Must be used within a Form.Field.InputWrapper component.
+ * Only renders when there is an error for the current field.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * import { Form } from '@wix/headless-forms/react';
+ *
+ * <Form.Field id="email">
+ *   <Form.Field.Label>
+ *     <label className="text-foreground font-paragraph">Email Address</label>
+ *   </Form.Field.Label>
+ *   <Form.Field.InputWrapper>
+ *     <Form.Field.Input>
+ *       <input type="email" className="bg-background border-foreground text-foreground" />
+ *     </Form.Field.Input>
+ *     <Form.Field.Error path="email">
+ *       <span className="text-destructive text-sm font-paragraph">Please enter a valid email address</span>
+ *     </Form.Field.Error>
+ *   </Form.Field.InputWrapper>
+ * </Form.Field>
+ * ```
+ */
+export const FieldError = React.forwardRef<HTMLDivElement, FieldErrorProps>(
+  (props, ref) => {
+    const { errorMessage, asChild, className, children, ...otherProps } = props;
+
+    if (!errorMessage && !children) return null;
+
+    return (
+      <AsChildSlot
+        data-testid={TestIds.fieldError}
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        {...otherProps}
+      >
+        {children || errorMessage}
+      </AsChildSlot>
+    );
+  },
+);
+
+FieldError.displayName = 'Form.Field.Error';
+
 export const Field = FieldRoot as FieldComponent;
 Field.Label = FieldLabel;
+Field.InputWrapper = FieldInputWrapper;
 Field.Input = FieldInput;
+Field.Error = FieldError;
