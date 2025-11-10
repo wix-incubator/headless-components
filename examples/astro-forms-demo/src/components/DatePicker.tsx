@@ -20,7 +20,7 @@ const DatePicker = ({
   onChange,
   onBlur,
   onFocus,
-  error,
+  errorMessage,
 }: DatePickerProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
@@ -84,7 +84,7 @@ const DatePicker = ({
           />
         </Form.Field.Input>
         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-          {error}
+          {errorMessage}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>

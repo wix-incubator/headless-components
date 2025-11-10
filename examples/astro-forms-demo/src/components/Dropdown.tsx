@@ -13,7 +13,7 @@ const Dropdown = ({
   onChange,
   onBlur,
   onFocus,
-  error,
+  errorMessage,
 }: DropdownProps) => {
   return (
     <Form.Field id={id}>
@@ -50,7 +50,7 @@ const Dropdown = ({
           </select>
         </Form.Field.Input>
         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-          {error}
+          {errorMessage}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>

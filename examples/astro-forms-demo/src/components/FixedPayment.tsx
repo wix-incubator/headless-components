@@ -15,7 +15,7 @@ export default function FixedPayment({
   description,
   // TODO: check props & type
   id,
-  error,
+  errorMessage,
 }: FixedPaymentProps) {
   return (
     <Form.Field id={id}>
@@ -44,7 +44,7 @@ export default function FixedPayment({
           </div>
         </Form.Field.Input>
         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-          {error}
+          {errorMessage}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>

@@ -17,7 +17,7 @@ export default function Donation({
   onChange,
   onBlur,
   onFocus,
-  error,
+  errorMessage,
 }: DonationProps) {
   const handleOptionSelect = (optionValue: string) => {
     onChange(optionValue);
@@ -42,7 +42,7 @@ export default function Donation({
       <Form.Field.InputWrapper>
         <Form.Field.Input>
           <div className="flex flex-wrap gap-3">
-            {/* @ts-expect-error */}
+            {/* @ts-expect-errorMessage */}
             {options.map(({ value: option }) => (
               <button
                 key={option}
@@ -88,7 +88,7 @@ export default function Donation({
           </div>
         </Form.Field.Input>
         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-          {error}
+          {errorMessage}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>

@@ -129,17 +129,21 @@ export interface FilterOption {
    */
   fieldType?: 'array' | 'singular';
   /** Current filter value */
-  value?: any; // number[] (for range) | string[] (for multi) | string (for single)
-  /** Function to format values for display */
-  valueFormatter?: (value: string | number) => string;
+  value?: any; // number[] (for range) | string[] (for multi) | string (for single) | boolean
+  /** Function to format values for display - accepts both old (string | number) and new (with boolean) signatures for backward compatibility */
+  valueFormatter?:
+    | ((value: string | number) => string)
+    | ((value: string | number | boolean) => string);
   /** Valid values for this filter (for validation and shared field logic) */
-  validValues?: Array<string | number>;
+  validValues?: Array<string | number | boolean>;
   /** Filter input type */
   type: 'single' | 'multi' | 'range';
   /** Display type for styling/rendering */
   displayType: 'color' | 'text' | 'range';
-  /** Function to format background color for color filters */
-  valueBgColorFormatter?: (value: string | number) => string | null;
+  /** Function to format background color for color filters - accepts both old (string | number) and new (with boolean) signatures for backward compatibility */
+  valueBgColorFormatter?:
+    | ((value: string | number) => string | null)
+    | ((value: string | number | boolean) => string | null);
 }
 
 /**
@@ -805,8 +809,10 @@ export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
         className={otherProps.className}
       >
         {option.validValues?.map((value) => (
-          <ToggleGroup.Item key={value} value={String(value)}>
-            {option.valueFormatter ? option.valueFormatter(value) : value}
+          <ToggleGroup.Item key={String(value)} value={String(value)}>
+            {option.valueFormatter
+              ? option.valueFormatter(value as any)
+              : String(value)}
           </ToggleGroup.Item>
         ))}
       </ToggleGroup.Root>
@@ -920,11 +926,11 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
         >
           {option.validValues?.map((value) => {
             const formattedValue = option.valueFormatter
-              ? option.valueFormatter(value)
+              ? option.valueFormatter(value as any)
               : String(value);
             return (
               <ToggleGroup.Item
-                key={value}
+                key={String(value)}
                 value={String(value)}
                 data-color={
                   option.displayType === 'color'
@@ -933,7 +939,7 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
                 }
                 style={{
                   backgroundColor: option.valueBgColorFormatter
-                    ? option.valueBgColorFormatter(value)!
+                    ? option.valueBgColorFormatter(value as any)!
                     : undefined,
                 }}
                 aria-label={formattedValue}
@@ -958,7 +964,7 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
         {children || (
           <>
             {option.validValues?.map((value) => (
-              <label key={value}>
+              <label key={String(value)}>
                 <input
                   type="checkbox"
                   checked={currentValue.includes(String(value))}
@@ -970,7 +976,9 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
                     updateFilter(newValue);
                   }}
                 />
-                {option.valueFormatter ? option.valueFormatter(value) : value}
+                {option.valueFormatter
+                  ? option.valueFormatter(value as any)
+                  : String(value)}
               </label>
             ))}
           </>
@@ -1149,7 +1157,13 @@ function singleFilterUiValueToFilter(
     typeof option.fieldName === 'string' ? option.fieldName : option.key;
 
   if (uiValue && uiValue.trim() !== '') {
-    newFilter[fieldName] = uiValue;
+    // Find the valid value in validValues to preserve type (boolean, number, etc.)
+    const validValueOption = option.validValues?.find(
+      (v) => String(v) === uiValue,
+    );
+
+    newFilter[fieldName] =
+      validValueOption !== undefined ? validValueOption : uiValue;
   } else {
     delete newFilter[fieldName];
   }
@@ -1274,12 +1288,20 @@ function multiFilterUiValueToFilter(
   } else {
     // Standard logic for non-shared fields
     if (Array.isArray(uiValue) && uiValue.length > 0) {
+      // Convert to original types values (number, boolean, etc.)
+      const valuesWithTypes = uiValue.map((stringVal) => {
+        const validValueOption = option.validValues?.find(
+          (v) => String(v) === stringVal,
+        );
+        return validValueOption !== undefined ? validValueOption : stringVal;
+      });
+
       // Use operator based on fieldType
       if (option.fieldType === 'array') {
-        newFilter[fieldName] = { $hasSome: uiValue };
+        newFilter[fieldName] = { $hasSome: valuesWithTypes };
       } else {
         // Default to $in for 'singular' or undefined fieldType
-        newFilter[fieldName] = { $in: uiValue };
+        newFilter[fieldName] = { $in: valuesWithTypes };
       }
     } else {
       delete newFilter[fieldName];

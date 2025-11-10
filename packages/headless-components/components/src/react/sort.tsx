@@ -226,6 +226,37 @@ const SelectRenderer = React.forwardRef<HTMLSelectElement, SelectRendererProps>(
 SelectRenderer.displayName = 'Sort.SelectRenderer';
 
 /**
+ * Internal component for rendering list (ul) element with options
+ */
+interface ListRendererProps
+  extends Omit<React.HTMLAttributes<HTMLUListElement>, 'onChange'> {
+  currentSort: { fieldName?: string; order?: string };
+  options: SortOptionRenderable[];
+}
+
+const ListRenderer = React.forwardRef<HTMLUListElement, ListRendererProps>(
+  (props, ref) => {
+    const { currentSort, options, ...otherProps } = props;
+
+    return (
+      <ul ref={ref} {...otherProps}>
+        {options.map((option, index) => (
+          <Option
+            key={`${option?.fieldName ?? ''}-${option?.order ?? ''}-${index}`}
+            className={otherProps.className}
+            fieldName={option.fieldName!}
+            order={option.order!}
+            label={option.label}
+          />
+        ))}
+      </ul>
+    );
+  },
+);
+
+ListRenderer.displayName = 'Sort.ListRenderer';
+
+/**
  * Root component that provides sort context and can render as select or custom controls.
  * Supports both declarative (sortOptions prop) and programmatic (children) APIs.
  *
@@ -272,7 +303,7 @@ SelectRenderer.displayName = 'Sort.SelectRenderer';
 // Helper function to get current sort from array or default to first option
 const getCurrentSort = (
   sortArray: SortValue | undefined,
-  options: Array<SortOption>,
+  options: Array<SortOptionRenderable>,
 ): { fieldName?: string; order?: string } => {
   const currentSort = sortArray?.find((sort) => sort);
 
@@ -307,8 +338,6 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
       ...otherProps
     } = props;
 
-    // Get current sort from sortOptions directly
-    const currentSortOption = getCurrentSort(value, sortOptions);
     const currentValue = value?.[0];
 
     // Handle change events - create Wix SDK array format
@@ -364,6 +393,9 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
       });
     }
 
+    // Get current sort from sortOptions directly
+    const currentSortOption = getCurrentSort(value, completeOptions);
+
     const contextValue: SortContextValue = {
       currentSort: currentSortOption,
       onChange,
@@ -394,7 +426,8 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
         ...otherProps,
       };
     } else {
-      Comp = 'ul';
+      // as === 'list'
+      Comp = ListRenderer;
       compProps = {
         ref: ref as React.Ref<HTMLUListElement>,
         ...commonProps,
@@ -465,8 +498,8 @@ export const Option = React.forwardRef<HTMLElement, SortOptionProps>(
     };
 
     const isSelected =
-      (!fieldName || currentSort.fieldName === fieldName) &&
-      (!order || currentSort.order === order);
+      (!fieldName || currentSort?.fieldName === fieldName) &&
+      (!order || currentSort?.order === order);
 
     // When used in list mode (ul parent), render as li > button
     // When used with asChild, use Slot
@@ -494,6 +527,7 @@ export const Option = React.forwardRef<HTMLElement, SortOptionProps>(
           onClick={handleSelect}
           data-testid={TestIds.sortOption}
           data-selected={isSelected}
+          className={otherProps.className}
           data-field-name={fieldName}
           data-order={order}
           {...otherProps}

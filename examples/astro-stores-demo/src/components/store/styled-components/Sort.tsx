@@ -30,8 +30,10 @@ export interface StyledProductListSortProps {
 }
 
 export const StyledProductListSort = (props: StyledProductListSortProps) => {
+
+
   return (
-    <ProductListPrimitive.Sort>
+    <ProductListPrimitive.Sort {...props}>
       {({ currentSort, sortOptions, setSort }) => (
         <Root
           value={currentSort}
@@ -55,7 +57,7 @@ export const StyledProductListSortSplit = (
   props: StyledProductListSortSplitProps
 ) => {
   return (
-    <ProductListPrimitive.Sort>
+    <ProductListPrimitive.Sort {...props}>
       {({ currentSort, sortFieldOptions, sortOrderOptions, setSort }) => (
         <>
           <Root

@@ -42,8 +42,9 @@ export interface ItemDescriptionProps {
 
 export interface ItemPriceProps {
   children: (props: {
-    price: string;
+    price?: string;
     formattedPrice?: string;
+    hasPrice: boolean;
   }) => React.ReactNode;
 }
 
@@ -70,11 +71,12 @@ export function Description(props: ItemDescriptionProps) {
 export function Price(props: ItemPriceProps) {
   const { item } = useItemContext();
 
-  const price = item.priceInfo?.price ?? '';
+  const price = item.priceInfo?.price;
   const formattedPrice = (item.priceInfo as { formattedPrice?: string })
     ?.formattedPrice;
+  const hasPrice = !!(price || formattedPrice);
 
-  return props.children({ price, formattedPrice });
+  return props.children({ price, formattedPrice, hasPrice });
 }
 
 export function Images(props: ItemImagesProps) {

@@ -57,9 +57,9 @@ export interface ItemPriceProps {
   asChild?: boolean;
   /** Custom render function when using asChild */
   children?: AsChildChildren<{
-    price: number;
-    currency: string;
+    price?: string;
     formattedPrice?: string;
+    hasPrice: boolean;
   }>;
   /** CSS classes to apply to the default element */
   className?: string;
@@ -221,9 +221,9 @@ export const Description = React.forwardRef<HTMLElement, ItemDescriptionProps>(
  *
  * // asChild with react component
  * <Item.Price asChild>
- *   {React.forwardRef(({price, currency, formattedPrice, ...props}, ref) => (
+ *   {React.forwardRef(({price, formattedPrice, hasPrice, ...props}, ref) => (
  *     <span ref={ref} {...props} className="text-lg font-bold text-primary">
- *       {formattedPrice || `${currency} ${price}`}
+ *       {formattedPrice || price}
  *     </span>
  *   ))}
  * </Item.Price>
@@ -235,7 +235,13 @@ export const Price = React.forwardRef<HTMLElement, ItemPriceProps>(
 
     return (
       <CorePrice>
-        {({ price, formattedPrice }) => {
+        {({ price, formattedPrice, hasPrice }) => {
+          if (!hasPrice) {
+            return null;
+          }
+
+          const displayPrice = formattedPrice || price;
+
           return (
             <AsChildSlot
               ref={ref}
@@ -243,11 +249,11 @@ export const Price = React.forwardRef<HTMLElement, ItemPriceProps>(
               className={className}
               data-testid={TestIds.itemPrice}
               customElement={children}
-              customElementProps={{ price, formattedPrice }}
-              content={formattedPrice || price}
+              customElementProps={{ price, formattedPrice, hasPrice }}
+              content={displayPrice}
               {...otherProps}
             >
-              <p>{formattedPrice || price}</p>
+              <p>{displayPrice}</p>
             </AsChildSlot>
           );
         }}

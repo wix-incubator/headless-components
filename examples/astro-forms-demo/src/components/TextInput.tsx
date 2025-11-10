@@ -20,7 +20,7 @@ const TextInput = ({
   onChange,
   onBlur,
   onFocus,
-  error,
+  errorMessage,
 }: TextInputProps) => {
   const descriptionId = description ? `${id}-description` : undefined;
 
@@ -70,7 +70,7 @@ const TextInput = ({
           />
         </Form.Field.Input>
         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-          {error}
+          {errorMessage}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>

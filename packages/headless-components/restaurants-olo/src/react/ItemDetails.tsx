@@ -446,9 +446,7 @@ ModifiersMultiSelect.displayName = 'ItemDetails.ModifiersMultiSelect';
  */
 export interface ItemDetailsVariantsProps {
   children?: AsChildChildren<{
-    variant: EnhancedVariant;
     variants: EnhancedVariant[];
-    hasVariants: boolean;
     selectedVariantId?: string;
     onVariantChange?: (variantId: string) => void;
   }>;
@@ -456,7 +454,6 @@ export interface ItemDetailsVariantsProps {
   asChild?: boolean;
   variantNameClassName?: string;
   variantPriceClassName?: string;
-  emptyState?: React.ReactNode;
 }
 
 export const Variants = React.forwardRef<HTMLElement, ItemDetailsVariantsProps>(
@@ -467,7 +464,6 @@ export const Variants = React.forwardRef<HTMLElement, ItemDetailsVariantsProps>(
       asChild,
       variantNameClassName,
       variantPriceClassName,
-      emptyState,
     },
     ref,
   ) => {
@@ -475,7 +471,7 @@ export const Variants = React.forwardRef<HTMLElement, ItemDetailsVariantsProps>(
       <CoreItemDetails.VariantsComponent>
         {({ variants, hasVariants, selectedVariantId, onVariantChange }) => {
           if (!hasVariants) {
-            return emptyState || null;
+            return null;
           }
 
           return (
@@ -487,7 +483,6 @@ export const Variants = React.forwardRef<HTMLElement, ItemDetailsVariantsProps>(
               customElement={children}
               customElementProps={{
                 variants,
-                hasVariants,
                 selectedVariantId,
                 onVariantChange,
               }}

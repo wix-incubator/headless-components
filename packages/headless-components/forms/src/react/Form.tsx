@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
+import { AsChildSlot } from '@wix/headless-utils/react';
 import {
   type FormValues,
   type FormError,
@@ -999,23 +999,6 @@ export interface FieldLabelProps {
   className?: string;
 }
 
-/**
- * Props for Field.Label.Required component
- */
-export interface FieldLabelRequiredProps {
-  /** Whether to show the required indicator */
-  required?: boolean;
-  /** Custom content to display (defaults to red asterisk) */
-  children?: React.ReactNode;
-  /** Whether to render as a child component */
-  asChild?: boolean;
-  /** CSS classes to apply to the required indicator */
-  className?: string;
-}
-
-/**
- * Props for Field.InputWrapper component
- */
 export interface FieldInputWrapperProps {
   /** Child components (typically Field.Input and Field.Error) */
   children: React.ReactNode;
@@ -1053,16 +1036,14 @@ export interface FieldErrorRenderProps {
  * Props for Field.Error component
  */
 export interface FieldErrorProps {
-  /** Error message content to display, or a render function that receives error details */
-  children:
-    | React.ReactNode
-    | AsChildChildren<{ type: FormError['errorType']; message: string }>;
   /** Whether to render as a child component */
   asChild?: boolean;
   /** CSS classes to apply to the error element */
   className?: string;
-  /** The path of the error */
-  path?: string;
+  /** The error message */
+  errorMessage?: string;
+  /** Child components to render */
+  children?: React.ReactNode;
 }
 
 /**
@@ -1182,6 +1163,20 @@ const FieldLabelRoot = React.forwardRef<HTMLDivElement, FieldLabelProps>(
 );
 
 FieldLabelRoot.displayName = 'Form.Field.Label';
+
+/**
+ * Props for Field.Label.Required component
+ */
+export interface FieldLabelRequiredProps {
+  /** Whether to show the required indicator */
+  required?: boolean;
+  /** Custom content to display (defaults to red asterisk) */
+  children?: React.ReactNode;
+  /** Whether to render as a child component */
+  asChild?: boolean;
+  /** CSS classes to apply to the required indicator */
+  className?: string;
+}
 
 /**
  * Required indicator component for form field labels.
@@ -1352,7 +1347,6 @@ FieldInput.displayName = 'Form.Field.Input';
 /**
  * Error component for displaying field-level validation errors.
  * Must be used within a Form.Field.InputWrapper component.
- * Renders error messages that flow naturally after the input field.
  * Only renders when there is an error for the current field.
  *
  * @component
@@ -1373,42 +1367,23 @@ FieldInput.displayName = 'Form.Field.Input';
  *     </Form.Field.Error>
  *   </Form.Field.InputWrapper>
  * </Form.Field>
- *
- * // Render prop pattern for dynamic error messages
- * <Form.Field id="username">
- *   <Form.Field.Label>
- *     <label className="text-foreground font-paragraph">Username</label>
- *   </Form.Field.Label>
- *   <Form.Field.InputWrapper>
- *     <Form.Field.Input>
- *       <input className="bg-background border-foreground text-foreground" />
- *     </Form.Field.Input>
- *     <Form.Field.Error path="username">
- *       {({ type, message }) => {
- *         if (type === 'required') {
- *           return <span className="text-destructive text-sm font-paragraph">This field is required</span>;
- *         }
- *         return <span className="text-destructive text-sm font-paragraph">{message}</span>;
- *       }}
- *     </Form.Field.Error>
- *   </Form.Field.InputWrapper>
- * </Form.Field>
  * ```
  */
 export const FieldError = React.forwardRef<HTMLDivElement, FieldErrorProps>(
   (props, ref) => {
-    const { children, asChild, className, ...otherProps } = props;
+    const { errorMessage, asChild, className, children, ...otherProps } = props;
+
+    if (!errorMessage && !children) return null;
 
     return (
       <AsChildSlot
+        data-testid={TestIds.fieldError}
         ref={ref}
         asChild={asChild}
         className={className}
-        data-testid={TestIds.fieldError}
-        customElement={children}
         {...otherProps}
       >
-        {children}
+        {children || errorMessage}
       </AsChildSlot>
     );
   },

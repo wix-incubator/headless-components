@@ -16,7 +16,7 @@ const CheckboxGroup = ({
   onChange,
   onBlur,
   onFocus,
-  error,
+  errorMessage,
 }: CheckboxGroupProps) => {
   const currentValues = value || [];
 
@@ -71,7 +71,7 @@ const CheckboxGroup = ({
           </div>
         </Form.Field.Input>
         <Form.Field.Error className="text-destructive text-sm font-paragraph">
-          {error}
+          {errorMessage}
         </Form.Field.Error>
       </Form.Field.InputWrapper>
     </Form.Field>
