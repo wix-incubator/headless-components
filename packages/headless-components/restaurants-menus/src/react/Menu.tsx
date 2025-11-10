@@ -36,6 +36,13 @@ export interface MenuSectionsRepeaterProps {
   children: React.ReactNode;
 }
 
+/**
+ * Root component that provides menu context to its children.
+ *
+ * @warning Do not use this component directly if it's inside a repeater.
+ * Use the repeater component (e.g., Menus.MenusRepeater) instead, which will
+ * automatically render this Root component for each menu.
+ */
 export function Root(props: MenuRootProps) {
   if (!props.menu) {
     return null;

@@ -14,6 +14,13 @@ export interface LabelRootProps {
   children: React.ReactNode;
 }
 
+/**
+ * Root component that provides label context to its children.
+ *
+ * @warning Do not use this component directly if it's inside a repeater.
+ * Use the repeater component (e.g., Item.LabelsRepeater) instead, which will
+ * automatically render this Root component for each label.
+ */
 export const Root = (props: LabelRootProps) => {
   if (!props.label) {
     return null;
