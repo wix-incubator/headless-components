@@ -91,11 +91,11 @@ export interface PhoneErrorProps {
 const Error = React.forwardRef<HTMLDivElement, PhoneErrorProps>(
   (props, ref) => {
     const { children, ...rest } = props;
-    const { error } = useFieldProps();
+    const { errorMessage } = useFieldProps();
 
     return (
       <Form.Field.Error ref={ref} {...rest}>
-        {error}
+        {errorMessage}
       </Form.Field.Error>
     );
   },
