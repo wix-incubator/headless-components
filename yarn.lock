@@ -8543,7 +8543,21 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@wix/headless-cms@npm:0.0.13, @wix/headless-cms@workspace:*, @wix/headless-cms@workspace:packages/headless-components/cms":
+"@wix/headless-cms@npm:0.0.13":
+  version: 0.0.13
+  resolution: "@wix/headless-cms@npm:0.0.13"
+  dependencies:
+    "@wix/data": "npm:^1.0.0"
+    "@wix/headless-utils": "npm:0.0.4"
+    "@wix/services-definitions": "npm:^0.1.4"
+    "@wix/services-manager-react": "npm:^0.1.26"
+  peerDependencies:
+    "@wix/headless-components": 0.0.17
+  checksum: 10c0/34e5316a3571497171e4ebcaa6df894498ae6e99e612567c456cbfc49fa6cc20d3e86cd9d2c7e44d5775b704c4d02533c6b861d5dcbd1d866886006d21e360ba
+  languageName: node
+  linkType: hard
+
+"@wix/headless-cms@workspace:*, @wix/headless-cms@workspace:packages/headless-components/cms":
   version: 0.0.0-use.local
   resolution: "@wix/headless-cms@workspace:packages/headless-components/cms"
   dependencies:
