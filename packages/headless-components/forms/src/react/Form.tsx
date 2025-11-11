@@ -853,83 +853,7 @@ interface FieldsProps {
  */
 export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
   (props, ref) => {
-    const [formValues, setFormValues] = useState<FormValues>({});
     const [formErrors, setFormErrors] = useState<FormError[]>([]);
-
-    // const isFileField = useCallback((value: any): boolean => {
-    //   if (!Array.isArray(value)) {
-    //     return false;
-    //   }
-    //   if (value.length === 0) {
-    //     return false;
-    //   }
-    //   const first = value[0];
-    //   return 'fileId' in first;
-    // }, []);
-
-
-    // const uploadImage = useCallback(async (formId: string, file: FileField): Promise<FileField> => {
-    //   const { uploadUrl } = await submissions.getMediaUploadUrl(formId, file.displayName, file.fileType);
-
-    //   const response = await fetch(file.url);
-    //   const blob = await response.blob();
-    //   const params = {
-    //     filename: file.displayName,
-    //   };
-
-    //   const headers = {
-    //     'Content-Type': 'application/octet-stream',
-    //   };
-
-    //   try {
-    //     const { data } = await httpClient.put(uploadUrl!, blob, {
-    //       headers,
-    //       params,
-    //     });
-
-    //     console.log(data.file.url);
-
-    //     return {
-    //       ...file,
-    //       url: data.file.url,
-    //     };
-    //   } catch (e) {
-    //     console.log(e);
-    //   }
-
-    //   return file;
-    // }, []);
-
-    const handleFormChange = useCallback(async (values: FormValues) => {
-      // const newValues = Object.fromEntries(Object.entries(values).map(([key, value]) => {
-      //   if (value === null) {
-      //     return [ key, value ];
-      //   }
-
-      //   if (!isFileField(value)) {
-      //     return [ key, value ];
-      //   }
-
-      //   const files = value.map((file: FileField) => {
-      //     const { fileId } = file;
-
-      //     if (savedFiles.includes(fileId)) {
-      //       return file;
-      //     }
-
-      //     setSavedFiles([...savedFiles, fileId]);
-
-      //     const newFile = uploadImage(formId, file);
-      //     console.log(newFile);
-
-      //     return newFile;
-      //   });
-
-      //   return [ key, files ];
-      // }));
-
-      setFormValues(values);
-    }, []);
 
     const handleFormValidate = useCallback((errors: FormError[]) => {
       setFormErrors(errors);
@@ -937,7 +861,12 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
 
     return (
       <CoreFields>
-        {({ form, submitForm }) => {
+        {({
+          form,
+          formValues,
+          submitForm,
+          handleForm,
+        }) => {
           if (!form) return null;
 
           return (
@@ -946,11 +875,11 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
                 <FieldsWithForm
                   form={form}
                   values={formValues}
-                  onChange={handleFormChange}
+                  onChange={handleForm}
                   errors={formErrors}
                   onValidate={handleFormValidate}
                   fields={props.fieldMap}
-                  submitForm={() => submitForm(formValues)}
+                  submitForm={submitForm}
                   rowGapClassname={props.rowGapClassname}
                   columnGapClassname={props.columnGapClassname}
                 />

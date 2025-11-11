@@ -308,8 +308,10 @@ export function Submitted(props: FormSubmittedProps) {
 export interface FieldsRenderProps {
   /** The form data, or null if not loaded */
   form: forms.Form | null;
+  formValues: FormValues;
   /** Function to submit the form with values */
-  submitForm: (formValues: FormValues) => Promise<void>;
+  submitForm: () => Promise<void>;
+  handleForm: (formValues: FormValues) => Promise<void>;
 }
 
 /**
@@ -352,12 +354,20 @@ export interface FieldsProps {
  * ```
  */
 export function Fields(props: FieldsProps) {
-  const { formSignal, submitForm } = useService(FormServiceDefinition);
+  const {
+    formSignal,
+    submitForm,
+    handleForm,
+    formValuesSignal,
+  } = useService(FormServiceDefinition);
   const form = formSignal.get();
+  const formValues = formValuesSignal.get();
 
   return props.children({
     form,
+    formValues,
     submitForm,
+    handleForm,
   });
 }
 

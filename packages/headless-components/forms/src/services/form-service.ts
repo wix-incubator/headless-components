@@ -4,8 +4,11 @@ import {
   SignalsServiceDefinition,
   type ReadOnlySignal,
 } from '@wix/services-definitions/core-services/signals';
-import { FormValues } from '../react/types.js';
+import httpClient from 'axios';
+
+import { FileField, FormValues } from '../react/types.js';
 import { isFormFileField } from '../react/utils.js';
+import { useUploadImage } from './hooks/index.js';
 
 /**
  * Response type for form submission operations.
@@ -36,7 +39,7 @@ export interface FormServiceAPI {
   /** Reactive signal that contains all actual formValues */
   formValuesSignal: ReadOnlySignal<FormValues>;
   /** Function to submit form with current values */
-  submitForm: (formValues: FormValues) => Promise<void>;
+  submitForm: () => Promise<void>;
   /** Function to handle changed form with new values */
   handleForm: (formValues: FormValues) => Promise<void>;
 }
@@ -108,6 +111,11 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
     );
     const formValuesSignal = signalsService.signal<FormValues>({});
 
+    const { handleFileFields } = useUploadImage({
+      setError: errorSignal.set,
+      formValues: formValuesSignal.get(),
+    });
+
     if (!hasSchema) {
       loadForm(config.formId);
     }
@@ -156,6 +164,8 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
      * Uses custom handler if provided in config, otherwise uses default submission.
      */
     async function submitForm(): Promise<void> {
+      console.log('Final form: ', formValuesSignal.get());
+
       const form = formSignal.get();
       if (!form) {
         console.error('Cannot submit: form not loaded');
@@ -179,30 +189,25 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
       }
     }
 
-    async function handleFileFields(files: FileField[]): Promise<FileField[]> {
-      const newFileFields = files.map((fileField) => {
-
-
-        return fileField;
-      });
-
-      return newFileFields;
-    }
-
     async function handleForm(formValues: FormValues) {
       isLoadingSignal.set(true);
       errorSignal.set(null);
 
-      const newFormValues = Object.fromEntries(
+      const formId = formSignal.get()?._id;
+      if (!formId) {
+        return;
+      }
+
+      const newFormValues = await Object.fromEntries(
         await Promise.all(
           Object
             .entries(formValues)
-            .map(([key, value]) => {
+            .map(async ([key, value]) => {
               if (!isFormFileField(value)) {
                 return [key, value];
               }
 
-              return [key, handleFileFields(value)];
+              return [key, await handleFileFields(formId, value)];
             }),
         ),
       );
@@ -218,17 +223,10 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
       submitResponseSignal,
       formValuesSignal,
       submitForm,
-      handleForm
+      handleForm,
     };
   },
 );
-
-interface FileField {
-  fileId: string,
-  displayName: string,
-  url: string,
-  fileType: string,
-}
 
 async function fetchForm(id: string): Promise<forms.Form> {
   try {

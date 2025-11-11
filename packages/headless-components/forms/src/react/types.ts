@@ -55,3 +55,10 @@ export type {
 };
 
 export type FormValues = Record<string, any>;
+
+export interface FileField {
+  fileId: string,
+  displayName: string,
+  url: string,
+  fileType: string,
+}
