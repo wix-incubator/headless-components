@@ -54,13 +54,13 @@ type OnSubmit = (
 /**
  * Options for fetching forms with additional query parameters.
  * These parameters control how the form data is retrieved from the API.
+ *
+ * @internal
  */
-export interface FormFetchOptions {
-  /** Namespace for the form (e.g., 'wix.bookings.v2.bookings') */
+interface FormFetchOptions {
+  /** Namespace for the form */
   namespace?: string;
-  /** Fieldsets to include in the response (e.g., ['NESTED_FORMS']) */
-  fieldsets?: string[];
-  /** Additional query parameters to pass to the API */
+  /** Additional metadata to pass to the API */
   additionalMetadata?: Record<string, string | string[]>;
 }
 
@@ -201,9 +201,6 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
   },
 );
 
-/**
- * Builds query parameters for form fetch request
- */
 function buildFormFetchQueryParams(
   id: string,
   fetchOptions?: FormFetchOptions,
@@ -233,17 +230,13 @@ function buildFormFetchQueryParams(
   return params;
 }
 
-/**
- * Fetches form with authentication using Wix SDK's fetchWithAuth
- */
-async function fetchFormWithAuth(
+async function fetchForm(
   id: string,
-  fetchOptions: FormFetchOptions,
+  fetchOptions?: FormFetchOptions,
 ): Promise<forms.Form> {
-  const params = buildFormFetchQueryParams(id, fetchOptions);
-  const url = `https://edge.wixapis.com/form-schema-service/v4/forms/${id}?${params.toString()}`;
-
   try {
+    const params = buildFormFetchQueryParams(id, fetchOptions);
+    const url = `https://edge.wixapis.com/form-schema-service/v4/forms/${id}?${params.toString()}`;
     const response = await httpClient.fetchWithAuth(url);
 
     if (!response.ok) {
@@ -254,41 +247,11 @@ async function fetchFormWithAuth(
 
     const data = await response.json();
 
-    // The API returns { form: Form }, so extract the form object
     if (data && data.form) {
-      return data.form as forms.Form;
+      return data.form;
     }
 
     throw new Error('Invalid response format from Forms API');
-  } catch (err) {
-    console.error('Failed to fetch form with auth:', id, err);
-    throw err;
-  }
-}
-
-async function fetchForm(
-  id: string,
-  fetchOptions?: FormFetchOptions,
-): Promise<forms.Form> {
-  try {
-    // If fetch options are provided, use authenticated fetch with query parameters
-    if (
-      fetchOptions &&
-      (fetchOptions.namespace ||
-        fetchOptions.fieldsets ||
-        fetchOptions.additionalMetadata)
-    ) {
-      return await fetchFormWithAuth(id, fetchOptions);
-    }
-
-    // Standard SDK call when no special options are needed
-    const result = await forms.getForm(id);
-
-    if (!result) {
-      throw new Error(`Form ${id} not found`);
-    }
-
-    return result;
   } catch (err) {
     console.error('Failed to load form:', id, err);
     throw err;
@@ -301,7 +264,7 @@ async function fetchForm(
  * a specific form by ID that will be used to configure the FormService.
  *
  * @param {string} formId - The unique identifier of the form to load
- * @param {FormFetchOptions} [fetchOptions] - Optional parameters for fetching the form
+ * @param {FormFetchOptions} [fetchOptions] - Optional parameters for fetching the form (internal use only)
  * @returns {Promise<FormServiceConfig>} Configuration object with pre-loaded form data
  * @throws {Error} When the form cannot be loaded
  *
@@ -310,12 +273,6 @@ async function fetchForm(
  * // In your SSR/SSG setup
  * const formConfig = await loadFormServiceConfig('form-123');
  * const formService = FormService.withConfig(formConfig);
- *
- * // With fetch options
- * const formConfig = await loadFormServiceConfig('form-123', {
- *   namespace: 'wix.bookings.v2.bookings',
- *   fieldsets: ['NESTED_FORMS']
- * });
  * ```
  */
 export async function loadFormServiceConfig(

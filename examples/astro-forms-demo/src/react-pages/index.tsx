@@ -85,21 +85,15 @@ export default function FormsPage({ formServiceConfig }: FormsPageProps) {
     }
   };
 
-  const configWithFetchOptions = {
-    ...formServiceConfig,
-    onSubmit: handleCustomSubmit,
-    fetchOptions: {
-      namespace: 'wix.bookings.v2.bookings',
-      additionalMetadata: {
-        serviceIds: ['456f4037-e4f9-4aa0-801f-9ed6080d57e0'],
-      },
-    },
-  };
-
   return (
     <div className="min-h-screen bg-background py-12 px-4">
       <div className="max-w-2xl mx-auto">
-        <Form.Root formServiceConfig={configWithFetchOptions}>
+        <Form.Root
+          formServiceConfig={{
+            ...formServiceConfig,
+            onSubmit: handleCustomSubmit,
+          }}
+        >
           <div className="bg-background/50 backdrop-blur-sm p-8 rounded-xl border border-foreground/10 shadow-lg">
             <Form.Fields
               fieldMap={FIELD_MAP}
