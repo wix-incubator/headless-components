@@ -1,8 +1,8 @@
 import {
-  Sort as SortPrimitive,
   GenericList,
-  type ListVariant,
+  Sort as SortPrimitive,
   type GenericListRepeaterRenderProps,
+  type ListVariant,
 } from '@wix/headless-components/react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import { createServicesMap } from '@wix/services-manager';
@@ -180,8 +180,7 @@ export const PostItems = React.forwardRef<HTMLElement, PostItemsProps>((props, r
 
 PostItems.displayName = 'Blog.Feed.PostItems';
 
-export type PostRepeaterRenderProps =
-  GenericListRepeaterRenderProps<PostWithResolvedFields>;
+export type PostRepeaterRenderProps = GenericListRepeaterRenderProps<PostWithResolvedFields>;
 
 export interface SortProps {
   /**
@@ -325,24 +324,30 @@ export interface PostItemRepeaterProps {
  *   <Blog.Post.PublishDate />
  * </Blog.Feed.PostItemRepeater>
  *
- * // With offset/limit
- * <Blog.Feed.PostItemRepeater offset={0} limit={10}>
- *   <Blog.Post.Title />
- * </Blog.Feed.PostItemRepeater>
- *
- * // AsChild usage with custom wrapper
+ * // AsChild usage with custom wrapper and conditional rendering
  * <Blog.Feed.PostItemRepeater asChild>
- *   {({ items, variant, itemWrapper }) => (
- *     <CustomWrapper
- *       items={items}
- *       variant={variant}
- *       itemRenderer={(item, index) =>
- *         itemWrapper({ item, index, children: <>
- *           <Blog.Post.Title />
- *           <Blog.Post.Excerpt />
- *         </> })
- *       }
- *     />
+ *   {({ itemWrapper, items }) => (
+ *     <>
+ *       {items.map((item, index) =>
+ *         itemWrapper({
+ *           item,
+ *           index,
+ *           children:
+ *             index === 0 ? (
+ *               <div className="featured">
+ *                 <Blog.Post.Title />
+ *                 <Blog.Post.Excerpt />
+ *                 <Blog.Post.PublishDate />
+ *               </div>
+ *             ) : (
+ *               <div>
+ *                 <Blog.Post.Title />
+ *                 <Blog.Post.Excerpt />
+ *               </div>
+ *             ),
+ *         })
+ *       )}
+ *     </>
  *   )}
  * </Blog.Feed.PostItemRepeater>
  * ```
@@ -352,20 +357,12 @@ export const PostItemRepeater = React.forwardRef<HTMLElement, PostItemRepeaterPr
     const { children, offset = 0, limit = Infinity, asChild } = props;
     const { fallbackImageUrl } = usePostsContext();
 
-    const itemWrapper: GenericList.GenericListRepeaterProps<PostWithResolvedFields>['itemWrapper'] = ({
-      item: post,
-      children,
-    }) => (
-      <Post.Root
-        key={post._id}
-        post={post}
-        asChild
-        fallbackImageUrl={fallbackImageUrl}
-      >
-        {children}
-      </Post.Root>
-    );
-
+    const itemWrapper: GenericList.GenericListRepeaterProps<PostWithResolvedFields>['itemWrapper'] =
+      ({ item: post, children }) => (
+        <Post.Root key={post._id} post={post} asChild fallbackImageUrl={fallbackImageUrl}>
+          {children}
+        </Post.Root>
+      );
 
     // If offset/limit are used, use asChild pattern to access items and slice them
     if (offset !== 0 || limit !== Infinity) {
@@ -425,21 +422,19 @@ export interface LoadMoreProps {
  * </Blog.Feed.LoadMore>
  * ```
  */
-export const LoadMore = React.forwardRef<HTMLButtonElement, LoadMoreProps>(
-  (props, ref) => {
-    const { children, className, loadingState } = props;
+export const LoadMore = React.forwardRef<HTMLButtonElement, LoadMoreProps>((props, ref) => {
+  const { children, className, loadingState } = props;
 
-    return (
-      <GenericList.Actions.LoadMore
-        ref={ref}
-        className={className}
-        loadingState={loadingState}
-        data-testid={TestIds.blogFeedLoadMore}
-      >
-        {children}
-      </GenericList.Actions.LoadMore>
-    );
-  },
-);
+  return (
+    <GenericList.Actions.LoadMore
+      ref={ref}
+      className={className}
+      loadingState={loadingState}
+      data-testid={TestIds.blogFeedLoadMore}
+    >
+      {children}
+    </GenericList.Actions.LoadMore>
+  );
+});
 
 LoadMore.displayName = 'Blog.Feed.LoadMore';
