@@ -7,7 +7,7 @@ import {
 
 import TextInput from '../components/TextInput';
 import TextArea from '../components/TextArea';
-import ContactsPhone from '../components/ContactsPhone';
+import Phone from '../components/Phone';
 import MultilineAddress from '../components/MultilineAddress';
 import DateInput from '../components/DateInput';
 import DatePicker from '../components/DatePicker';
@@ -38,7 +38,7 @@ interface FormsPageProps {
 const FIELD_MAP = {
   TEXT_INPUT: TextInput,
   TEXT_AREA: TextArea,
-  PHONE_INPUT: ContactsPhone,
+  PHONE_INPUT: Phone,
   MULTILINE_ADDRESS: MultilineAddress,
   DATE_INPUT: DateInput,
   DATE_PICKER: DatePicker,

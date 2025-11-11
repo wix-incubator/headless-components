@@ -29,13 +29,11 @@ const Tags = ({
 
   return (
     <Form.Field id={id}>
-      {showLabel && (
-        <Form.Field.Label>
-          <label htmlFor={id} className="text-foreground font-paragraph mb-3">
-            {label}
-          </label>
-        </Form.Field.Label>
-      )}
+      <Form.Field.Label>
+        <label htmlFor={id} className="text-foreground font-paragraph mb-3">
+          {label}
+        </label>
+      </Form.Field.Label>
       <Form.Field.InputWrapper>
         <Form.Field.Input>
           <div className="flex flex-wrap gap-2" role="group">
