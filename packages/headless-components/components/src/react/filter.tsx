@@ -840,7 +840,7 @@ export interface MultiFilterProps{
    */
   children?:
     | AsChildChildren<{
-        value: string[];
+        values: string[];
         onChange: (value: string[]) => void;
         validValues: FilterOption['validValues'];
         valueFormatter: FilterOption['valueFormatter'];
