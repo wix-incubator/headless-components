@@ -13,7 +13,9 @@ enum TestIds {
 export interface RootProps {
   asChild?: boolean;
   className?: string;
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((props: CoreCmsItem.RootRenderProps) => React.ReactNode);
   item: {
     collectionId: string;
     id: string;
@@ -80,18 +82,26 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
 
     return (
       <CoreCmsItem.Root itemServiceConfig={itemServiceConfig}>
-        {() => (
-          <AsChildSlot
-          ref={ref}
-          asChild={asChild}
-          className={className}
-          customElement={children}
-          {...attributes}
-          customElementProps={props}
-        >
-          <div>{children}</div>
-        </AsChildSlot>
-        )}
+        {(renderProps) => {
+          // If children is a function (render props pattern), call it directly
+          if (typeof children === 'function') {
+            return children(renderProps);
+          }
+
+          // Otherwise, use AsChildSlot for regular JSX children
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              customElement={children}
+              {...attributes}
+              customElementProps={renderProps}
+            >
+              <div>{children}</div>
+            </AsChildSlot>
+          );
+        }}
       </CoreCmsItem.Root>
     );
   },

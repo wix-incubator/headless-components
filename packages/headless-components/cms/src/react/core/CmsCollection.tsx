@@ -24,16 +24,16 @@ export interface RootProps {
  * Render props exposed by CmsCollection.Root
  */
 export interface RootRenderProps {
-  /** Reactive signal indicating if items are currently being loaded */
-  loadingSignal: Signal<boolean>;
-  /** Reactive signal containing any error message, or null if no error */
-  errorSignal: Signal<string | null>;
-  /** Reactive signal containing the current query result with pagination data */
-  queryResultSignal: Signal<WixDataQueryResult | null>;
-  /** Reactive signal containing the current sort value */
-  sortSignal: Signal<SortValue>;
-  /** Reactive signal containing the current filter value */
-  filterSignal: Signal<Filter | null>;
+  /** Boolean indicating if items are currently being loaded */
+  loading: boolean;
+  /** Error message, or null if no error */
+  error: string | null;
+  /** Current query result with pagination data */
+  queryResult: WixDataQueryResult | null;
+  /** Current sort value */
+  sort: SortValue;
+  /** Current filter value */
+  filter: Filter | null;
   /** Function to explicitly invalidate and reload items */
   invalidate: () => Promise<void>;
   /** Function to load items with optional query options */
@@ -75,13 +75,13 @@ export interface RootRenderProps {
  * @example
  * ```tsx
  * <CmsCollection.Root collectionServiceConfig={{ collectionId: 'MyCollection' }}>
- *   {({ queryResultSignal, loadingSignal, createItem, updateItem }) => (
+ *   {({ queryResult, loading, createItem, updateItem }) => (
  *     <div>
- *       {loadingSignal.get() ? (
+ *       {loading ? (
  *         <div>Loading...</div>
  *       ) : (
  *         <>
- *           {queryResultSignal.get()?.items.map(item => (
+ *           {queryResult?.items.map(item => (
  *             <div key={item._id}>{item.title}</div>
  *           ))}
  *           <button onClick={() => createItem({ title: 'New Item' })}>
@@ -119,11 +119,11 @@ function RootContent(props: {
   >;
 
   return props.children({
-    loadingSignal: service.loadingSignal,
-    errorSignal: service.errorSignal,
-    queryResultSignal: service.queryResultSignal,
-    sortSignal: service.sortSignal,
-    filterSignal: service.filterSignal,
+    loading: service.loadingSignal.get(),
+    error: service.errorSignal.get(),
+    queryResult: service.queryResultSignal.get(),
+    sort: service.sortSignal.get(),
+    filter: service.filterSignal.get(),
     invalidate: service.invalidate,
     loadItems: service.loadItems,
     createItem: service.createItem,

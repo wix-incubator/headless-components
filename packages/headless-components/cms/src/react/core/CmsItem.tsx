@@ -19,12 +19,12 @@ export interface RootProps {
  * Render props exposed by CmsItem.Root
  */
 export interface RootRenderProps {
-  /** Reactive signal containing the current item data */
-  itemSignal: Signal<WixDataItem>;
-  /** Reactive signal indicating if the item is currently being loaded */
-  loadingSignal: Signal<boolean>;
-  /** Reactive signal containing any error message, or null if no error */
-  errorSignal: Signal<string | null>;
+  /** Current item data */
+  item: WixDataItem;
+  /** Boolean indicating if the item is currently being loaded */
+  loading: boolean;
+  /** Error message, or null if no error */
+  error: string | null;
   /** Function to update the current item */
   updateItem: (itemData: Partial<WixDataItem>) => Promise<WixDataItem>;
   /** Function to delete the current item */
@@ -43,13 +43,13 @@ export interface RootRenderProps {
  * @example
  * ```tsx
  * <CmsItem.Root itemServiceConfig={{ collectionId: 'MyCollection', itemId: 'item-123' }}>
- *   {({ itemSignal, loadingSignal, updateItem, deleteItem }) => (
+ *   {({ item, loading, updateItem, deleteItem }) => (
  *     <div>
- *       {loadingSignal.get() ? (
+ *       {loading ? (
  *         <div>Loading...</div>
  *       ) : (
  *         <>
- *           <h1>{itemSignal.get()?.title}</h1>
+ *           <h1>{item?.title}</h1>
  *           <button onClick={() => updateItem({ title: 'Updated Title' })}>
  *             Update Title
  *           </button>
@@ -88,9 +88,9 @@ function RootContent(props: {
   >;
 
   return props.children({
-    itemSignal: service.itemSignal,
-    loadingSignal: service.loadingSignal,
-    errorSignal: service.errorSignal,
+    item: service.itemSignal.get(),
+    loading: service.loadingSignal.get(),
+    error: service.errorSignal.get(),
     updateItem: service.updateItem,
     deleteItem: service.deleteItem,
     linkItem: service.linkItem,

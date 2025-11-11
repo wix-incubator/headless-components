@@ -28,7 +28,11 @@ enum TestIds {
  * Props for CmsCollection.Root component
  */
 export interface RootProps {
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((
+        props: CoreCmsCollection.RootRenderProps,
+      ) => React.ReactNode);
   collection: {
     id: string;
     queryResult?: WixDataQueryResult;
@@ -127,18 +131,26 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
 
     return (
       <CoreCmsCollection.Root collectionServiceConfig={collectionServiceConfig}>
-        {(props) => (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            customElement={children}
-            {...attributes}
-            customElementProps={props}
-          >
-            <div>{children}</div>
-          </AsChildSlot>
-        )}
+        {(renderProps) => {
+          // If children is a function (render props pattern), call it directly
+          if (typeof children === 'function') {
+            return children(renderProps);
+          }
+
+          // Otherwise, use AsChildSlot for regular JSX children
+          return (
+            <AsChildSlot
+              ref={ref}
+              asChild={asChild}
+              className={className}
+              customElement={children}
+              {...attributes}
+              customElementProps={renderProps}
+            >
+              <div>{children}</div>
+            </AsChildSlot>
+          );
+        }}
       </CoreCmsCollection.Root>
     );
   },
