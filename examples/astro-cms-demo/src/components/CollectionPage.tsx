@@ -52,6 +52,7 @@ export default function CollectionPage({
           limit: 6,
           returnTotalCount: true,
         },
+        initialSort: [{ fieldName: 'dishName', order: 'ASC' }],
       }}
     >
       {({
