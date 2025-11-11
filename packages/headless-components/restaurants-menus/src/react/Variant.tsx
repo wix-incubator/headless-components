@@ -36,6 +36,13 @@ export interface VariantPriceProps {
   className?: string;
 }
 
+/**
+ * Root component that provides variant context to its children.
+ *
+ * @warning Do not use this component directly if it's inside a repeater.
+ * Use the repeater component (e.g., Item.VariantsRepeater) instead, which will
+ * automatically render this Root component for each variant.
+ */
 export function Root(props: VariantRootProps) {
   if (!props.variant) {
     return null;

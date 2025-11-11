@@ -47,6 +47,7 @@
 
 import React, { createContext, useContext } from 'react';
 import { Slot } from '@radix-ui/react-slot';
+import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 /**
  * Props for button-like components that support the asChild pattern
  */
@@ -101,6 +102,15 @@ interface SortOptionRenderable {
   label: string;
   /** Function to select this option */
   onSelect: () => void;
+  /** Whether this option is currently selected */
+  isSelected: boolean;
+}
+
+interface SortOptionRenderableWithChildren extends SortOptionRenderable {
+  /** Whether this option is rendered as a child */
+  asChild?: boolean;
+  /** Children components */
+  children?: React.ReactNode;
 }
 
 /**
@@ -151,22 +161,6 @@ export interface SortRootProps
   children?: React.ReactNode;
   /** When true, the component will not render its own element but forward its props to its child */
   asChild?: boolean;
-}
-
-/**
- * Props for the Option component
- */
-export interface SortOptionProps {
-  /** Field name to sort by (optional if only setting order) */
-  fieldName: string;
-  /** Sort order (optional if only setting field) */
-  order: 'ASC' | 'DESC';
-  /** Display label */
-  label: string;
-  /** When true, the component will not render its own element but forward its props to its child */
-  asChild?: boolean;
-  /** Children components */
-  children?: React.ReactNode;
 }
 
 /**
@@ -231,7 +225,7 @@ SelectRenderer.displayName = 'Sort.SelectRenderer';
 interface ListRendererProps
   extends Omit<React.HTMLAttributes<HTMLUListElement>, 'onChange'> {
   currentSort: { fieldName?: string; order?: string };
-  options: SortOptionRenderable[];
+  options: SortOptionRenderableWithChildren[];
 }
 
 const ListRenderer = React.forwardRef<HTMLUListElement, ListRendererProps>(
@@ -245,6 +239,8 @@ const ListRenderer = React.forwardRef<HTMLUListElement, ListRendererProps>(
             key={`${option?.fieldName ?? ''}-${option?.order ?? ''}-${index}`}
             className={otherProps.className}
             fieldName={option.fieldName!}
+            asChild={option.asChild}
+            children={option.children}
             order={option.order!}
             label={option.label}
           />
@@ -351,7 +347,7 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
     };
 
     // Use EITHER sortOptions prop OR extract from children - not both
-    let completeOptions: SortOptionRenderable[] = [];
+    let completeOptions: SortOptionRenderableWithChildren[] = [];
 
     if (sortOptions.length > 0) {
       // Use sortOptions prop (declarative API)
@@ -360,12 +356,15 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
         const fieldName = 'fieldName' in option ? option.fieldName : undefined;
         const order = 'order' in option ? option.order : undefined;
 
+        const isSelected = isSelectedHelper(fieldName, order, currentValue);
+
         return {
           fieldName,
           label: option.label,
           order,
+          isSelected,
           onSelect: () => handleChange(fieldName, order),
-        } as SortOptionRenderable;
+        } as SortOptionRenderableWithChildren;
       });
     } else if (children) {
       // Extract options from children (programmatic API)
@@ -379,13 +378,22 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
               child.props?.fieldName !== undefined);
 
           if (isOption) {
-            const { fieldName, order, label } = child.props;
+            const { fieldName, order, label, asChild, children } = child.props;
             if (fieldName && label) {
+              const isSelected = isSelectedHelper(
+                fieldName,
+                order,
+                currentValue,
+              );
+
               completeOptions.push({
                 fieldName,
+                asChild,
+                children,
                 order,
                 label,
                 onSelect: () => handleChange(fieldName, order),
+                isSelected,
               });
             }
           }
@@ -446,15 +454,19 @@ export const Root = React.forwardRef<HTMLElement, SortRootProps>(
 /**
  * Props for the Option component
  */
-export interface SortOptionProps extends ButtonProps {
+export interface SortOptionProps {
   /** Field name to sort by (optional if only setting order) */
   fieldName: string;
   /** Sort order (optional if only setting field) */
   order: 'ASC' | 'DESC';
   /** Display label */
   label: string;
+  /** When true, the component will not render its own element but forward its props to its child */
+  asChild?: boolean;
   /** Children components */
-  children?: React.ReactNode;
+  children?: React.ReactNode | AsChildChildren<SortOptionRenderable>;
+  /** Additional CSS classes */
+  className?: string;
 }
 
 /**
@@ -488,7 +500,15 @@ export interface SortOptionProps extends ButtonProps {
  */
 export const Option = React.forwardRef<HTMLElement, SortOptionProps>(
   (props, ref) => {
-    const { fieldName, order, label, asChild, children, ...otherProps } = props;
+    const {
+      fieldName,
+      order,
+      label,
+      asChild,
+      children,
+      className,
+      ...otherProps
+    } = props;
     const { currentSort, onChange } = useSortContext();
 
     const handleSelect = () => {
@@ -497,44 +517,38 @@ export const Option = React.forwardRef<HTMLElement, SortOptionProps>(
       onChange([{ fieldName: targetFieldName, order: targetOrder }]);
     };
 
-    const isSelected =
-      (!fieldName || currentSort?.fieldName === fieldName) &&
-      (!order || currentSort?.order === order);
+    const isSelected = isSelectedHelper(fieldName, order, currentSort);
 
-    // When used in list mode (ul parent), render as li > button
-    // When used with asChild, use Slot
+    const attributes = {
+      'data-testid': TestIds.sortOption,
+      'data-selected': isSelected,
+      'data-field-name': fieldName,
+      'data-order': order,
+      ...otherProps,
+    };
 
-    if (asChild) {
-      return (
-        <Slot
-          ref={ref}
-          onClick={handleSelect}
-          data-testid={TestIds.sortOption}
-          data-selected={isSelected}
-          data-field-name={fieldName}
-          data-order={order}
-          {...otherProps}
-        >
-          {children}
-        </Slot>
-      );
-    }
-
-    // Default: render as list item with button inside
     return (
-      <li ref={ref as React.Ref<HTMLLIElement>}>
-        <button
-          onClick={handleSelect}
-          data-testid={TestIds.sortOption}
-          data-selected={isSelected}
-          className={otherProps.className}
-          data-field-name={fieldName}
-          data-order={order}
-          {...otherProps}
-        >
-          {children || label}
-        </button>
-      </li>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        {...attributes}
+        onClick={handleSelect}
+        customElement={children}
+        customElementProps={{
+          isSelected,
+          onSelect: handleSelect,
+          label,
+          fieldName,
+          order,
+        }}
+      >
+        <li>
+          <button className={className}>
+            {React.isValidElement(children) ? children : label}
+          </button>
+        </li>
+      </AsChildSlot>
     );
   },
 );
@@ -546,3 +560,14 @@ export const Option = React.forwardRef<HTMLElement, SortOptionProps>(
 // Set display names for debugging
 Root.displayName = 'Sort.Root';
 Option.displayName = 'Sort.Option';
+
+function isSelectedHelper(
+  fieldName?: string,
+  order?: string,
+  currentValue?: { fieldName?: string; order?: string },
+) {
+  return (
+    (!fieldName || currentValue?.fieldName === fieldName) &&
+    (!order || currentValue?.order === order)
+  );
+}
