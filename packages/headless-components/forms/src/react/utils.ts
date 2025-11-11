@@ -18,3 +18,18 @@ export function calculateGridStyles(layout: Layout) {
     },
   };
 }
+
+export function isFormFileField(value: any): boolean {
+  if (!value) {
+    return false;
+  }
+
+  if (!Array.isArray(value)) {
+    return false;
+  }
+  if (value.length === 0) {
+    return false;
+  }
+  const first = value[0];
+  return 'fileId' in first;
+};

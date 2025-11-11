@@ -5,6 +5,7 @@ import {
   type ReadOnlySignal,
 } from '@wix/services-definitions/core-services/signals';
 import { FormValues } from '../react/types.js';
+import { isFormFileField } from '../react/utils.js';
 
 /**
  * Response type for form submission operations.
@@ -32,8 +33,12 @@ export interface FormServiceAPI {
   errorSignal: ReadOnlySignal<string | null>;
   /** Reactive signal containing submission response state */
   submitResponseSignal: ReadOnlySignal<SubmitResponse>;
+  /** Reactive signal that contains all actual formValues */
+  formValuesSignal: ReadOnlySignal<FormValues>;
   /** Function to submit form with current values */
   submitForm: (formValues: FormValues) => Promise<void>;
+  /** Function to handle changed form with new values */
+  handleForm: (formValues: FormValues) => Promise<void>;
 }
 
 /**
@@ -101,6 +106,7 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
     const formSignal = signalsService.signal<forms.Form | null>(
       hasSchema ? config.form : null,
     );
+    const formValuesSignal = signalsService.signal<FormValues>({});
 
     if (!hasSchema) {
       loadForm(config.formId);
@@ -130,11 +136,13 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
       formId: string,
       formValues: FormValues,
     ): Promise<SubmitResponse> {
+      console.log('Final form:', formValues);
       try {
         await submissions.createSubmission({
           formId,
           submissions: formValues,
         });
+
         // TODO: add message
         return { type: 'success' };
       } catch (error) {
@@ -147,7 +155,7 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
      * Submits the form with the provided values.
      * Uses custom handler if provided in config, otherwise uses default submission.
      */
-    async function submitForm(formValues: FormValues): Promise<void> {
+    async function submitForm(): Promise<void> {
       const form = formSignal.get();
       if (!form) {
         console.error('Cannot submit: form not loaded');
@@ -159,8 +167,8 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
       submitResponseSignal.set({ type: 'loading' });
 
       try {
-        const handler = config.onSubmit || defaultSubmitHandler;
-        const response = await handler(formId, formValues);
+        const handler = await defaultSubmitHandler;
+        const response = await handler(formId, formValuesSignal.get());
         submitResponseSignal.set(response);
       } catch (error) {
         console.error('Unexpected error during submission:', error);
@@ -171,15 +179,60 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
       }
     }
 
+    async function getUploadMediaLink() {
+
+    }
+
+    async function handleFileFields(files: FileField[]): Promise<FileField[]> {
+      const newFileFields = files.map((fileField) => {
+
+
+        return fileField;
+      });
+
+      return newFileFields;
+    }
+
+    async function handleForm(formValues: FormValues) {
+      isLoadingSignal.set(true);
+      errorSignal.set(null);
+
+      const newFormValues = Object.fromEntries(
+        await Promise.all(
+          Object
+            .entries(formValues)
+            .map(([key, value]) => {
+              if (!isFormFileField(value)) {
+                return [key, value];
+              }
+
+              return [key, handleFileFields(value)];
+            }),
+        ),
+      );
+
+      isLoadingSignal.set(false);
+      formValuesSignal.set(newFormValues);
+    }
+
     return {
-      formSignal: formSignal,
-      isLoadingSignal: isLoadingSignal,
-      errorSignal: errorSignal,
-      submitResponseSignal: submitResponseSignal,
-      submitForm: submitForm,
+      formSignal,
+      isLoadingSignal,
+      errorSignal,
+      submitResponseSignal,
+      formValuesSignal,
+      submitForm,
+      handleForm
     };
   },
 );
+
+interface FileField {
+  fileId: string,
+  displayName: string,
+  url: string,
+  fileType: string,
+}
 
 async function fetchForm(id: string): Promise<forms.Form> {
   try {
