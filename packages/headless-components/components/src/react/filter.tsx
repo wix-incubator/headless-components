@@ -686,8 +686,6 @@ export const FilterOptionLabel = React.forwardRef<
   );
 });
 
-
-
 /**
  * Props for single filter components
  */
@@ -825,7 +823,7 @@ export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
 /**
  * Props for multi filter components
  */
-export interface MultiFilterProps{
+export interface MultiFilterProps {
   /**
    * When true, enables the asChild pattern where the component delegates
    * rendering to its child using the Slot pattern. Useful for custom styling
