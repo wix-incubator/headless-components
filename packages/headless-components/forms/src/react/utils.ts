@@ -32,4 +32,4 @@ export function isFormFileField(value: any): boolean {
   }
   const first = value[0];
   return 'fileId' in first;
-};
+}

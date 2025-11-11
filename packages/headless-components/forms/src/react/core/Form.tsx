@@ -354,12 +354,9 @@ export interface FieldsProps {
  * ```
  */
 export function Fields(props: FieldsProps) {
-  const {
-    formSignal,
-    submitForm,
-    handleForm,
-    formValuesSignal,
-  } = useService(FormServiceDefinition);
+  const { formSignal, submitForm, handleForm, formValuesSignal } = useService(
+    FormServiceDefinition,
+  );
   const form = formSignal.get();
   const formValues = formValuesSignal.get();
 

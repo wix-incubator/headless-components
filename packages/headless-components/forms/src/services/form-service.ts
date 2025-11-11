@@ -199,15 +199,13 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
 
       const newFormValues = await Object.fromEntries(
         await Promise.all(
-          Object
-            .entries(formValues)
-            .map(async ([key, value]) => {
-              if (!isFormFileField(value)) {
-                return [key, value];
-              }
+          Object.entries(formValues).map(async ([key, value]) => {
+            if (!isFormFileField(value)) {
+              return [key, value];
+            }
 
-              return [key, await handleFileFields(formId, value)];
-            }),
+            return [key, await handleFileFields(formId, value)];
+          }),
         ),
       );
 
