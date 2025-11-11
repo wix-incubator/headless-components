@@ -135,7 +135,7 @@ export const MultiFilterText: Story = {
 
 /**
  * Multi-selection filter component with color swatches.
- * Demonstrates color-based filtering with visual color indicators.
+ * Demonstrates color-based filtering with visual color indicators..
  */
 export const MultiFilterColor: Story = {
   render: () => {
