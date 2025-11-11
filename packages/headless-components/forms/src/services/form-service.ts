@@ -174,7 +174,7 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
       submitResponseSignal.set({ type: 'loading' });
 
       try {
-        const handler = await config.onSubmit || await defaultSubmitHandler;
+        const handler = (await config.onSubmit) || (await defaultSubmitHandler);
         const response = await handler(formId, formValuesSignal.get());
         submitResponseSignal.set(response);
       } catch (error) {
