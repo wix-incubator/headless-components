@@ -143,7 +143,6 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
       formId: string,
       formValues: FormValues,
     ): Promise<SubmitResponse> {
-      console.log('Final form:', formValues);
       try {
         await submissions.createSubmission({
           formId,
