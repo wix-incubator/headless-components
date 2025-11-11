@@ -823,7 +823,7 @@ export const SingleFilter = React.forwardRef<HTMLElement, SingleFilterProps>(
 /**
  * Props for multi filter components
  */
-export interface MultiFilterProps extends React.HTMLAttributes<HTMLElement> {
+export interface MultiFilterProps{
   /**
    * When true, enables the asChild pattern where the component delegates
    * rendering to its child using the Slot pattern. Useful for custom styling
@@ -838,7 +838,16 @@ export interface MultiFilterProps extends React.HTMLAttributes<HTMLElement> {
    * replaces the default checkbox list. When used with asChild=true,
    * should be a single child element that will receive filter props.
    */
-  children?: React.ReactNode;
+  children?:
+    | AsChildChildren<{
+        values: string[];
+        onChange: (value: string[]) => void;
+        validValues: FilterOption['validValues'];
+        valueFormatter: FilterOption['valueFormatter'];
+      }>
+    | React.ReactNode;
+
+  className?: string;
 }
 
 /**
@@ -909,81 +918,61 @@ export const MultiFilter = React.forwardRef<HTMLElement, MultiFilterProps>(
       currentValue = multiFilterGetUIValue(filterValue, option);
     }
 
-    // Use the same pattern as MediaGallery components
-    const Comp = asChild ? Slot : 'div';
+    const attributes = {
+      'data-testid': TestIds.filterOptionMulti,
+      'data-filter-type': 'multi',
+      'data-display-type': option.displayType,
+      ...otherProps,
+    };
 
-    // Default rendering - Radix ToggleGroup for better UX
-    if (!asChild && !children) {
-      return (
-        <ToggleGroup.Root
-          type="multiple"
-          value={currentValue}
-          onValueChange={updateFilter}
-          data-testid={TestIds.filterOptionMulti}
-          data-filter-type="multi"
-          data-display-type={option.displayType}
-          className={otherProps.className}
-        >
-          {option.validValues?.map((value) => {
-            const formattedValue = option.valueFormatter
-              ? option.valueFormatter(value as any)
-              : String(value);
-            return (
-              <ToggleGroup.Item
-                key={String(value)}
-                value={String(value)}
-                data-color={
-                  option.displayType === 'color'
-                    ? formattedValue.toLowerCase()
-                    : undefined
-                }
-                style={{
-                  backgroundColor: option.valueBgColorFormatter
-                    ? option.valueBgColorFormatter(value as any)!
-                    : undefined,
-                }}
-                aria-label={formattedValue}
-              >
-                {formattedValue}
-              </ToggleGroup.Item>
-            );
-          })}
-        </ToggleGroup.Root>
-      );
-    }
-
-    // Custom rendering with asChild/children
     return (
-      <Comp
-        ref={ref as React.Ref<HTMLDivElement>}
-        data-testid={TestIds.filterOptionMulti}
-        data-filter-type="multi"
-        data-display-type={option.displayType}
-        {...otherProps}
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={otherProps.className}
+        {...attributes}
+        customElement={children}
+        customElementProps={{
+          value: currentValue,
+          onChange: updateFilter,
+          validValues: option.validValues,
+          valueFormatter: option.valueFormatter,
+        }}
       >
         {children || (
-          <>
-            {option.validValues?.map((value) => (
-              <label key={String(value)}>
-                <input
-                  type="checkbox"
-                  checked={currentValue.includes(String(value))}
-                  onChange={(e) => {
-                    const stringValue = String(value);
-                    const newValue = e.target.checked
-                      ? [...currentValue, stringValue]
-                      : currentValue.filter((v: string) => v !== stringValue);
-                    updateFilter(newValue);
+          <ToggleGroup.Root
+            type="multiple"
+            value={currentValue}
+            onValueChange={updateFilter}
+            className={otherProps.className}
+          >
+            {option.validValues?.map((value) => {
+              const formattedValue = option.valueFormatter
+                ? option.valueFormatter(value as any)
+                : String(value);
+              return (
+                <ToggleGroup.Item
+                  key={String(value)}
+                  value={String(value)}
+                  data-color={
+                    option.displayType === 'color'
+                      ? formattedValue.toLowerCase()
+                      : undefined
+                  }
+                  style={{
+                    backgroundColor: option.valueBgColorFormatter
+                      ? option.valueBgColorFormatter(value as any)!
+                      : undefined,
                   }}
-                />
-                {option.valueFormatter
-                  ? option.valueFormatter(value as any)
-                  : String(value)}
-              </label>
-            ))}
-          </>
+                  aria-label={formattedValue}
+                >
+                  {formattedValue}
+                </ToggleGroup.Item>
+              );
+            })}
+          </ToggleGroup.Root>
         )}
-      </Comp>
+      </AsChildSlot>
     );
   },
 );
