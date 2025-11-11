@@ -4,9 +4,8 @@ import {
   SignalsServiceDefinition,
   type ReadOnlySignal,
 } from '@wix/services-definitions/core-services/signals';
-import httpClient from 'axios';
 
-import { FileField, FormValues } from '../react/types.js';
+import { FormValues } from '../react/types.js';
 import { isFormFileField } from '../react/utils.js';
 import { useUploadImage } from './hooks/index.js';
 
