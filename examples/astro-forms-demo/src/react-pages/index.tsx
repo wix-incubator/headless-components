@@ -91,9 +91,9 @@ export default function FormsPage({ formServiceConfig }: FormsPageProps) {
     fetchOptions: {
       namespace: 'wix.bookings.v2.bookings',
       additionalMetadata: {
-        serviceIds: ["456f4037-e4f9-4aa0-801f-9ed6080d57e0"]
-      }
-    }
+        serviceIds: ['456f4037-e4f9-4aa0-801f-9ed6080d57e0'],
+      },
+    },
   };
 
   return (

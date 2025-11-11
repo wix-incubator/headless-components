@@ -12,7 +12,8 @@ import {
 } from '../services/blog-categories-service.js';
 import type { createCustomCategory } from '../services/helpers.js';
 import * as CoreCategories from './core/Categories.js';
-import { isActiveCategory, isValidChildren } from './helpers.js';
+import { isActiveCategory } from './helpers/category.js';
+import { isValidChildren } from './helpers/children.js';
 
 /** https://manage.wix.com/apps/14bcded7-0066-7c35-14d7-466cb3f09103/extensions/dynamic/wix-vibe-component?component-id=833bf7b1-2ad5-45f7-b2ac-89c207bcdc42 */
 const HTML_CODE_TAG = 'blog.categories';

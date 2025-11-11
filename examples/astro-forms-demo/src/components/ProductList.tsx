@@ -25,12 +25,12 @@ export default function ProductList({
 
   return (
     <Form.Field id={id}>
-        <Form.Field.Label>
-          <label className="text-foreground font-paragraph mb-3">
-            {label}
-            {required && <span className="text-destructive ml-1">*</span>}
-          </label>
-        </Form.Field.Label>
+      <Form.Field.Label>
+        <label className="text-foreground font-paragraph mb-3">
+          {label}
+          {required && <span className="text-destructive ml-1">*</span>}
+        </label>
+      </Form.Field.Label>
       <Form.Field.InputWrapper>
         <Form.Field.Input>
           <div className="space-y-3">

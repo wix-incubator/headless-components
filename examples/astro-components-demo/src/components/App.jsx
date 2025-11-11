@@ -1,23 +1,16 @@
-import logo from "../assets/logo.svg";
 import "./App.css";
+import MySort from "./MySort";
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo.src} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/components/App.jsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h1>Headless Components Demo</h1>
+        <p>Demonstrating the different available components</p>
       </header>
+      <main>
+        <MySort />
+      </main>
     </div>
   );
 }

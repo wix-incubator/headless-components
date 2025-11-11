@@ -52,263 +52,271 @@ export default function CollectionPage({
           limit: 6,
           returnTotalCount: true,
         },
+        initialSort: [{ fieldName: 'dishName', order: 'ASC' }],
       }}
     >
-      <div className="min-h-screen bg-background">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="font-heading text-4xl font-bold text-foreground mb-4">
-              Menu Items
-            </h1>
-            <div className="flex items-center gap-4 text-foreground">
-              <span className="font-paragraph text-sm">
-                Total items:{' '}
-                <CmsCollection.Totals.Count className="font-semibold" />
-              </span>
-              <span className="font-paragraph text-sm">
-                Showing:{' '}
-                <CmsCollection.Totals.Displayed
-                  displayType="displayed"
-                  className="font-semibold"
-                />
-              </span>
-            </div>
-          </div>
+      {({
+        queryResult,
+        loading,
+        error,
+        collectionId,
+        resetFilter,
+        isFiltered,
+        loadItems,
+      }) => {
+        const items = queryResult?.items || [];
+        const currentPage = queryResult?.currentPage ?? 0;
+        const totalCount = queryResult?.totalCount ?? 0;
+        const pageSize = queryResult?.pageSize ?? 0;
+        const totalPages = queryResult?.totalPages ?? 0;
+        const hasNext = queryResult?.hasNext() ?? false;
+        const hasPrev = queryResult?.hasPrev() ?? false;
+        const displayed =
+          pageSize > 0 ? currentPage * pageSize + items.length : items.length;
 
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
-            {/* Sidebar - Filters and Sort */}
-            <aside className="lg:col-span-1">
-              <div className="sticky top-8 space-y-6">
-                {/* Sort Section */}
-                <div className="rounded-lg bg-background border border-foreground/10 p-4">
-                  <h2 className="font-heading mb-3 text-lg font-semibold text-foreground">
-                    Sort By
-                  </h2>
-                  <CmsCollection.Sort
-                    as="select"
-                    sortOptions={sortOptions}
-                    className="w-full rounded-md border border-foreground/20 bg-background px-3 py-2 font-paragraph text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  />
-                </div>
+        const loadNext = async () => {
+          if (hasNext && queryResult) {
+            await loadItems({
+              skip: (currentPage + 1) * pageSize,
+              limit: pageSize,
+              returnTotalCount: true,
+            });
+          }
+        };
 
-                {/* Filters Section */}
-                <div className="rounded-lg bg-background border border-foreground/10 p-4">
-                  <div className="mb-3 flex items-center justify-between">
-                    <h2 className="font-heading text-lg font-semibold text-foreground">
-                      Filters
-                    </h2>
-                    <CmsCollection.FilterResetTrigger
-                      label="Clear"
-                      className="font-paragraph text-sm text-primary hover:text-primary/80 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded px-2 py-1"
-                    />
-                  </div>
-
-                  <CmsCollection.Filters
-                    filterOptions={filterOptions}
-                    className="space-y-4"
-                  >
-                    <Filter.FilterOptions>
-                      <Filter.FilterOptionRepeater>
-                        <div className="space-y-2">
-                          <Filter.FilterOption.Label className="font-paragraph block text-sm font-medium text-foreground" />
-                          <Filter.FilterOption.MultiFilter className="flex flex-wrap gap-2 [&_button]:rounded-md [&_button]:border [&_button]:border-foreground/20 [&_button]:bg-background [&_button]:px-3 [&_button]:py-1.5 [&_button]:text-sm [&_button]:font-paragraph [&_button]:text-foreground [&_button]:transition-colors hover:[&_button]:bg-foreground/5 hover:[&_button]:border-foreground/30 [&_button[data-state='on']]:bg-primary [&_button[data-state='on']]:text-primary-foreground [&_button[data-state='on']]:border-primary hover:[&_button[data-state='on']]:bg-primary/90" />
-                          <Filter.FilterOption.SingleFilter className="flex flex-wrap gap-2 [&_button]:rounded-md [&_button]:border [&_button]:border-foreground/20 [&_button]:bg-background [&_button]:px-3 [&_button]:py-1.5 [&_button]:text-sm [&_button]:font-paragraph [&_button]:text-foreground [&_button]:transition-colors hover:[&_button]:bg-foreground/5 hover:[&_button]:border-foreground/30 [&_button[data-state='on']]:bg-primary [&_button[data-state='on']]:text-primary-foreground [&_button[data-state='on']]:border-primary hover:[&_button[data-state='on']]:bg-primary/90" />
-                        </div>
-                      </Filter.FilterOptionRepeater>
-                    </Filter.FilterOptions>
-                  </CmsCollection.Filters>
+        const loadPrev = async () => {
+          if (hasPrev && queryResult) {
+            await loadItems({
+              skip: (currentPage - 1) * pageSize,
+              limit: pageSize,
+              returnTotalCount: true,
+            });
+          }
+        };
+        return (
+          <div className="min-h-screen bg-background">
+            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+              {/* Header */}
+              <div className="mb-8">
+                <h1 className="font-heading text-4xl font-bold text-foreground mb-4">
+                  Menu Items
+                </h1>
+                <div className="flex items-center gap-4 text-foreground">
+                  <span className="font-paragraph text-sm">
+                    Total items:{' '}
+                    <span className="font-semibold">{totalCount}</span>
+                  </span>
+                  <span className="font-paragraph text-sm">
+                    Showing:{' '}
+                    <span className="font-semibold">{displayed}</span>
+                  </span>
                 </div>
               </div>
-            </aside>
 
-            {/* Main Content - Items Grid */}
-            <div className="lg:col-span-3">
-              {/* Loading State */}
-              <CmsCollection.Loading>
-                <div className="flex items-center justify-center py-12">
-                  <div className="font-paragraph text-foreground">
-                    Loading collection...
-                  </div>
-                </div>
-              </CmsCollection.Loading>
-
-              {/* Error State */}
-              <CmsCollection.Error>
-                {({ error }) => (
-                  <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-6">
-                    <h3 className="font-heading mb-2 text-lg font-semibold text-destructive">
-                      Error Loading Collection
-                    </h3>
-                    <p className="font-paragraph text-sm text-destructive/80">
-                      {error}
-                    </p>
-                  </div>
-                )}
-              </CmsCollection.Error>
-
-              {/* Items Grid */}
-              <CmsCollection.Items
-                emptyState={
-                  <div className="rounded-lg bg-background border border-foreground/10 p-12 text-center">
-                    <p className="font-paragraph text-foreground/60">
-                      No items found. Try adjusting your filters.
-                    </p>
-                  </div>
-                }
-              >
-                <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                  <CmsCollection.ItemRepeater>
-                    {/* Item Card */}
-                    <div className="group overflow-hidden rounded-lg bg-background border border-foreground/10 shadow-sm transition-all hover:shadow-md hover:border-primary/20 p-6 flex flex-col h-full">
-                    {/* Dish Name */}
-                    <CmsItem.Field fieldId="dishName" asChild>
-                      {({ fieldValue, isLoading, error, ...props }, ref) => (
-                        <h3
-                          ref={ref as any}
-                          {...props}
-                          className="font-heading mb-2 text-xl font-semibold text-foreground line-clamp-2"
-                        >
-                          {isLoading
-                            ? 'Loading...'
-                            : error
-                              ? 'Error'
-                              : fieldValue || 'Untitled'}
-                        </h3>
-                      )}
-                    </CmsItem.Field>
-
-                    {/* Price */}
-                    <CmsItem.Field fieldId="price" asChild>
-                      {({ fieldValue, isLoading, error, ...props }, ref) => {
-                        if (isLoading || error || !fieldValue) return null;
-                        return (
-                          <div
-                            ref={ref as any}
-                            {...props}
-                            className="font-heading mb-3 text-2xl font-bold text-primary"
-                          >
-                            ${fieldValue}
-                          </div>
-                        );
-                      }}
-                    </CmsItem.Field>
-
-                    {/* Description */}
-                    <CmsItem.Field fieldId="description" asChild>
-                      {({ fieldValue, isLoading, error, ...props }, ref) => (
-                        <p
-                          ref={ref as any}
-                          {...props}
-                          className="font-paragraph mb-3 text-sm text-foreground/70 line-clamp-3 flex-grow"
-                        >
-                          {isLoading
-                            ? 'Loading...'
-                            : error
-                              ? ''
-                              : fieldValue || 'No description available.'}
-                        </p>
-                      )}
-                    </CmsItem.Field>
-
-                    {/* Bottom Section - Dietary Restrictions and Availability */}
-                    <div className="mt-auto space-y-3">
-                      {/* Dietary Restrictions */}
-                      <CmsItem.Field fieldId="dietaryRestrictions" asChild>
-                        {({ fieldValue, isLoading, error, ...props }, ref) => {
-                          if (isLoading || error || !fieldValue) return null;
-                          const restrictions = Array.isArray(fieldValue)
-                            ? fieldValue
-                            : [fieldValue];
-                          return (
-                            <div
-                              ref={ref as any}
-                              {...props}
-                              className="flex flex-wrap gap-2"
-                            >
-                              {restrictions.map((restriction: string, index: number) => (
-                                <span
-                                  key={index}
-                                  className="inline-block rounded-full bg-primary/10 px-3 py-1 font-paragraph text-xs font-medium text-primary"
-                                >
-                                  {restriction}
-                                </span>
-                              ))}
-                            </div>
-                          );
-                        }}
-                      </CmsItem.Field>
-
-                      {/* Availability Status */}
-                      <CmsItem.Field fieldId="isAvailable" asChild>
-                        {({ fieldValue, isLoading, error, ...props }, ref) => {
-                          if (isLoading || error || fieldValue === undefined) return null;
-                          const isAvailable = fieldValue === true || fieldValue === 'true';
-                          return (
-                            <div
-                              ref={ref as any}
-                              {...props}
-                              className={`rounded-full px-3 py-1 font-paragraph text-xs font-medium text-center ${
-                                isAvailable
-                                  ? 'bg-green-500/10 text-green-500'
-                                  : 'bg-red-500/10 text-red-500'
-                              }`}
-                            >
-                              {isAvailable ? 'Available' : 'Unavailable'}
-                            </div>
-                          );
-                        }}
-                      </CmsItem.Field>
+              <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
+                {/* Sidebar - Filters and Sort */}
+                <aside className="lg:col-span-1">
+                  <div className="sticky top-8 space-y-6">
+                    {/* Sort Section */}
+                    <div className="rounded-lg bg-background border border-foreground/10 p-4">
+                      <h2 className="font-heading mb-3 text-lg font-semibold text-foreground">
+                        Sort By
+                      </h2>
+                      <CmsCollection.Sort
+                        as="select"
+                        sortOptions={sortOptions}
+                        className="w-full rounded-md border border-foreground/20 bg-background px-3 py-2 font-paragraph text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      />
                     </div>
 
-                    {/* Created Date */}
-                    <CmsItem.Field fieldId="_createdDate" asChild>
-                      {({ fieldValue, isLoading, error, ...props }, ref) => {
-                        if (isLoading || error || !fieldValue) return null;
-                        const date = new Date(fieldValue as string);
-                        return (
-                          <div
-                            ref={ref as any}
-                            {...props}
-                            className="mt-4 border-t border-foreground/10 pt-3 font-paragraph text-xs text-foreground/50"
+                    {/* Filters Section */}
+                    <div className="rounded-lg bg-background border border-foreground/10 p-4">
+                      <div className="mb-3 flex items-center justify-between">
+                        <h2 className="font-heading text-lg font-semibold text-foreground">
+                          Filters
+                        </h2>
+                        {isFiltered() && (
+                          <button
+                            onClick={resetFilter}
+                            className="font-paragraph text-sm text-primary hover:text-primary/80 focus:outline-none focus:ring-2 focus:ring-primary/20 rounded px-2 py-1"
                           >
-                            Created: {date.toLocaleDateString()}
-                          </div>
-                        );
-                      }}
-                    </CmsItem.Field>
+                            Clear
+                          </button>
+                        )}
+                      </div>
+
+                      <CmsCollection.Filters
+                        filterOptions={filterOptions}
+                        className="space-y-4"
+                      >
+                        <Filter.FilterOptions>
+                          <Filter.FilterOptionRepeater>
+                            <div className="space-y-2">
+                              <Filter.FilterOption.Label className="font-paragraph block text-sm font-medium text-foreground" />
+                              <Filter.FilterOption.MultiFilter className="flex flex-wrap gap-2 [&_button]:rounded-md [&_button]:border [&_button]:border-foreground/20 [&_button]:bg-background [&_button]:px-3 [&_button]:py-1.5 [&_button]:text-sm [&_button]:font-paragraph [&_button]:text-foreground [&_button]:transition-colors hover:[&_button]:bg-foreground/5 hover:[&_button]:border-foreground/30 [&_button[data-state='on']]:bg-primary [&_button[data-state='on']]:text-primary-foreground [&_button[data-state='on']]:border-primary hover:[&_button[data-state='on']]:bg-primary/90" />
+                              <Filter.FilterOption.SingleFilter className="flex flex-wrap gap-2 [&_button]:rounded-md [&_button]:border [&_button]:border-foreground/20 [&_button]:bg-background [&_button]:px-3 [&_button]:py-1.5 [&_button]:text-sm [&_button]:font-paragraph [&_button]:text-foreground [&_button]:transition-colors hover:[&_button]:bg-foreground/5 hover:[&_button]:border-foreground/30 [&_button[data-state='on']]:bg-primary [&_button[data-state='on']]:text-primary-foreground [&_button[data-state='on']]:border-primary hover:[&_button[data-state='on']]:bg-primary/90" />
+                            </div>
+                          </Filter.FilterOptionRepeater>
+                        </Filter.FilterOptions>
+                      </CmsCollection.Filters>
                     </div>
-                  </CmsCollection.ItemRepeater>
+                  </div>
+                </aside>
+
+                {/* Main Content - Items Grid */}
+                <div className="lg:col-span-3">
+                  {/* Loading State */}
+                  {loading && items.length === 0 && (
+                    <div className="flex items-center justify-center py-12">
+                      <div className="font-paragraph text-foreground">
+                        Loading collection...
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Error State */}
+                  {error && items.length === 0 && (
+                    <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-6">
+                      <h3 className="font-heading mb-2 text-lg font-semibold text-destructive">
+                        Error Loading Collection
+                      </h3>
+                      <p className="font-paragraph text-sm text-destructive/80">
+                        {error}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Items Grid */}
+                  {items.length === 0 && !loading ? (
+                    <div className="rounded-lg bg-background border border-foreground/10 p-12 text-center">
+                      <p className="font-paragraph text-foreground/60">
+                        No items found. Try adjusting your filters.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                      {items.map((item: any) => (
+                        <CmsItem.Root
+                          key={item._id}
+                          item={{
+                            collectionId,
+                            id: item._id,
+                            item: item,
+                          }}
+                        >
+                          {({ item: itemData, loading: itemLoading, error: itemError }) => (
+                            /* Item Card */
+                            <div className="group overflow-hidden rounded-lg bg-background border border-foreground/10 shadow-sm transition-all hover:shadow-md hover:border-primary/20 p-6 flex flex-col h-full">
+                              {/* Dish Name */}
+                              <h3 className="font-heading mb-2 text-xl font-semibold text-foreground line-clamp-2">
+                                {itemLoading
+                                  ? 'Loading...'
+                                  : itemError
+                                    ? 'Error'
+                                    : itemData?.dishName || 'Untitled'}
+                              </h3>
+
+                              {/* Price */}
+                              {!itemLoading && !itemError && itemData?.price && (
+                                <div className="font-heading mb-3 text-2xl font-bold text-primary">
+                                  ${itemData.price}
+                                </div>
+                              )}
+
+                              {/* Description */}
+                              <p className="font-paragraph mb-3 text-sm text-foreground/70 line-clamp-3 flex-grow">
+                                {itemLoading
+                                  ? 'Loading...'
+                                  : itemError
+                                    ? ''
+                                    : itemData?.description || 'No description available.'}
+                              </p>
+
+                              {/* Bottom Section - Dietary Restrictions and Availability */}
+                              <div className="mt-auto space-y-3">
+                                {/* Dietary Restrictions */}
+                                {!itemLoading && !itemError && itemData?.dietaryRestrictions && (
+                                  <div className="flex flex-wrap gap-2">
+                                    {(Array.isArray(itemData.dietaryRestrictions)
+                                      ? itemData.dietaryRestrictions
+                                      : [itemData.dietaryRestrictions]
+                                    ).map((restriction: string, index: number) => (
+                                      <span
+                                        key={index}
+                                        className="inline-block rounded-full bg-primary/10 px-3 py-1 font-paragraph text-xs font-medium text-primary"
+                                      >
+                                        {restriction}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+
+                                {/* Availability Status */}
+                                {!itemLoading &&
+                                  !itemError &&
+                                  itemData?.isAvailable !== undefined && (
+                                    <div
+                                      className={`rounded-full px-3 py-1 font-paragraph text-xs font-medium text-center ${
+                                        itemData.isAvailable === true ||
+                                        itemData.isAvailable === 'true'
+                                          ? 'bg-green-500/10 text-green-500'
+                                          : 'bg-red-500/10 text-red-500'
+                                      }`}
+                                    >
+                                      {itemData.isAvailable === true ||
+                                      itemData.isAvailable === 'true'
+                                        ? 'Available'
+                                        : 'Unavailable'}
+                                    </div>
+                                  )}
+                              </div>
+
+                              {/* Created Date */}
+                              {!itemLoading && !itemError && itemData?._createdDate && (
+                                <div className="mt-4 border-t border-foreground/10 pt-3 font-paragraph text-xs text-foreground/50">
+                                  Created: {new Date(itemData._createdDate).toLocaleDateString()}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </CmsItem.Root>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Pagination */}
+                  <div className="mt-8 flex items-center justify-center gap-4">
+                    {hasPrev && (
+                      <button
+                        onClick={loadPrev}
+                        disabled={loading}
+                        className="rounded-md bg-primary px-4 py-2 font-paragraph text-sm font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        Previous
+                      </button>
+                    )}
+
+                    <div className="font-paragraph text-sm text-foreground">
+                      Page <span className="font-semibold">{currentPage + 1}</span> of{' '}
+                      <span className="font-semibold">{totalPages}</span>
+                    </div>
+
+                    {hasNext && (
+                      <button
+                        onClick={loadNext}
+                        disabled={loading}
+                        className="rounded-md bg-primary px-4 py-2 font-paragraph text-sm font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        Next
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </CmsCollection.Items>
-
-              {/* Pagination */}
-              <div className="mt-8 flex items-center justify-center gap-4">
-                <CmsCollection.PrevAction className="rounded-md bg-primary px-4 py-2 font-paragraph text-sm font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50">
-                  Previous
-                </CmsCollection.PrevAction>
-
-                <div className="font-paragraph text-sm text-foreground">
-                  Page{' '}
-                  <CmsCollection.Totals.Displayed
-                    displayType="currentPageNum"
-                    className="font-semibold"
-                  />{' '}
-                  of{' '}
-                  <CmsCollection.Totals.Displayed
-                    displayType="totalPages"
-                    className="font-semibold"
-                  />
-                </div>
-
-                <CmsCollection.NextAction className="rounded-md bg-primary px-4 py-2 font-paragraph text-sm font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50">
-                  Next
-                </CmsCollection.NextAction>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        );
+      }}
     </CmsCollection.Root>
   );
 }

@@ -13,13 +13,6 @@ export type WixDataItem = items.WixDataItem;
 export type WixDataQueryResult = items.WixDataResult;
 
 /**
- * Parameters for creating a regular item
- */
-export interface InsertItemParams {
-  itemData: Partial<WixDataItem>;
-}
-
-/**
  * Parameters for inserting a reference between items
  */
 export interface InsertReferenceParams {
@@ -29,26 +22,10 @@ export interface InsertReferenceParams {
 }
 
 /**
- * Union type for insertItem parameters
- */
-export type InsertItemOrReferenceParams =
-  | InsertItemParams
-  | InsertReferenceParams;
-
-/**
  * Utility function to extract error messages consistently
  */
 function extractErrorMessage(err: unknown, fallback: string): string {
   return err instanceof Error ? err.message : fallback;
-}
-
-/**
- * Type guard to check if params are for inserting a reference
- */
-function isInsertReferenceParams(
-  params: InsertItemOrReferenceParams,
-): params is InsertReferenceParams {
-  return 'referenceFieldId' in params;
 }
 
 /**
@@ -65,18 +42,23 @@ export const CmsCollectionServiceDefinition = defineService<{
   sortSignal: Signal<SortValue>;
   /** Reactive signal containing the current filter value */
   filterSignal: Signal<Filter | null>;
-  /** Function to load the next page of items */
-  loadNextPage: () => Promise<void>;
-  /** Function to load the previous page of items */
-  loadPrevPage: () => Promise<void>;
   /** Function to explicitly invalidate and reload items */
   invalidate: () => Promise<void>;
   /** Function to load items with optional query options */
   loadItems: (options?: CmsQueryOptions) => Promise<void>;
-  /** Function to create a new item in the collection or insert a reference between items. Returns the created item when creating, or void when inserting references. */
-  insertItemOrReference: (
-    params: InsertItemOrReferenceParams,
-  ) => Promise<WixDataItem | void>;
+  /** Function to create a new item in the collection */
+  createItem: (itemData: Partial<WixDataItem>) => Promise<WixDataItem>;
+  /** Function to insert a reference between items */
+  linkItem: (params: InsertReferenceParams) => Promise<void>;
+  /** Function to update an existing item in the collection */
+  updateItem: (
+    itemId: string,
+    itemData: Partial<WixDataItem>,
+  ) => Promise<WixDataItem>;
+  /** Function to delete an item from the collection */
+  deleteItem: (itemId: string) => Promise<void>;
+  /** Function to remove a reference between items */
+  unlinkItem: (params: InsertReferenceParams) => Promise<void>;
   /** Function to update the sort value */
   setSort: (sort: SortValue) => void;
   /** Function to update the filter value */
@@ -380,15 +362,6 @@ export const CmsCollectionServiceImplementation =
         config.initialFilter || null,
       );
 
-      // Track current query result for cursor-based pagination
-      let currentQueryResult: WixDataQueryResult | null =
-        queryResultSignal.get();
-
-      // Use effect to maintain currentQueryResult consistency with queryResultSignal
-      signalsService.effect(() => {
-        currentQueryResult = queryResultSignal.get();
-      });
-
       const loadItems = async (options: CmsQueryOptions = {}) => {
         loadingSignal.set(true);
         errorSignal.set(null);
@@ -433,103 +406,127 @@ export const CmsCollectionServiceImplementation =
         });
       };
 
-      const loadNextPage = async () => {
-        if (!currentQueryResult) {
-          return;
-        }
-
-        const hasNext = currentQueryResult.hasNext();
-
-        if (!hasNext) {
-          return;
-        }
-
+      const createItem = async (
+        itemData: Partial<WixDataItem>,
+      ): Promise<WixDataItem> => {
         loadingSignal.set(true);
         errorSignal.set(null);
 
         try {
-          // Use the SDK's next() function
-          const nextResult = await currentQueryResult.next();
-          queryResultSignal.set(nextResult);
-        } catch (err) {
-          errorSignal.set(extractErrorMessage(err, 'Failed to load next page'));
-          console.error(
-            `Failed to load next page from collection "${config.collectionId}":`,
-            err,
-          );
-        } finally {
-          loadingSignal.set(false);
-        }
-      };
-
-      const loadPrevPage = async () => {
-        if (!currentQueryResult) {
-          return;
-        }
-
-        const hasPrev = currentQueryResult.hasPrev();
-
-        if (!hasPrev) {
-          return;
-        }
-
-        loadingSignal.set(true);
-        errorSignal.set(null);
-
-        try {
-          // Use the SDK's prev() function
-          const prevResult = await currentQueryResult.prev();
-          queryResultSignal.set(prevResult);
-        } catch (err) {
-          errorSignal.set(
-            extractErrorMessage(err, 'Failed to load previous page'),
-          );
-          console.error(
-            `Failed to load previous page from collection "${config.collectionId}":`,
-            err,
-          );
-        } finally {
-          loadingSignal.set(false);
-        }
-      };
-
-      const insertItemOrReference = async (
-        params: InsertItemOrReferenceParams,
-      ): Promise<WixDataItem | void> => {
-        loadingSignal.set(true);
-        errorSignal.set(null);
-
-        try {
-          let createdItem: WixDataItem | undefined;
-
-          if (isInsertReferenceParams(params)) {
-            // Insert reference between items
-            await items.insertReference(
-              config.collectionId,
-              params.referenceFieldId,
-              params.itemId,
-              params.referencedItemIds,
-            );
-          } else {
-            // Regular item creation - capture the returned item
-            createdItem = await items.insert(
-              config.collectionId,
-              params.itemData,
-            );
-          }
+          const createdItem = await items.insert(config.collectionId, itemData);
 
           // Invalidate + refetch to maintain consistency with backend query logic
           await invalidate();
 
-          // Return the created item if available
           return createdItem;
         } catch (err) {
-          const errorMessage = isInsertReferenceParams(params)
-            ? 'Failed to insert reference'
-            : 'Failed to create item';
-          errorSignal.set(extractErrorMessage(err, errorMessage));
+          errorSignal.set(extractErrorMessage(err, 'Failed to create item'));
           console.error(
-            `${errorMessage} in collection "${config.collectionId}":`,
+            `Failed to create item in collection "${config.collectionId}":`,
+            err,
+          );
+          throw err; // Re-throw for component error handling
+        } finally {
+          loadingSignal.set(false);
+        }
+      };
+
+      const linkItem = async (params: InsertReferenceParams): Promise<void> => {
+        loadingSignal.set(true);
+        errorSignal.set(null);
+
+        try {
+          await items.insertReference(
+            config.collectionId,
+            params.referenceFieldId,
+            params.itemId,
+            params.referencedItemIds,
+          );
+
+          // Invalidate + refetch to maintain consistency with backend query logic
+          await invalidate();
+        } catch (err) {
+          errorSignal.set(extractErrorMessage(err, 'Failed to link item'));
+          console.error(
+            `Failed to link item in collection "${config.collectionId}":`,
+            err,
+          );
+          throw err; // Re-throw for component error handling
+        } finally {
+          loadingSignal.set(false);
+        }
+      };
+
+      const updateItem = async (
+        itemId: string,
+        itemData: Partial<WixDataItem>,
+      ): Promise<WixDataItem> => {
+        loadingSignal.set(true);
+        errorSignal.set(null);
+
+        try {
+          const updatedItem = await items.update(config.collectionId, {
+            ...itemData,
+            _id: itemId,
+          });
+
+          // Invalidate + refetch to maintain consistency with backend query logic
+          await invalidate();
+
+          return updatedItem;
+        } catch (err) {
+          errorSignal.set(extractErrorMessage(err, 'Failed to update item'));
+          console.error(
+            `Failed to update item in collection "${config.collectionId}":`,
+            err,
+          );
+          throw err; // Re-throw for component error handling
+        } finally {
+          loadingSignal.set(false);
+        }
+      };
+
+      const deleteItem = async (itemId: string): Promise<void> => {
+        loadingSignal.set(true);
+        errorSignal.set(null);
+
+        try {
+          await items.remove(config.collectionId, itemId);
+
+          // Invalidate + refetch to maintain consistency with backend query logic
+          await invalidate();
+        } catch (err) {
+          errorSignal.set(extractErrorMessage(err, 'Failed to delete item'));
+          console.error(
+            `Failed to delete item in collection "${config.collectionId}":`,
+            err,
+          );
+          throw err; // Re-throw for component error handling
+        } finally {
+          loadingSignal.set(false);
+        }
+      };
+
+      const unlinkItem = async (
+        params: InsertReferenceParams,
+      ): Promise<void> => {
+        loadingSignal.set(true);
+        errorSignal.set(null);
+
+        try {
+          await items.removeReference(
+            config.collectionId,
+            params.referenceFieldId,
+            params.itemId,
+            params.referencedItemIds,
+          );
+
+          // Invalidate + refetch to maintain consistency with backend query logic
+          await invalidate();
+        } catch (err) {
+          errorSignal.set(extractErrorMessage(err, 'Failed to unlink item'));
+          console.error(
+            `Failed to unlink item in collection "${config.collectionId}":`,
             err,
           );
           throw err; // Re-throw for component error handling
@@ -574,9 +571,11 @@ export const CmsCollectionServiceImplementation =
         filterSignal,
         loadItems,
         invalidate,
-        loadNextPage,
-        loadPrevPage,
-        insertItemOrReference,
+        createItem,
+        linkItem,
+        updateItem,
+        deleteItem,
+        unlinkItem,
         setSort,
         setFilter,
         resetFilter,

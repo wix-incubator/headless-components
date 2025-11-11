@@ -218,13 +218,15 @@ function buildFormFetchQueryParams(
     }
 
     if (fetchOptions.additionalMetadata) {
-      Object.entries(fetchOptions.additionalMetadata).forEach(([key, value]) => {
-        if (Array.isArray(value)) {
-          value.forEach((v) => params.append(key, v));
-        } else {
-          params.append(key, value);
-        }
-      });
+      Object.entries(fetchOptions.additionalMetadata).forEach(
+        ([key, value]) => {
+          if (Array.isArray(value)) {
+            value.forEach((v) => params.append(key, v));
+          } else {
+            params.append(key, value);
+          }
+        },
+      );
     }
   }
 

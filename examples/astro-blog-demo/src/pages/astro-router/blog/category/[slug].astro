@@ -1,6 +1,4 @@
 ---
-import BlogCategoriesSection from "@/components/blog/BlogCategoriesSection";
-import FeedPage from "@/components/blog/FeedPage";
 import {
   createCustomCategory,
   loadBlogCategoriesServiceConfig,
@@ -17,7 +15,6 @@ import "@/styles/global.css";
 import RouteFeed from "@/components/blog/RouteFeed";
 
 const { slug } = Astro.params;
-export const prerender = false;
 
 if (!slug) {
   return Astro.redirect("/");

@@ -15,7 +15,9 @@ import {
 } from '../services/blog-post-service.js';
 import type { CommentsServiceConfig } from '../services/comments-service.js';
 import { Root as CommentsRoot } from './Comments.js';
-import { isValidChildren } from './helpers.js';
+import { useBiLogger } from './helpers/bi.js';
+import { isValidChildren } from './helpers/children.js';
+import { useScrollListener, useVisibilityChangeListener } from './helpers/listeners.js';
 
 /** https://manage.wix.com/apps/14bcded7-0066-7c35-14d7-466cb3f09103/extensions/dynamic/wix-vibe-component?component-id=cb293890-7b26-4bcf-8c87-64f624c59158 */
 const HTML_CODE_TAG = 'blog.post';
@@ -45,6 +47,7 @@ const enum TestIds {
   title = 'blog-post-title',
   excerpt = 'blog-post-excerpt',
   content = 'blog-post-content',
+  contentBi = 'blog-post-content-bi',
   coverImage = 'blog-post-cover-image',
   author = 'blog-post-author',
   publishDate = 'blog-post-publish-date',
@@ -445,14 +448,16 @@ export const Content = React.forwardRef<HTMLElement, ContentProps>((props, ref) 
   };
 
   return (
-    <AsChildSlot
-      ref={ref}
-      asChild={asChild}
-      className={className}
-      {...attributes}
-      customElement={children}
-      customElementProps={{ content, pricingPlanIds }}
-    ></AsChildSlot>
+    <ContentBiLogger postId={post?._id}>
+      <AsChildSlot
+        ref={ref}
+        asChild={asChild}
+        className={className}
+        {...attributes}
+        customElement={children}
+        customElementProps={{ content, pricingPlanIds }}
+      ></AsChildSlot>
+    </ContentBiLogger>
   );
 });
 
@@ -978,3 +983,54 @@ export const Comments = React.forwardRef<HTMLElement, CommentsProps>((props, ref
 });
 
 Comments.displayName = 'Blog.Post.Comments';
+
+type BiLoggerForReadingTimeProps = {
+  postId: string | undefined;
+  children: React.ReactNode;
+};
+
+const ContentBiLogger = ({ postId, children }: BiLoggerForReadingTimeProps) => {
+  const bi = useBiLogger();
+  const contentContainerRef = React.useRef<HTMLDivElement>(null);
+  const readingStartTimeRef = React.useRef(new Date());
+  const readingSessionIdRef = React.useRef(
+    `${Math.floor(Math.random() * 10000000)}-${readingStartTimeRef.current.getTime()}`,
+  );
+
+  const handleScroll = React.useCallback(
+    (_scroll: Event) => {
+      if (!bi || !postId) {
+        return;
+      }
+
+      bi.readingTime({
+        readingStartTime: readingStartTimeRef.current,
+        contentContainer: contentContainerRef.current,
+        reading_session_id: readingSessionIdRef.current,
+        post_stable_id: postId,
+      });
+    },
+    [postId, bi],
+  );
+
+  const handleTabVisibilityChange = React.useCallback(() => {
+    if (!bi || !postId) return;
+
+    bi.activeTabChange({
+      is_on: document.visibilityState === 'visible',
+      reading_session_id: readingSessionIdRef.current,
+      post_stable_id: postId,
+    });
+  }, [bi, postId]);
+
+  useScrollListener(handleScroll);
+  useVisibilityChangeListener(handleTabVisibilityChange);
+
+  return (
+    <div ref={contentContainerRef} data-testid={TestIds.contentBi} style={{ display: 'contents' }}>
+      {children}
+    </div>
+  );
+};
+
+ContentBiLogger.displayName = 'Blog.Post.ContentBiLogger';

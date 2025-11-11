@@ -86,6 +86,13 @@ export interface ItemFeaturedProps {
   className?: string;
 }
 
+/**
+ * Root component that provides item context to its children.
+ *
+ * @warning Do not use this component directly if it's inside a repeater.
+ * Use the repeater component (e.g., Section.ItemsRepeater) instead, which will
+ * automatically render this Root component for each item.
+ */
 export function Root(props: ItemRootProps) {
   if (!props.item) {
     return null;

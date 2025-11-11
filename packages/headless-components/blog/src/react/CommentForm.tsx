@@ -3,7 +3,7 @@ import React from 'react';
 import type { CommentWithResolvedFields } from '../services/comments-service.js';
 import { CommentContext } from './Comment.js';
 import * as CoreComments from './core/Comments.js';
-import { isValidChildren } from './helpers.js';
+import { isValidChildren } from './helpers/children.js';
 
 const enum TestIds {
   root = 'comment-form-root',

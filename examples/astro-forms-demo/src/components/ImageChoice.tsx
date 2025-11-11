@@ -18,15 +18,15 @@ const ImageChoice = ({
 }: ImageChoiceProps) => {
   return (
     <Form.Field id={id}>
-        <Form.Field.Label>
-          <label
-            htmlFor={id}
-            className="text-foreground font-paragraph font-semibold mb-3"
-          >
-            {label}
-            {required && <span className="text-destructive ml-1">*</span>}
-          </label>
-        </Form.Field.Label>
+      <Form.Field.Label>
+        <label
+          htmlFor={id}
+          className="text-foreground font-paragraph font-semibold mb-3"
+        >
+          {label}
+          {required && <span className="text-destructive ml-1">*</span>}
+        </label>
+      </Form.Field.Label>
       <Form.Field.InputWrapper>
         <Form.Field.Input>
           <div
