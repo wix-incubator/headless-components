@@ -8,9 +8,7 @@ export {
   CmsCollectionServiceImplementation,
   loadCmsCollectionServiceInitialData,
   type WixDataItem,
-  type InsertItemParams,
   type InsertReferenceParams,
-  type InsertItemOrReferenceParams,
 } from './cms-collection-service.js';
 
 export {
@@ -18,4 +16,5 @@ export {
   CmsItemServiceConfig,
   CmsItemServiceImplementation,
   loadCmsItemServiceInitialData,
+  type ItemReferenceParams,
 } from './cms-item-service.js';

@@ -4,17 +4,63 @@ import {
   CmsItemServiceDefinition,
   CmsItemServiceConfig,
   CmsItemServiceImplementation,
+  type WixDataItem,
+  type ItemReferenceParams,
 } from '../../services/cms-item-service.js';
 import { createServicesMap } from '@wix/services-manager';
 
 export interface RootProps {
-  children: React.ReactNode;
+  children: (props: RootRenderProps) => React.ReactNode;
   itemServiceConfig: CmsItemServiceConfig;
 }
 
 /**
- * Core Root component that provides the CMS Item service context to its children.
- * This component sets up the necessary services for rendering and managing individual item data.
+ * Render props exposed by CmsItem.Root
+ */
+export interface RootRenderProps {
+  /** Current item data */
+  item: WixDataItem;
+  /** Boolean indicating if the item is currently being loaded */
+  loading: boolean;
+  /** Error message, or null if no error */
+  error: string | null;
+  /** Function to update the current item */
+  updateItem: (itemData: Partial<WixDataItem>) => Promise<WixDataItem>;
+  /** Function to delete the current item */
+  deleteItem: () => Promise<void>;
+  /** Function to insert a reference between the current item and other items */
+  linkItem: (params: ItemReferenceParams) => Promise<void>;
+  /** Function to remove a reference between the current item and other items */
+  unlinkItem: (params: ItemReferenceParams) => Promise<void>;
+}
+
+/**
+ * Core Root component that provides CMS Item functionality via render props.
+ * This component sets up the necessary services and exposes all item operations
+ * and state through a render prop function.
+ *
+ * @example
+ * ```tsx
+ * <CmsItem.Root itemServiceConfig={{ collectionId: 'MyCollection', itemId: 'item-123' }}>
+ *   {({ item, loading, updateItem, deleteItem }) => (
+ *     <div>
+ *       {loading ? (
+ *         <div>Loading...</div>
+ *       ) : (
+ *         <>
+ *           <h1>{item?.title}</h1>
+ *           <button onClick={() => updateItem({ title: 'Updated Title' })}>
+ *             Update Title
+ *           </button>
+ *           <button onClick={() => deleteItem()}>
+ *             Delete Item
+ *           </button>
+ *         </>
+ *       )}
+ *     </div>
+ *   )}
+ * </CmsItem.Root>
+ * ```
  */
 export function Root(props: RootProps): React.ReactNode {
   return (
@@ -25,47 +71,28 @@ export function Root(props: RootProps): React.ReactNode {
         props.itemServiceConfig,
       )}
     >
-      {props.children}
+      <RootContent>{props.children}</RootContent>
     </WixServices>
   );
 }
 
-export interface FieldProps<T = any> {
-  /** Render prop function that receives field data */
-  children: (props: FieldRenderProps<T>) => React.ReactNode;
-  /** ID of the field to extract from the item */
-  fieldId: string;
-}
-
-export interface FieldRenderProps<T = any> {
-  /** The raw field value */
-  fieldValue: T;
-  /** Whether the item is currently loading */
-  isLoading: boolean;
-  /** Error message if loading failed, null otherwise */
-  error: string | null;
-}
-
 /**
- * Core headless component for CMS item field display
+ * Internal component that accesses the service and passes render props
  */
-export function Field<T = any>(props: FieldProps<T>) {
-  const { children, fieldId } = props;
-
+function RootContent(props: {
+  children: (props: RootRenderProps) => React.ReactNode;
+}): React.ReactNode {
   const service = useService(CmsItemServiceDefinition) as ServiceAPI<
     typeof CmsItemServiceDefinition
   >;
 
-  const item = service.itemSignal.get();
-  const isLoading = service.loadingSignal.get();
-  const error = service.errorSignal.get();
-
-  // Extract field value by fieldId from the item's data
-  const fieldValue = item?.[fieldId] ?? null;
-
-  return children({
-    fieldValue: fieldValue as T,
-    isLoading,
-    error,
+  return props.children({
+    item: service.itemSignal.get(),
+    loading: service.loadingSignal.get(),
+    error: service.errorSignal.get(),
+    updateItem: service.updateItem,
+    deleteItem: service.deleteItem,
+    linkItem: service.linkItem,
+    unlinkItem: service.unlinkItem,
   });
 }
