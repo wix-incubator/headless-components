@@ -30,9 +30,7 @@ enum TestIds {
 export interface RootProps {
   children:
     | React.ReactNode
-    | ((
-        props: CoreCmsCollection.RootRenderProps,
-      ) => React.ReactNode);
+    | ((props: CoreCmsCollection.RootRenderProps) => React.ReactNode);
   collection: {
     id: string;
     queryResult?: WixDataQueryResult;

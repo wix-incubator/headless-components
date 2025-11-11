@@ -1,6 +1,5 @@
 import type { ServiceAPI } from '@wix/services-definitions';
 import { useService, WixServices } from '@wix/services-manager-react';
-import type { Signal } from '@wix/services-definitions/core-services/signals';
 import {
   CmsCollectionServiceDefinition,
   CmsCollectionServiceConfig,
