@@ -112,8 +112,29 @@ export default function CollectionPage({
                       <Filter.FilterOptionRepeater>
                         <div className="space-y-2">
                           <Filter.FilterOption.Label className="font-paragraph block text-sm font-medium text-foreground" />
-                          <Filter.FilterOption.MultiFilter className="flex flex-wrap gap-2 [&_button]:rounded-md [&_button]:border [&_button]:border-foreground/20 [&_button]:bg-background [&_button]:px-3 [&_button]:py-1.5 [&_button]:text-sm [&_button]:font-paragraph [&_button]:text-foreground [&_button]:transition-colors hover:[&_button]:bg-foreground/5 hover:[&_button]:border-foreground/30 [&_button[data-state='on']]:bg-primary [&_button[data-state='on']]:text-primary-foreground [&_button[data-state='on']]:border-primary hover:[&_button[data-state='on']]:bg-primary/90" />
-                          <Filter.FilterOption.SingleFilter className="flex flex-wrap gap-2 [&_button]:rounded-md [&_button]:border [&_button]:border-foreground/20 [&_button]:bg-background [&_button]:px-3 [&_button]:py-1.5 [&_button]:text-sm [&_button]:font-paragraph [&_button]:text-foreground [&_button]:transition-colors hover:[&_button]:bg-foreground/5 hover:[&_button]:border-foreground/30 [&_button[data-state='on']]:bg-primary [&_button[data-state='on']]:text-primary-foreground [&_button[data-state='on']]:border-primary hover:[&_button[data-state='on']]:bg-primary/90" />
+                          <Filter.FilterOption.MultiFilter className="flex flex-wrap gap-2 [&_button]:rounded-md [&_button]:border [&_button]:border-foreground/20 [&_button]:bg-background [&_button]:px-3 [&_button]:py-1.5 [&_button]:text-sm [&_button]:font-paragraph [&_button]:text-foreground [&_button]:transition-colors hover:[&_button]:bg-foreground/5 hover:[&_button]:border-foreground/30 [&_button[data-state='on']]:bg-primary [&_button[data-state='on']]:text-primary-foreground [&_button[data-state='on']]:border-primary hover:[&_button[data-state='on']]:bg-primary/90" /> <Filter.FilterOption.SingleFilter className="flex flex-wrap gap-2 [&_button]:rounded-md [&_button]:border [&_button]:border-foreground/20 [&_button]:bg-background [&_button]:px-3 [&_button]:py-1.5 [&_button]:text-sm [&_button]:font-paragraph [&_button]:text-foreground [&_button]:transition-colors hover:[&_button]:bg-foreground/5 hover:[&_button]:border-foreground/30 [&_button[data-state='on']]:bg-primary [&_button[data-state='on']]:text-primary-foreground [&_button[data-state='on']]:border-primary hover:[&_button[data-state='on']]:bg-primary/90" />
+                          {/* <Filter.FilterOption.MultiFilter asChild>
+                            {({ value, onChange, validValues, valueFormatter }) => (
+                              <div className="flex flex-wrap gap-2">
+                                {validValues?.map((option) => (
+                                  <button key={String(option)} onClick={() => onChange(String(option))} className={value === String(option) ? 'bg-blue-500 text-white' : 'bg-pink-500 text-white'}>
+                                    {valueFormatter ? valueFormatter(String(option)) : String(option)}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </Filter.FilterOption.MultiFilter> */}
+                          <Filter.FilterOption.SingleFilter asChild>
+                            {({ value, onChange, validValues, valueFormatter }) => (
+                              <div className="flex flex-wrap gap-2">
+                                {validValues?.map((option) => (
+                                  <button key={String(option)} onClick={() => onChange(String(option))} className={value === String(option) ? 'bg-blue-500 text-white' : 'bg-pink-500 text-white'}>
+                                    {valueFormatter ? valueFormatter(String(option)) : String(option)}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </Filter.FilterOption.SingleFilter>
                         </div>
                       </Filter.FilterOptionRepeater>
                     </Filter.FilterOptions>
