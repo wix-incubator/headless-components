@@ -1,3 +1,4 @@
+// to do: remove this comment
 import React from 'react';
 import * as CoreCmsCollection from './core/CmsCollection.js';
 import {
