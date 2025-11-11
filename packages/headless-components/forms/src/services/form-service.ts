@@ -163,8 +163,6 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
      * Uses custom handler if provided in config, otherwise uses default submission.
      */
     async function submitForm(): Promise<void> {
-      console.log('Final form: ', formValuesSignal.get());
-
       const form = formSignal.get();
       if (!form) {
         console.error('Cannot submit: form not loaded');
@@ -176,7 +174,7 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
       submitResponseSignal.set({ type: 'loading' });
 
       try {
-        const handler = await defaultSubmitHandler;
+        const handler = await config.onSubmit || await defaultSubmitHandler;
         const response = await handler(formId, formValuesSignal.get());
         submitResponseSignal.set(response);
       } catch (error) {

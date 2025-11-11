@@ -69,8 +69,6 @@ export default function FormsPage({ formServiceConfig }: FormsPageProps) {
     formValues: FormValues
   ): Promise<SubmitResponse> => {
     try {
-      console.log('Final form values:', formValues);
-
       const response = await submissions.createSubmission({
         formId,
         submissions: formValues,

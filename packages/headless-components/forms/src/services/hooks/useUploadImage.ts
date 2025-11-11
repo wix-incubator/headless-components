@@ -81,19 +81,16 @@ export const useUploadImage = ({
     const newFileFields = await Promise.all(
       files.map(async (fileField) => {
         if (fileFieldIds.includes(fileField.fileId)) {
-          console.log('Already have one', fileField.fileId);
           return fileField;
         }
 
         const uploadUrl = await getUploadUrl(formId, fileField);
-        console.log('Upload url', uploadUrl);
         if (uploadUrl === undefined) {
           setError('An error occured while uploading the file!');
           return fileField;
         }
 
         const newUrl = await uploadImage(fileField, uploadUrl);
-        console.log('New url', uploadUrl);
         if (newUrl === undefined) {
           setError('An error occured while uploading the file!');
           return fileField;
