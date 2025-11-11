@@ -189,9 +189,7 @@ export const CmsItemServiceImplementation =
         }
       };
 
-      const linkItem = async (
-        params: ItemReferenceParams,
-      ): Promise<void> => {
+      const linkItem = async (params: ItemReferenceParams): Promise<void> => {
         loadingSignal.set(true);
         errorSignal.set(null);
 
@@ -217,9 +215,7 @@ export const CmsItemServiceImplementation =
         }
       };
 
-      const unlinkItem = async (
-        params: ItemReferenceParams,
-      ): Promise<void> => {
+      const unlinkItem = async (params: ItemReferenceParams): Promise<void> => {
         loadingSignal.set(true);
         errorSignal.set(null);
 

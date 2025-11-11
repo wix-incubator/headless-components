@@ -413,10 +413,7 @@ export const CmsCollectionServiceImplementation =
         errorSignal.set(null);
 
         try {
-          const createdItem = await items.insert(
-            config.collectionId,
-            itemData,
-          );
+          const createdItem = await items.insert(config.collectionId, itemData);
 
           // Invalidate + refetch to maintain consistency with backend query logic
           await invalidate();
@@ -434,9 +431,7 @@ export const CmsCollectionServiceImplementation =
         }
       };
 
-      const linkItem = async (
-        params: InsertReferenceParams,
-      ): Promise<void> => {
+      const linkItem = async (params: InsertReferenceParams): Promise<void> => {
         loadingSignal.set(true);
         errorSignal.set(null);
 
