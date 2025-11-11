@@ -104,7 +104,6 @@ interface SortOptionRenderable {
   onSelect: () => void;
   /** Whether this option is currently selected */
   isSelected: boolean;
-
 }
 
 interface SortOptionRenderableWithChildren extends SortOptionRenderable {
