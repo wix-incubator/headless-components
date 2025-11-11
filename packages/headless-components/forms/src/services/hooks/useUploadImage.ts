@@ -1,5 +1,4 @@
 import { submissions } from '@wix/forms';
-import httpClient from 'axios';
 import { FileField } from '../../react';
 import { FormValues } from '@wix/form-public';
 import { isFormFileField } from '../../react/utils';
@@ -54,24 +53,28 @@ export const useUploadImage = ({
   ): Promise<string | undefined> => {
     const fileResponse = await fetch(file.url);
     const blob = await fileResponse.blob();
-    const params = {
-      filename: file.displayName,
-    };
 
     const headers = {
       'Content-Type': 'application/octet-stream',
     };
 
-    const { data } = await httpClient.put(uploadUrl, blob, {
-      headers,
-      params,
-    });
+    try {
+      const response = await fetch(uploadUrl, {
+        headers,
+        method: 'PUT',
+        body: blob,
+      });
 
-    if (!data) {
+      const { file } = await response.json();
+
+      if (!file) {
+        return;
+      }
+
+      return file.url;
+    } catch {
       return;
     }
-
-    return data.file.url;
   };
 
   const handleFileFields = async (
