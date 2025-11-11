@@ -8,7 +8,7 @@ import {
   type CommentWithResolvedFields,
 } from '../services/comments-service.js';
 import * as CoreComments from './core/Comments.js';
-import { isValidChildren } from './helpers.js';
+import { isValidChildren } from './helpers/children.js';
 
 export * as Form from './CommentForm.js';
 

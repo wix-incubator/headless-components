@@ -11,8 +11,8 @@ import {
 } from '../services/comments-service.js';
 import * as Comment from './Comment.js';
 import * as CoreComments from './core/Comments.js';
-import { isValidChildren, useIntersectionObserver } from './helpers.js';
-// import { usePostContext } from './Post.js';
+import { isValidChildren } from './helpers/children.js';
+import { useIntersectionObserver } from './helpers/listeners.js';
 
 const enum TestIds {
   root = 'comments-root',

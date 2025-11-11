@@ -9331,7 +9331,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wix/headless-blog@npm:0.0.19, @wix/headless-blog@workspace:*, @wix/headless-blog@workspace:packages/headless-components/blog":
+"@wix/headless-blog@npm:0.0.19":
+  version: 0.0.19
+  resolution: "@wix/headless-blog@npm:0.0.19"
+  dependencies:
+    "@radix-ui/react-slot": "npm:^1.1.0"
+    "@wix/blog": "npm:^1.0.477"
+    "@wix/comments": "npm:^1.0.133"
+    "@wix/headless-media": "npm:0.0.15"
+    "@wix/headless-utils": "npm:0.0.4"
+    "@wix/members": "npm:^1.0.322"
+    "@wix/redirects": "npm:^1.0.0"
+    "@wix/sdk": "npm:^1.15.27"
+    "@wix/services-definitions": "npm:^0.1.5"
+    "@wix/services-manager-react": "npm:^0.1.27"
+  peerDependencies:
+    "@wix/headless-components": 0.0.17
+  checksum: 10c0/44358393c794257748b320e6cb40ed409b49ed08302beba38fa942e4b5b23d8b08fb502f231e8a15ab48ebccb838d81cc5e0a454f4ed0db3abfd18a90fb63f47
+  languageName: node
+  linkType: hard
+
+"@wix/headless-blog@workspace:*, @wix/headless-blog@workspace:packages/headless-components/blog":
   version: 0.0.0-use.local
   resolution: "@wix/headless-blog@workspace:packages/headless-components/blog"
   dependencies:

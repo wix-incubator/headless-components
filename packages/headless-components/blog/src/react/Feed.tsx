@@ -11,7 +11,7 @@ import {
   type QueryPostsSort,
 } from '../services/blog-feed-service.js';
 import * as CoreFeed from './core/Feed.js';
-import { isValidChildren } from './helpers.js';
+import { isValidChildren } from './helpers/children.js';
 import * as Post from './Post.js';
 
 /** https://manage.wix.com/apps/14bcded7-0066-7c35-14d7-466cb3f09103/extensions/dynamic/wix-vibe-component?component-id=83683a8a-9d7f-437a-9c15-d5cd083530da */
