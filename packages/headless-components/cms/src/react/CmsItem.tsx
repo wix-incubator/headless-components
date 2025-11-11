@@ -1,6 +1,7 @@
 import React from 'react';
 import * as CoreCmsItem from './core/CmsItem.js';
 import { type CmsItemServiceConfig } from '../services/cms-item-service.js';
+import { AsChildSlot } from '@wix/headless-utils/react';
 
 enum TestIds {
   cmsItemRoot = 'collection-item',
@@ -10,6 +11,8 @@ enum TestIds {
  * Props for CmsItem.Root component
  */
 export interface RootProps {
+  asChild?: boolean;
+  className?: string;
   children: React.ReactNode;
   item: {
     collectionId: string;
@@ -59,7 +62,7 @@ export interface RootProps {
  */
 export const Root = React.forwardRef<HTMLDivElement, RootProps>(
   (props, ref) => {
-    const { children, item } = props;
+    const { asChild, className, children, item } = props;
 
     const itemServiceConfig: CmsItemServiceConfig = {
       collectionId: item.collectionId,
@@ -78,9 +81,16 @@ export const Root = React.forwardRef<HTMLDivElement, RootProps>(
     return (
       <CoreCmsItem.Root itemServiceConfig={itemServiceConfig}>
         {() => (
-          <div {...attributes} ref={ref}>
-            {children}
-          </div>
+          <AsChildSlot
+          ref={ref}
+          asChild={asChild}
+          className={className}
+          customElement={children}
+          {...attributes}
+          customElementProps={props}
+        >
+          <div>{children}</div>
+        </AsChildSlot>
         )}
       </CoreCmsItem.Root>
     );
