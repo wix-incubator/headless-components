@@ -52,12 +52,12 @@ const FileUpload = ({
 
   return (
     <Form.Field id={id}>
-        <Form.Field.Label>
-          <label htmlFor={id} className="text-foreground font-paragraph mb-2">
-            {label}
-            {required && <span className="text-destructive ml-1">*</span>}
-          </label>
-        </Form.Field.Label>
+      <Form.Field.Label>
+        <label htmlFor={id} className="text-foreground font-paragraph mb-2">
+          {label}
+          {required && <span className="text-destructive ml-1">*</span>}
+        </label>
+      </Form.Field.Label>
       <Form.Field.InputWrapper>
         <Form.Field.Input
           className="w-full px-4 py-2 bg-background text-foreground border border-foreground/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary file:text-primary-foreground file:cursor-pointer"

@@ -24,12 +24,12 @@ const NumberInput = ({
 
   return (
     <Form.Field id={id}>
-        <Form.Field.Label>
-          <label htmlFor={id} className="text-foreground font-paragraph mb-2">
-            {label}
-            {required && <span className="text-destructive ml-1">*</span>}
-          </label>
-        </Form.Field.Label>
+      <Form.Field.Label>
+        <label htmlFor={id} className="text-foreground font-paragraph mb-2">
+          {label}
+          {required && <span className="text-destructive ml-1">*</span>}
+        </label>
+      </Form.Field.Label>
       <Form.Field.InputWrapper>
         <Form.Field.Input
           asChild
