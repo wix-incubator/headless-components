@@ -39,6 +39,13 @@ export interface SectionItemsRepeaterProps {
   children: React.ReactNode;
 }
 
+/**
+ * Root component that provides section context to its children.
+ *
+ * @warning Do not use this component directly if it's inside a repeater.
+ * Use the repeater component (e.g., Menu.SectionsRepeater) instead, which will
+ * automatically render this Root component for each section.
+ */
 export function Root(props: SectionRootProps) {
   if (!props.section) {
     return null;
