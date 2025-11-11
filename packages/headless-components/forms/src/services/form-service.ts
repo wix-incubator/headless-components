@@ -179,10 +179,6 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
       }
     }
 
-    async function getUploadMediaLink() {
-
-    }
-
     async function handleFileFields(files: FileField[]): Promise<FileField[]> {
       const newFileFields = files.map((fileField) => {
 
