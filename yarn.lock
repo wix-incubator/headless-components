@@ -5211,6 +5211,7 @@ __metadata:
     "@wix/cli-edge": "npm:^1.1.74"
     "@wix/dashboard": "npm:^1.3.39"
     "@wix/headless-bookings": "workspace:*"
+    "@wix/headless-components": "workspace:*"
     "@wix/headless-ecom": "workspace:*"
     "@wix/headless-stores": "workspace:*"
     "@wix/services-manager-react": "npm:^0.1.26"
