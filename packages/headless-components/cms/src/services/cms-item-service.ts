@@ -6,6 +6,24 @@ import {
 import { items } from '@wix/data';
 import { type WixDataItem } from './cms-collection-service.js';
 
+// Re-export WixDataItem for consumers
+export type { WixDataItem };
+
+/**
+ * Parameters for linking/unlinking items in a reference field
+ */
+export interface ItemReferenceParams {
+  referenceFieldId: string;
+  referencedItemIds: string | string[];
+}
+
+/**
+ * Utility function to extract error messages consistently
+ */
+function extractErrorMessage(err: unknown, fallback: string): string {
+  return err instanceof Error ? err.message : fallback;
+}
+
 /**
  * Service definition for the CMS Item service.
  */
@@ -16,6 +34,14 @@ export const CmsItemServiceDefinition = defineService<{
   loadingSignal: Signal<boolean>;
   /** Reactive signal containing any error message, or null if no error */
   errorSignal: Signal<string | null>;
+  /** Function to update the current item */
+  updateItem: (itemData: Partial<WixDataItem>) => Promise<WixDataItem>;
+  /** Function to delete the current item */
+  deleteItem: () => Promise<void>;
+  /** Function to link the current item to referenced items */
+  linkItem: (params: ItemReferenceParams) => Promise<void>;
+  /** Function to unlink the current item from referenced items */
+  unlinkItem: (params: ItemReferenceParams) => Promise<void>;
 }>('CmsItem');
 
 /**
@@ -115,6 +141,110 @@ export const CmsItemServiceImplementation =
         }
       };
 
+      const updateItem = async (
+        itemData: Partial<WixDataItem>,
+      ): Promise<WixDataItem> => {
+        loadingSignal.set(true);
+        errorSignal.set(null);
+
+        try {
+          const updatedItem = await items.update(config.collectionId, {
+            ...itemData,
+            _id: config.itemId,
+          });
+
+          // Reload item to maintain consistency with backend data
+          await loadItemData();
+
+          return updatedItem;
+        } catch (err) {
+          errorSignal.set(extractErrorMessage(err, 'Failed to update item'));
+          console.error(
+            `Failed to update item "${config.itemId}" in collection "${config.collectionId}":`,
+            err,
+          );
+          throw err; // Re-throw for component error handling
+        } finally {
+          loadingSignal.set(false);
+        }
+      };
+
+      const deleteItem = async (): Promise<void> => {
+        loadingSignal.set(true);
+        errorSignal.set(null);
+
+        try {
+          await items.remove(config.collectionId, config.itemId);
+
+          // No reload after delete since item no longer exists
+        } catch (err) {
+          errorSignal.set(extractErrorMessage(err, 'Failed to delete item'));
+          console.error(
+            `Failed to delete item "${config.itemId}" from collection "${config.collectionId}":`,
+            err,
+          );
+          throw err; // Re-throw for component error handling
+        } finally {
+          loadingSignal.set(false);
+        }
+      };
+
+      const linkItem = async (
+        params: ItemReferenceParams,
+      ): Promise<void> => {
+        loadingSignal.set(true);
+        errorSignal.set(null);
+
+        try {
+          await items.insertReference(
+            config.collectionId,
+            params.referenceFieldId,
+            config.itemId,
+            params.referencedItemIds,
+          );
+
+          // Reload item to maintain consistency with backend data
+          await loadItemData();
+        } catch (err) {
+          errorSignal.set(extractErrorMessage(err, 'Failed to link item'));
+          console.error(
+            `Failed to link item "${config.itemId}" in collection "${config.collectionId}":`,
+            err,
+          );
+          throw err; // Re-throw for component error handling
+        } finally {
+          loadingSignal.set(false);
+        }
+      };
+
+      const unlinkItem = async (
+        params: ItemReferenceParams,
+      ): Promise<void> => {
+        loadingSignal.set(true);
+        errorSignal.set(null);
+
+        try {
+          await items.removeReference(
+            config.collectionId,
+            params.referenceFieldId,
+            config.itemId,
+            params.referencedItemIds,
+          );
+
+          // Reload item to maintain consistency with backend data
+          await loadItemData();
+        } catch (err) {
+          errorSignal.set(extractErrorMessage(err, 'Failed to unlink item'));
+          console.error(
+            `Failed to unlink item "${config.itemId}" from collection "${config.collectionId}":`,
+            err,
+          );
+          throw err; // Re-throw for component error handling
+        } finally {
+          loadingSignal.set(false);
+        }
+      };
+
       // Auto-load item on service initialization only if not pre-loaded
       if (!config.item) {
         loadItemData();
@@ -125,6 +255,10 @@ export const CmsItemServiceImplementation =
         itemSignal,
         loadingSignal,
         errorSignal,
+        updateItem,
+        deleteItem,
+        linkItem,
+        unlinkItem,
       };
     },
   );

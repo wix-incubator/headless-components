@@ -1,23 +1,98 @@
 import type { ServiceAPI } from '@wix/services-definitions';
 import { useService, WixServices } from '@wix/services-manager-react';
+import type { Signal } from '@wix/services-definitions/core-services/signals';
 import {
   CmsCollectionServiceDefinition,
   CmsCollectionServiceConfig,
   CmsCollectionServiceImplementation,
   type WixDataItem,
   type WixDataQueryResult,
-  type InsertItemOrReferenceParams,
+  type InsertReferenceParams,
 } from '../../services/cms-collection-service.js';
 import { createServicesMap } from '@wix/services-manager';
+import type {
+  SortValue,
+  FilterValue as Filter,
+} from '@wix/headless-components/react';
 
 export interface RootProps {
-  children: React.ReactNode;
+  children: (props: RootRenderProps) => React.ReactNode;
   collectionServiceConfig: CmsCollectionServiceConfig;
 }
 
 /**
- * Core Root component that provides the CMS Collection service context to its children.
- * This component sets up the necessary services for rendering and managing collection data.
+ * Render props exposed by CmsCollection.Root
+ */
+export interface RootRenderProps {
+  /** Reactive signal indicating if items are currently being loaded */
+  loadingSignal: Signal<boolean>;
+  /** Reactive signal containing any error message, or null if no error */
+  errorSignal: Signal<string | null>;
+  /** Reactive signal containing the current query result with pagination data */
+  queryResultSignal: Signal<WixDataQueryResult | null>;
+  /** Reactive signal containing the current sort value */
+  sortSignal: Signal<SortValue>;
+  /** Reactive signal containing the current filter value */
+  filterSignal: Signal<Filter | null>;
+  /** Function to explicitly invalidate and reload items */
+  invalidate: () => Promise<void>;
+  /** Function to load items with optional query options */
+  loadItems: (options?: {
+    limit?: number;
+    skip?: number;
+    returnTotalCount?: boolean;
+  }) => Promise<void>;
+  /** Function to create a new item in the collection */
+  createItem: (itemData: Partial<WixDataItem>) => Promise<WixDataItem>;
+  /** Function to insert a reference between items */
+  linkItem: (params: InsertReferenceParams) => Promise<void>;
+  /** Function to update an existing item in the collection */
+  updateItem: (
+    itemId: string,
+    itemData: Partial<WixDataItem>,
+  ) => Promise<WixDataItem>;
+  /** Function to delete an item from the collection */
+  deleteItem: (itemId: string) => Promise<void>;
+  /** Function to remove a reference between items */
+  unlinkItem: (params: InsertReferenceParams) => Promise<void>;
+  /** Function to update the sort value */
+  setSort: (sort: SortValue) => void;
+  /** Function to update the filter value */
+  setFilter: (filter: Filter) => void;
+  /** Function to reset all filters */
+  resetFilter: () => void;
+  /** Function to check if filters are applied */
+  isFiltered: () => boolean;
+  /** The collection ID */
+  collectionId: string;
+}
+
+/**
+ * Core Root component that provides CMS Collection functionality via render props.
+ * This component sets up the necessary services and exposes all collection operations
+ * and state through a render prop function.
+ *
+ * @example
+ * ```tsx
+ * <CmsCollection.Root collectionServiceConfig={{ collectionId: 'MyCollection' }}>
+ *   {({ queryResultSignal, loadingSignal, createItem, updateItem }) => (
+ *     <div>
+ *       {loadingSignal.get() ? (
+ *         <div>Loading...</div>
+ *       ) : (
+ *         <>
+ *           {queryResultSignal.get()?.items.map(item => (
+ *             <div key={item._id}>{item.title}</div>
+ *           ))}
+ *           <button onClick={() => createItem({ title: 'New Item' })}>
+ *             Create Item
+ *           </button>
+ *         </>
+ *       )}
+ *     </div>
+ *   )}
+ * </CmsCollection.Root>
+ * ```
  */
 export function Root(props: RootProps): React.ReactNode {
   return (
@@ -28,434 +103,38 @@ export function Root(props: RootProps): React.ReactNode {
         props.collectionServiceConfig,
       )}
     >
-      {props.children}
+      <RootContent>{props.children}</RootContent>
     </WixServices>
   );
 }
 
 /**
- * Props for CmsCollection.Items headless component
+ * Internal component that accesses the service and passes render props
  */
-export interface ItemsProps {
-  /** Render prop function that receives collection items data */
-  children: (props: ItemsRenderProps) => React.ReactNode;
-}
-
-/**
- * Render props for CmsCollection.Items component
- */
-export interface ItemsRenderProps {
-  /** Array of collection items */
-  items: WixDataItem[];
-  /** Whether the collection is currently loading */
-  isLoading: boolean;
-  /** Error message if loading failed, null otherwise */
-  error: string | null;
-  /** Function to load the next page */
-  loadNext: () => Promise<void>;
-  /** Whether there is a next page available */
-  hasNext: boolean;
-}
-
-/**
- * Core headless component for collection items display with loading and error states
- */
-export function Items(props: ItemsProps) {
+function RootContent(props: {
+  children: (props: RootRenderProps) => React.ReactNode;
+}): React.ReactNode {
   const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
     typeof CmsCollectionServiceDefinition
   >;
-
-  const items = service.queryResultSignal.get()?.items || [];
-  const isLoading = service.loadingSignal.get();
-  const error = service.errorSignal.get();
-  const queryResult = service.queryResultSignal.get();
-  const loadNext = service.loadNextPage;
 
   return props.children({
-    items,
-    isLoading,
-    error,
-    loadNext,
-    hasNext: queryResult?.hasNext() ?? false,
+    loadingSignal: service.loadingSignal,
+    errorSignal: service.errorSignal,
+    queryResultSignal: service.queryResultSignal,
+    sortSignal: service.sortSignal,
+    filterSignal: service.filterSignal,
+    invalidate: service.invalidate,
+    loadItems: service.loadItems,
+    createItem: service.createItem,
+    linkItem: service.linkItem,
+    updateItem: service.updateItem,
+    deleteItem: service.deleteItem,
+    unlinkItem: service.unlinkItem,
+    setSort: service.setSort,
+    setFilter: service.setFilter,
+    resetFilter: service.resetFilter,
+    isFiltered: service.isFiltered,
+    collectionId: service.collectionId,
   });
-}
-
-/**
- * Props for CmsCollection.NextAction headless component
- */
-export interface NextActionProps {
-  /** Render prop function that receives next page controls */
-  children: (props: NextActionRenderProps) => React.ReactNode;
-}
-
-/**
- * Render props for CmsCollection.NextAction component
- */
-export interface NextActionRenderProps {
-  /** Function to load the next page */
-  loadNext: () => Promise<void>;
-  /** Whether there is a next page available */
-  hasNext: boolean;
-  /** Whether a page is currently loading */
-  isLoading: boolean;
-  /** Error message if loading failed, null otherwise */
-  error: string | null;
-  /** Current page number */
-  currentPage: WixDataQueryResult['currentPage'];
-  /** Total number of items */
-  totalCount: WixDataQueryResult['totalCount'];
-  /** Page size */
-  pageSize: WixDataQueryResult['pageSize'];
-  /** Total number of pages */
-  totalPages: WixDataQueryResult['totalPages'];
-}
-
-/**
- * Core headless component for loading the next page of collection items
- */
-export function NextAction(props: NextActionProps) {
-  const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
-    typeof CmsCollectionServiceDefinition
-  >;
-
-  const isLoading = service.loadingSignal.get();
-  const error = service.errorSignal.get();
-  const queryResult = service.queryResultSignal.get();
-  const loadNext = service.loadNextPage;
-
-  return props.children({
-    loadNext,
-    hasNext: queryResult?.hasNext() ?? false,
-    isLoading,
-    error,
-    currentPage: queryResult?.currentPage,
-    totalCount: queryResult?.totalCount,
-    pageSize: queryResult?.pageSize,
-    totalPages: queryResult?.totalPages,
-  });
-}
-
-/**
- * Props for CmsCollection.PrevAction headless component
- */
-export interface PrevActionProps {
-  /** Render prop function that receives previous page controls */
-  children: (props: PrevActionRenderProps) => React.ReactNode;
-}
-
-/**
- * Render props for CmsCollection.PrevAction component
- */
-export interface PrevActionRenderProps {
-  /** Function to load the previous page */
-  loadPrev: () => Promise<void>;
-  /** Whether there is a previous page available */
-  hasPrev: boolean;
-  /** Whether a page is currently loading */
-  isLoading: boolean;
-  /** Error message if loading failed, null otherwise */
-  error: string | null;
-  /** Current page number */
-  currentPage: WixDataQueryResult['currentPage'];
-  /** Total number of items */
-  totalCount: WixDataQueryResult['totalCount'];
-  /** Page size */
-  pageSize: WixDataQueryResult['pageSize'];
-  /** Total number of pages */
-  totalPages: WixDataQueryResult['totalPages'];
-}
-
-/**
- * Core headless component for loading the previous page of collection items
- */
-export function PrevAction(props: PrevActionProps) {
-  const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
-    typeof CmsCollectionServiceDefinition
-  >;
-
-  const isLoading = service.loadingSignal.get();
-  const error = service.errorSignal.get();
-  const queryResult = service.queryResultSignal.get();
-  const loadPrev = service.loadPrevPage;
-
-  return props.children({
-    loadPrev,
-    hasPrev: queryResult?.hasPrev() ?? false,
-    isLoading,
-    error,
-    currentPage: queryResult?.currentPage,
-    totalCount: queryResult?.totalCount,
-    pageSize: queryResult?.pageSize,
-    totalPages: queryResult?.totalPages,
-  });
-}
-
-/**
- * Props for CmsCollection.Totals.Count headless component
- */
-export interface TotalsCountProps {
-  /** Render prop function that receives total count data */
-  children: (props: TotalsCountRenderProps) => React.ReactNode;
-}
-
-/**
- * Render props for CmsCollection.Totals.Count component
- */
-export interface TotalsCountRenderProps {
-  /** Total number of items in the collection */
-  total: number;
-  /** Whether the collection is currently loading */
-  isLoading: boolean;
-  /** Error message if loading failed, null otherwise */
-  error: string | null;
-}
-
-/**
- * Core headless component for displaying the total number of items in the collection
- */
-export function TotalsCount(props: TotalsCountProps) {
-  const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
-    typeof CmsCollectionServiceDefinition
-  >;
-
-  const queryResult = service.queryResultSignal.get();
-  const isLoading = service.loadingSignal.get();
-  const error = service.errorSignal.get();
-
-  return props.children({
-    total: queryResult?.totalCount ?? 0,
-    isLoading,
-    error,
-  });
-}
-
-/**
- * Type of display count to show
- */
-export type DisplayType =
-  | 'displayed' // Number of items displayed up to current page (default)
-  | 'currentPageAmount' // Number of items on current page only
-  | 'currentPageNum' // Current page number
-  | 'totalPages'; // Total number of pages
-
-/**
- * Props for CmsCollection.Totals.Displayed headless component
- */
-export interface TotalsDisplayedProps {
-  /** Type of display count to show */
-  displayType?: DisplayType;
-  /** Render prop function that receives displayed count data */
-  children: (props: TotalsDisplayedRenderProps) => React.ReactNode;
-}
-
-/**
- * Render props for CmsCollection.Totals.Displayed component
- */
-export interface TotalsDisplayedRenderProps {
-  /** Number based on the specified displayType */
-  displayed: number;
-  /** Whether the collection is currently loading */
-  isLoading: boolean;
-  /** Error message if loading failed, null otherwise */
-  error: string | null;
-}
-
-/**
- * Core headless component for displaying various count metrics
- */
-export function TotalsDisplayed(props: TotalsDisplayedProps) {
-  const { displayType = 'displayed' } = props;
-  const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
-    typeof CmsCollectionServiceDefinition
-  >;
-
-  const queryResult = service.queryResultSignal.get();
-  const isLoading = service.loadingSignal.get();
-  const error = service.errorSignal.get();
-
-  // Extract data from queryResult
-  const currentPage = queryResult?.currentPage ?? 0; // 0-based index
-  const pageSize = queryResult?.pageSize ?? 0;
-  const currentPageItems = queryResult?.items.length ?? 0;
-  const totalPages = queryResult?.totalPages ?? 0;
-
-  // Calculate the displayed value based on displayType
-  let displayed: number;
-
-  switch (displayType) {
-    case 'currentPageAmount':
-      displayed = currentPageItems;
-      break;
-    case 'currentPageNum':
-      displayed = currentPage + 1; // Convert from 0-based to 1-based for display
-      break;
-    case 'totalPages':
-      displayed = totalPages;
-      break;
-    case 'displayed':
-    default:
-      // Calculate total displayed count: all items from previous pages + current page items
-      displayed =
-        pageSize > 0
-          ? currentPage * pageSize + currentPageItems
-          : currentPageItems;
-      break;
-  }
-
-  return props.children({
-    displayed,
-    isLoading,
-    error,
-  });
-}
-
-/**
- * Props for CmsCollection.CreateItemAction headless component
- */
-export interface CreateItemActionProps {
-  /** Render prop function that receives create item controls */
-  children: (props: CreateItemActionRenderProps) => React.ReactNode;
-}
-
-/**
- * Render props for CmsCollection.CreateItemAction component
- */
-export interface CreateItemActionRenderProps {
-  /** Function to create a new item or insert a reference. Returns the created item when creating, or void when inserting references. */
-  insertItemOrReference: (
-    params: InsertItemOrReferenceParams,
-  ) => Promise<WixDataItem | void>;
-  /** Whether creation is currently in progress */
-  isLoading: boolean;
-  /** Error message if creation failed, null otherwise */
-  error: string | null;
-}
-
-/**
- * Props for CmsCollection.ItemRepeater headless component
- */
-export interface ItemRepeaterProps {
-  /** Render prop function that receives collection items data for repeating */
-  children: (props: ItemRepeaterRenderProps) => React.ReactNode;
-}
-
-/**
- * Render props for CmsCollection.ItemRepeater component
- */
-export interface ItemRepeaterRenderProps {
-  /** Array of collection items */
-  items: WixDataItem[];
-  /** The collection ID */
-  collectionId: string;
-  /** Whether the collection is currently loading */
-  isLoading: boolean;
-  /** Error message if loading failed, null otherwise */
-  error: string | null;
-}
-
-/**
- * Core headless component for creating new items in the collection
- */
-export function CreateItemAction(props: CreateItemActionProps) {
-  const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
-    typeof CmsCollectionServiceDefinition
-  >;
-
-  const isLoading = service.loadingSignal.get();
-  const error = service.errorSignal.get();
-  const insertItemOrReference = service.insertItemOrReference;
-
-  return props.children({
-    insertItemOrReference,
-    isLoading,
-    error,
-  });
-}
-
-/**
- * Core headless component for collection item repeating with data access
- */
-export function ItemRepeater(props: ItemRepeaterProps) {
-  const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
-    typeof CmsCollectionServiceDefinition
-  >;
-
-  const items = service.queryResultSignal.get()?.items || [];
-  const isLoading = service.loadingSignal.get();
-  const error = service.errorSignal.get();
-  const collectionId = service.collectionId;
-
-  return props.children({
-    items,
-    collectionId,
-    isLoading,
-    error,
-  });
-}
-
-/**
- * Props for Loading headless component
- */
-export interface LoadingProps {
-  /** Content to display during loading (can be a render function or ReactNode) */
-  children: ((props: LoadingRenderProps) => React.ReactNode) | React.ReactNode;
-}
-
-/**
- * Render props for Loading component
- */
-export interface LoadingRenderProps {}
-
-/**
- * Component that renders content during loading state.
- * Only displays its children when the collection is currently loading.
- */
-export function Loading(props: LoadingProps): React.ReactNode {
-  const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
-    typeof CmsCollectionServiceDefinition
-  >;
-  const isLoadingValue = service.loadingSignal.get();
-
-  if (isLoadingValue) {
-    return typeof props.children === 'function'
-      ? props.children({})
-      : props.children;
-  }
-
-  return null;
-}
-
-/**
- * Props for Error headless component
- */
-export interface ErrorProps {
-  /** Content to display during error state (can be a render function or ReactNode) */
-  children: ((props: ErrorRenderProps) => React.ReactNode) | React.ReactNode;
-}
-
-/**
- * Render props for Error component
- */
-export interface ErrorRenderProps {
-  /** Error message */
-  error: string | null;
-}
-
-/**
- * Component that renders content when there's an error loading collection.
- * Only displays its children when an error has occurred.
- */
-export function Error(props: ErrorProps): React.ReactNode {
-  const service = useService(CmsCollectionServiceDefinition) as ServiceAPI<
-    typeof CmsCollectionServiceDefinition
-  >;
-  const errorValue = service.errorSignal.get();
-
-  if (errorValue) {
-    return typeof props.children === 'function'
-      ? props.children({ error: errorValue })
-      : props.children;
-  }
-
-  return null;
 }
