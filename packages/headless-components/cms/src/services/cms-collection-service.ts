@@ -507,9 +507,7 @@ export const CmsCollectionServiceImplementation =
         }
       };
 
-      const unlinkItem = async (
-        params: LinkItemParams,
-      ): Promise<void> => {
+      const unlinkItem = async (params: LinkItemParams): Promise<void> => {
         loadingSignal.set(true);
         errorSignal.set(null);
 
