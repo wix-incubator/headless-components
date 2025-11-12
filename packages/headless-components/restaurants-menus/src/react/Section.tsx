@@ -163,7 +163,7 @@ export const ItemsRepeater = React.forwardRef<
   const items =
     (section.itemIds ?? [])
       .map((itemId: string) =>
-        menusService.items.get().find((item) => item._id === itemId),
+        menusService.items.find((item) => item._id === itemId),
       )
       .filter(
         (item: EnhancedItem | undefined): item is EnhancedItem =>

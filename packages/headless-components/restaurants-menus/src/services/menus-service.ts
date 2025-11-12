@@ -29,25 +29,24 @@ import {
 } from '@wix/services-definitions/core-services/signals';
 
 export interface MenusServiceConfig {
-  autoLoad?: boolean;
   menus?: Menu[];
   sections?: Section[];
-  items?: EnhancedItem[];
+  items?: Item[];
   variants?: Variant[];
   labels?: Label[];
-  modifierGroups?: EnhancedModifierGroup[];
+  modifierGroups?: ModifierGroup[];
   modifiers?: Modifier[];
 }
 export interface MenusServiceAPI {
-  menus: Signal<Menu[]>;
+  menus: Menu[];
   filteredMenus: ReadOnlySignal<Menu[]>;
-  sections: Signal<Section[]>;
-  items: Signal<EnhancedItem[]>;
-  variants: Signal<Variant[]>;
-  labels: Signal<Label[]>;
-  modifierGroups: Signal<EnhancedModifierGroup[]>;
-  modifiers: Signal<Modifier[]>;
-  locations: Signal<Location[]>;
+  sections: Section[];
+  items: EnhancedItem[];
+  variants: Variant[];
+  labels: Label[];
+  modifierGroups: EnhancedModifierGroup[];
+  modifiers: Modifier[];
+  locations: ReadOnlySignal<Location[]>;
   loading: Signal<boolean>;
   error: Signal<string | null>;
   selectedMenu: Signal<Menu | null>;
@@ -200,52 +199,41 @@ export const MenusService = implementService.withConfig<MenusServiceConfig>()(
   ({ getService, config }) => {
     const signalsService = getService(SignalsServiceDefinition);
 
-    const menusSignal = signalsService.signal<Menu[]>(config.menus || []);
-    const sectionsSignal = signalsService.signal<Section[]>(
-      config.sections || [],
-    );
-    const itemsSignal = signalsService.signal<EnhancedItem[]>(
+    const enhanced = createEnhancedEntities(
       config.items || [],
-    );
-    const variantsSignal = signalsService.signal<Variant[]>(
       config.variants || [],
-    );
-    const labelsSignal = signalsService.signal<Label[]>(config.labels || []);
-    const modifierGroupsSignal = signalsService.signal<EnhancedModifierGroup[]>(
+      config.labels || [],
       config.modifierGroups || [],
-    );
-    const modifiersSignal = signalsService.signal<Modifier[]>(
       config.modifiers || [],
     );
-    const locationsSignal = signalsService.signal<Location[]>([]);
+
+    const allMenus = config.menus || [];
+    const allSections = config.sections || [];
+    const allItems = enhanced.enhancedItems;
+    const allVariants = config.variants || [];
+    const allLabels = config.labels || [];
+    const allModifierGroups = enhanced.enhancedModifierGroups;
+    const allModifiers = config.modifiers || [];
+
     const loadingSignal = signalsService.signal<boolean>(false);
     const errorSignal = signalsService.signal<string | null>(null);
     const selectedMenuSignal = signalsService.signal<Menu | null>(null);
     const selectedLocationSignal = signalsService.signal<string | null>(null);
 
-    const updateLocations = () => {
-      const currentMenus = menusSignal.get();
-      const locations = getLocations(currentMenus);
-      locationsSignal.set(locations);
-    };
-
     const filterMenusByLocation = () => {
-      const allMenus = menusSignal.get();
       const selectedLocationId = selectedLocationSignal.get();
 
       if (!selectedLocationId || selectedLocationId === 'all') {
-        // If no location selected or "all" selected, show all menus
         return allMenus;
       }
 
-      // Filter menus by selected location
       return allMenus.filter(
         (menu) => menu.businessLocationId === selectedLocationId,
       );
     };
 
-    signalsService.effect(() => {
-      updateLocations();
+    const locationsSignal = signalsService.computed(() => {
+      return getLocations(allMenus);
     });
 
     // Reset selected menu when location changes
@@ -272,14 +260,14 @@ export const MenusService = implementService.withConfig<MenusServiceConfig>()(
     });
 
     return {
-      menus: menusSignal,
+      menus: allMenus,
       filteredMenus: filteredMenusSignal,
-      sections: sectionsSignal,
-      items: itemsSignal,
-      variants: variantsSignal,
-      labels: labelsSignal,
-      modifierGroups: modifierGroupsSignal,
-      modifiers: modifiersSignal,
+      sections: allSections,
+      items: allItems,
+      variants: allVariants,
+      labels: allLabels,
+      modifierGroups: allModifierGroups,
+      modifiers: allModifiers,
       locations: locationsSignal,
       loading: loadingSignal,
       error: errorSignal,
@@ -324,21 +312,13 @@ export async function loadMenusServiceConfig(): Promise<MenusServiceConfig> {
       ),
     ]);
 
-    const enhanced = createEnhancedEntities(
-      allItems,
-      allVariants,
-      allLabels,
-      allModifierGroups,
-      allModifiers,
-    );
-
     return {
       menus: allMenus,
       sections: allSections,
-      items: enhanced.enhancedItems,
+      items: allItems,
       variants: allVariants,
       labels: allLabels,
-      modifierGroups: enhanced.enhancedModifierGroups,
+      modifierGroups: allModifierGroups,
       modifiers: allModifiers,
     };
   } catch (err) {

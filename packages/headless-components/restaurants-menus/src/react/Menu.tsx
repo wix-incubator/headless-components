@@ -160,7 +160,7 @@ export const SectionsRepeater = React.forwardRef<
   const menuSections =
     (menu.sectionIds ?? [])
       .map((sectionId: string) =>
-        sections.get().find((section) => section._id === sectionId),
+        sections.find((section) => section._id === sectionId),
       )
       .filter(
         (section: Section | undefined): section is Section =>
