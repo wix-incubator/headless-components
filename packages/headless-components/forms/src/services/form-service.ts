@@ -4,6 +4,7 @@ import {
   SignalsServiceDefinition,
   type ReadOnlySignal,
 } from '@wix/services-definitions/core-services/signals';
+import { httpClient } from '@wix/essentials';
 import { FormValues } from '../react/types.js';
 
 /**
@@ -49,6 +50,7 @@ type OnSubmit = (
   formId: string,
   formValues: FormValues,
 ) => Promise<SubmitResponse>;
+
 /**
  * Configuration type for the Form service.
  * Supports two distinct patterns for providing form data:
@@ -60,7 +62,12 @@ type OnSubmit = (
  * @type {FormServiceConfig}
  */
 export type FormServiceConfig =
-  | { formId: string; onSubmit?: OnSubmit }
+  | {
+      formId: string;
+      onSubmit?: OnSubmit;
+      namespace?: string;
+      additionalMetadata?: Record<string, string | string[]>;
+    }
   | { form: forms.Form; onSubmit?: OnSubmit };
 
 /**
@@ -103,15 +110,19 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
     );
 
     if (!hasSchema) {
-      loadForm(config.formId);
+      loadForm(config.formId, config.namespace, config.additionalMetadata);
     }
 
-    async function loadForm(id: string): Promise<void> {
+    async function loadForm(
+      id: string,
+      namespace?: string,
+      additionalMetadata?: Record<string, string | string[]>,
+    ): Promise<void> {
       isLoadingSignal.set(true);
       errorSignal.set(null);
 
       try {
-        const result = await fetchForm(id);
+        const result = await fetchForm({ id, namespace, additionalMetadata });
 
         if (result) {
           formSignal.set(result);
@@ -181,15 +192,67 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
   },
 );
 
-async function fetchForm(id: string): Promise<forms.Form> {
-  try {
-    const result = await forms.getForm(id);
+function buildFormFetchQueryParams({
+  id,
+  namespace,
+  additionalMetadata,
+}: {
+  id: string;
+  namespace?: string;
+  additionalMetadata?: Record<string, string | string[]>;
+}): URLSearchParams {
+  const params = new URLSearchParams();
 
-    if (!result) {
-      throw new Error(`Form ${id} not found`);
+  params.append('formId', id);
+
+  if (namespace) {
+    params.append('namespace', namespace);
+  }
+
+  if (additionalMetadata) {
+    Object.entries(additionalMetadata).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((v) => params.append(key, v));
+      } else {
+        params.append(key, value);
+      }
+    });
+  }
+
+  return params;
+}
+
+async function fetchForm({
+  id,
+  namespace,
+  additionalMetadata,
+}: {
+  id: string;
+  namespace?: string;
+  additionalMetadata?: Record<string, string | string[]>;
+}): Promise<forms.Form> {
+  try {
+    const params = buildFormFetchQueryParams({
+      id,
+      namespace,
+      additionalMetadata,
+    });
+    const url = `https://edge.wixapis.com/form-schema-service/v4/forms/${id}?${params.toString()}`;
+    const response = await httpClient.fetchWithAuth(url);
+
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch form: ${response.status} ${response.statusText}`,
+      );
     }
 
-    return result;
+    const data = await response.json();
+
+    if (data && data.form) {
+      return data.form;
+    }
+
+    throw new Error('Invalid response format from Forms API');
   } catch (err) {
     console.error('Failed to load form:', id, err);
     throw err;
@@ -202,6 +265,8 @@ async function fetchForm(id: string): Promise<forms.Form> {
  * a specific form by ID that will be used to configure the FormService.
  *
  * @param {string} formId - The unique identifier of the form to load
+ * @param {string} [namespace] - Optional namespace for the form
+ * @param {Record<string, string | string[]>} [additionalMetadata] - Optional additional metadata to pass to the API
  * @returns {Promise<FormServiceConfig>} Configuration object with pre-loaded form data
  * @throws {Error} When the form cannot be loaded
  *
@@ -214,7 +279,9 @@ async function fetchForm(id: string): Promise<forms.Form> {
  */
 export async function loadFormServiceConfig(
   formId: string,
+  namespace?: string,
+  additionalMetadata?: Record<string, string | string[]>,
 ): Promise<FormServiceConfig> {
-  const form = await fetchForm(formId);
+  const form = await fetchForm({ id: formId, namespace, additionalMetadata });
   return { form };
 }
