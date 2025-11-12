@@ -42,7 +42,6 @@ export default function FeedPage({
     <Blog.Feed.Root blogFeedServiceConfig={blogFeedServiceConfig}>
       <SortSelect sortComponent={Blog.Feed.Sort} className="mb-2" />
       <Blog.Feed.PostItems
-        className="grid gap-x-8 gap-y-12 lg:grid-cols-2 xl:grid-cols-3"
         emptyState={
           <EmptyState
             title="No Posts Found"
@@ -50,37 +49,38 @@ export default function FeedPage({
           />
         }
       >
-        <Blog.Feed.PostItemRepeater offset={0} limit={1}>
-          <BlogFeedCardSideBySide
-            className="col-span-full"
-            uiLocale={uiLocale}
-            postPageBaseUrl={postPageBaseUrl}
-            categoryPageBaseUrl={categoryPageBaseUrl}
-            readMoreText="Read more"
-          />
-        </Blog.Feed.PostItemRepeater>
-        <Blog.Feed.PostItemRepeater offset={1}>
-          <BlogFeedCardEditorial
-            uiLocale={uiLocale}
-            postPageBaseUrl={postPageBaseUrl}
-            categoryPageBaseUrl={categoryPageBaseUrl}
-            readMoreText="Read more"
-          />
-        </Blog.Feed.PostItemRepeater>
+        <div className="grid gap-x-8 gap-y-12 lg:grid-cols-2 xl:grid-cols-3">
+          <Blog.Feed.PostItemRepeater offset={0} limit={1}>
+            <BlogFeedCardSideBySide
+              className="col-span-full"
+              uiLocale={uiLocale}
+              postPageBaseUrl={postPageBaseUrl}
+              categoryPageBaseUrl={categoryPageBaseUrl}
+              readMoreText="Read more"
+            />
+          </Blog.Feed.PostItemRepeater>
+          <Blog.Feed.PostItemRepeater offset={1}>
+            <BlogFeedCardEditorial
+              uiLocale={uiLocale}
+              postPageBaseUrl={postPageBaseUrl}
+              categoryPageBaseUrl={categoryPageBaseUrl}
+              readMoreText="Read more"
+            />
+          </Blog.Feed.PostItemRepeater>
 
-        {/* Load More Button */}
-        <div className="col-span-full mt-12 text-center">
-          <Blog.Feed.LoadMore
-            asChild
-            loadingState={
-              <>
-                <Loader2Icon className="animate-spin" />
-                Loading...
-              </>
-            }
-          >
-            <Button variant="outline">Load More Posts</Button>
-          </Blog.Feed.LoadMore>
+          {/* Load More Button */}
+          <div className="col-span-full mt-12 text-center">
+            <Blog.Feed.LoadMore
+              loadingState={
+                <>
+                  <Loader2Icon className="animate-spin" />
+                  Loading...
+                </>
+              }
+            >
+              <Button variant="outline">Load More Posts</Button>
+            </Blog.Feed.LoadMore>
+          </div>
         </div>
       </Blog.Feed.PostItems>
     </Blog.Feed.Root>

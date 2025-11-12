@@ -1,4 +1,9 @@
-import { Sort as SortPrimitive } from '@wix/headless-components/react';
+import {
+  GenericList,
+  Sort as SortPrimitive,
+  type GenericListRepeaterRenderProps,
+  type ListVariant,
+} from '@wix/headless-components/react';
 import { AsChildChildren, AsChildSlot } from '@wix/headless-utils/react';
 import { createServicesMap } from '@wix/services-manager';
 import { WixServices } from '@wix/services-manager-react';
@@ -50,6 +55,7 @@ export interface BlogFeedRootProps {
   children: AsChildChildren<{ hasPosts: boolean }> | React.ReactNode;
   blogFeedServiceConfig: BlogFeedServiceConfig;
   fallbackImageUrl?: string;
+  variant?: ListVariant;
 }
 
 /**
@@ -77,7 +83,7 @@ export interface BlogFeedRootProps {
  * ```
  */
 export const Root = React.forwardRef<HTMLElement, BlogFeedRootProps>((props, ref) => {
-  const { asChild, children, className, blogFeedServiceConfig, fallbackImageUrl } = props;
+  const { asChild, children, className, blogFeedServiceConfig, fallbackImageUrl, variant } = props;
 
   return (
     <WixServices
@@ -88,7 +94,7 @@ export const Root = React.forwardRef<HTMLElement, BlogFeedRootProps>((props, ref
       )}
     >
       <CoreFeed.Posts>
-        {({ posts, hasPosts, totalPosts, isLoading }) => {
+        {({ posts, hasPosts, totalPosts, isLoading, hasNextPage, loadNextPage }) => {
           const contextValue: PostsContextValue = {
             hasPosts,
             posts,
@@ -96,6 +102,8 @@ export const Root = React.forwardRef<HTMLElement, BlogFeedRootProps>((props, ref
             isLoading,
             fallbackImageUrl,
           };
+
+          const items = posts.map((post) => ({ ...post, id: post._id }));
 
           const attributes = {
             'data-component-tag': HTML_CODE_TAG,
@@ -106,16 +114,24 @@ export const Root = React.forwardRef<HTMLElement, BlogFeedRootProps>((props, ref
 
           return (
             <PostsContext.Provider value={contextValue}>
-              <AsChildSlot
-                ref={ref}
-                asChild={asChild}
-                className={className}
-                {...attributes}
-                customElement={children}
-                customElementProps={{ hasPosts }}
+              <GenericList.Root
+                items={items}
+                loadMore={loadNextPage}
+                hasMore={hasNextPage}
+                isLoading={isLoading}
+                variant={variant}
               >
-                <div>{isValidChildren(children) ? children : null}</div>
-              </AsChildSlot>
+                <AsChildSlot
+                  ref={ref}
+                  asChild={asChild}
+                  className={className}
+                  {...attributes}
+                  customElement={children}
+                  customElementProps={{ hasPosts }}
+                >
+                  <div>{isValidChildren(children) ? children : null}</div>
+                </AsChildSlot>
+              </GenericList.Root>
             </PostsContext.Provider>
           );
         }}
@@ -149,25 +165,22 @@ export interface PostItemsProps {
  */
 export const PostItems = React.forwardRef<HTMLElement, PostItemsProps>((props, ref) => {
   const { children, emptyState, className } = props;
-  const { hasPosts, isLoading } = usePostsContext();
-
-  if (!hasPosts) {
-    return emptyState || null;
-  }
-
-  const attributes = {
-    'data-testid': TestIds.blogFeedPosts,
-    'data-loading': isLoading,
-  };
 
   return (
-    <div {...attributes} ref={ref as React.Ref<HTMLDivElement>} className={className}>
+    <GenericList.Items
+      ref={ref}
+      emptyState={emptyState}
+      className={className}
+      data-testid={TestIds.blogFeedPosts}
+    >
       {children}
-    </div>
+    </GenericList.Items>
   );
 });
 
 PostItems.displayName = 'Blog.Feed.PostItems';
+
+export type PostRepeaterRenderProps = GenericListRepeaterRenderProps<PostWithResolvedFields>;
 
 export interface SortProps {
   /**
@@ -288,45 +301,104 @@ export const Sort = React.forwardRef<HTMLElement, SortProps>(
 Sort.displayName = 'Blog.Feed.Sort';
 
 export interface PostItemRepeaterProps {
-  children: React.ReactNode;
+  children:
+    | React.ReactNode
+    | ((props: PostRepeaterRenderProps, ref: React.Ref<HTMLElement>) => React.ReactNode);
   offset?: number;
   limit?: number;
+  asChild?: boolean;
 }
 
 /**
  * Repeater component that creates individual post contexts for each post.
- * Follows Repeater Level pattern from architecture rules.
- * Note: Repeater components do NOT support asChild as per architecture rules.
+ * Follows Repeater Level pattern from architecture rules and uses GenericList.Repeater for consistency.
+ * Supports asChild pattern for advanced layout components.
  *
  * @component
  * @example
  * ```tsx
+ * // Standard usage
  * <Blog.Feed.PostItemRepeater>
  *   <Blog.Post.Title />
  *   <Blog.Post.Excerpt />
  *   <Blog.Post.PublishDate />
  * </Blog.Feed.PostItemRepeater>
+ *
+ * // AsChild usage with custom wrapper and conditional rendering
+ * <Blog.Feed.PostItemRepeater asChild>
+ *   {({ itemWrapper, items }) => (
+ *     <>
+ *       {items.map((item, index) =>
+ *         itemWrapper({
+ *           item,
+ *           index,
+ *           children:
+ *             index === 0 ? (
+ *               <div className="featured">
+ *                 <Blog.Post.Title />
+ *                 <Blog.Post.Excerpt />
+ *                 <Blog.Post.PublishDate />
+ *               </div>
+ *             ) : (
+ *               <div>
+ *                 <Blog.Post.Title />
+ *                 <Blog.Post.Excerpt />
+ *               </div>
+ *             ),
+ *         })
+ *       )}
+ *     </>
+ *   )}
+ * </Blog.Feed.PostItemRepeater>
  * ```
  */
 export const PostItemRepeater = React.forwardRef<HTMLElement, PostItemRepeaterProps>(
-  (props, _ref) => {
-    const { children, offset = 0, limit = Infinity } = props;
-    const { hasPosts, posts, fallbackImageUrl } = usePostsContext();
+  (props, ref) => {
+    const { children, offset = 0, limit = Infinity, asChild } = props;
+    const { fallbackImageUrl } = usePostsContext();
 
-    if (!hasPosts) return null;
+    const itemWrapper: GenericList.GenericListRepeaterProps<PostWithResolvedFields>['itemWrapper'] =
+      ({ item: post, children }) => (
+        <Post.Root key={post._id} post={post} asChild fallbackImageUrl={fallbackImageUrl}>
+          {children}
+        </Post.Root>
+      );
 
-    const postsSlice = posts.slice(offset, offset + limit);
+    // If offset/limit are used, use asChild pattern to access items and slice them
+    if (offset !== 0 || limit !== Infinity) {
+      return (
+        <GenericList.Repeater<PostWithResolvedFields>
+          ref={ref}
+          asChild={true}
+          itemWrapper={itemWrapper}
+        >
+          {({ items, itemWrapper: wrapper }) => {
+            const postsSlice = items.slice(offset, offset + limit);
+            return (
+              <>
+                {postsSlice.map((post, index) =>
+                  wrapper({
+                    item: post,
+                    index,
+                    children: children as React.ReactNode,
+                  }),
+                )}
+              </>
+            );
+          }}
+        </GenericList.Repeater>
+      );
+    }
 
+    // Otherwise use GenericList.Repeater normally
     return (
-      <>
-        {postsSlice.map((post) => {
-          return (
-            <Post.Root key={post._id} post={post} asChild fallbackImageUrl={fallbackImageUrl}>
-              {children}
-            </Post.Root>
-          );
-        })}
-      </>
+      <GenericList.Repeater<PostWithResolvedFields>
+        ref={ref}
+        asChild={asChild}
+        itemWrapper={itemWrapper}
+      >
+        {children}
+      </GenericList.Repeater>
     );
   },
 );
@@ -334,15 +406,9 @@ export const PostItemRepeater = React.forwardRef<HTMLElement, PostItemRepeaterPr
 PostItemRepeater.displayName = 'Blog.Feed.PostItemRepeater';
 
 export interface LoadMoreProps {
-  asChild?: boolean;
   className?: string;
   loadingState?: React.ReactNode;
-  children?:
-    | AsChildChildren<{
-        isLoading: boolean;
-        loadNextPage: () => Promise<void>;
-      }>
-    | React.ReactNode;
+  children?: React.ReactNode;
 }
 
 /**
@@ -351,52 +417,23 @@ export interface LoadMoreProps {
  * @component
  * @example
  * ```tsx
- * <Blog.Feed.LoadMore asChild>
- *   {({ hasNextPage, isLoading, loadNextPage }) => (
- *     <button
- *       onClick={loadNextPage}
- *       disabled={!hasNextPage || isLoading}
- *     >
- *       {isLoading ? 'Loading...' : 'Load More'}
- *     </button>
- *   )}
+ * <Blog.Feed.LoadMore>
+ *   <button>Load More</button>
  * </Blog.Feed.LoadMore>
  * ```
  */
-export const LoadMore = React.forwardRef<HTMLElement, LoadMoreProps>((props, ref) => {
-  const { asChild, children, className, loadingState } = props;
+export const LoadMore = React.forwardRef<HTMLButtonElement, LoadMoreProps>((props, ref) => {
+  const { children, className, loadingState } = props;
 
   return (
-    <CoreFeed.LoadMore>
-      {({ hasNextPage, isLoading, loadNextPage }) => {
-        if (!hasNextPage) return null;
-
-        const attributes: React.ButtonHTMLAttributes<HTMLButtonElement> & {
-          'data-testid'?: string;
-          'data-loading'?: boolean;
-          'data-has-next-page'?: boolean;
-        } = {
-          'data-testid': TestIds.blogFeedLoadMore,
-          'data-loading': isLoading,
-          'data-has-next-page': hasNextPage,
-          onClick: loadNextPage,
-        };
-
-        return (
-          <AsChildSlot
-            ref={ref}
-            asChild={asChild}
-            className={className}
-            {...attributes}
-            customElement={children}
-            customElementProps={{ isLoading, loadNextPage }}
-            content={isLoading && loadingState ? loadingState : undefined}
-          >
-            <button>{isValidChildren(children) ? children : null}</button>
-          </AsChildSlot>
-        );
-      }}
-    </CoreFeed.LoadMore>
+    <GenericList.Actions.LoadMore
+      ref={ref}
+      className={className}
+      loadingState={loadingState}
+      data-testid={TestIds.blogFeedLoadMore}
+    >
+      {children}
+    </GenericList.Actions.LoadMore>
   );
 });
 
