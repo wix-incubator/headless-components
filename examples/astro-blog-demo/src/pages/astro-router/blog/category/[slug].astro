@@ -1,0 +1,91 @@
+---
+import {
+  createCustomCategory,
+  loadBlogCategoriesServiceConfig,
+  loadBlogFeedServiceConfig,
+} from "@wix/blog/services";
+import { SEO } from "@wix/seo/components";
+import {
+  loadSEOTagsServiceConfig,
+  type SEOTagsServiceConfig,
+} from "@wix/seo/services";
+import { ClientRouter } from "astro:transitions";
+
+import "@/styles/global.css";
+import RouteFeed from "@/components/blog/RouteFeed";
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect("/");
+}
+
+let blogFeedServiceConfig;
+let blogCategoriesServiceConfig;
+let categoryName = slug;
+let seoTagsServiceConfig: SEOTagsServiceConfig;
+
+try {
+  [blogFeedServiceConfig, blogCategoriesServiceConfig] = await Promise.all([
+    loadBlogFeedServiceConfig({
+      categorySlug: slug,
+      pageSize: 10,
+      showPinnedPostsFirst: true,
+      sort: [
+        {
+          fieldName: "firstPublishedDate",
+          order: "DESC",
+        },
+      ],
+    }),
+    loadBlogCategoriesServiceConfig(),
+  ]);
+
+  // Get the category name for the page title
+  categoryName = blogFeedServiceConfig.initialCategory?.label || slug;
+
+  seoTagsServiceConfig = await loadSEOTagsServiceConfig({
+    pageUrl: Astro.url.href,
+    itemData: {
+      slug,
+      pageName: categoryName,
+      seoData: blogFeedServiceConfig.initialCategory?.seoData,
+    },
+  });
+} catch (error) {
+  // If category not found, redirect to 404
+  return Astro.rewrite("/404");
+}
+
+const customCategoriesToPrepend = [
+  createCustomCategory({
+    label: "All posts",
+    slug: "/astro-router/blog/",
+    description:
+      "Discover the latest insights, tutorials, and best practices for building modern web applications with headless components.",
+  }),
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <ClientRouter />
+    <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} />
+  </head>
+  <body>
+    <RouteFeed
+      client:load
+      pathname={Astro.url.pathname}
+      blogCategoriesServiceConfig={blogCategoriesServiceConfig}
+      customCategoriesToPrepend={customCategoriesToPrepend}
+      blogFeedServiceConfig={blogFeedServiceConfig}
+      postPageBaseUrl="/astro-router/blog/post/"
+      categoryPageBaseUrl="/astro-router/blog/category/"
+      uiLocale="en-US"
+    />
+  </body>
+</html>

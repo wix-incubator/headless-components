@@ -1,0 +1,58 @@
+{
+  "name": "@wix/headless-bookings",
+  "version": "0.0.3",
+  "type": "module",
+  "scripts": {
+    "prebuild": "cd ../media && yarn build && cd ../ecom && yarn build",
+    "build": "npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "test": "vitest",
+    "lint:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "lint:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\""
+  },
+  "files": [
+    "dist",
+    "cjs",
+    "react",
+    "services",
+    "server-actions",
+    "astro"
+  ],
+  "exports": {
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js",
+      "require": "./cjs/dist/react/index.js"
+    },
+    "./services": {
+      "types": "./dist/services/index.d.ts",
+      "import": "./dist/services/index.js",
+      "require": "./cjs/dist/services/index.js"
+    }
+  },
+  "dependencies": {
+    "@wix/bookings": "^1.0.122",
+    "@wix/headless-media": "workspace:*",
+    "@wix/headless-utils": "workspace:*",
+    "@wix/services-definitions": "^0.1.4",
+    "@wix/services-manager-react": "^0.1.26"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "^20.9.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitest/ui": "^3.1.4",
+    "jsdom": "^26.1.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.4"
+  },
+  "peerDependencies": {
+    "@wix/headless-components": "workspace:*",
+    "react": ">=16.3.0"
+  }
+}

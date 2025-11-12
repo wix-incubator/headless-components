@@ -1,0 +1,21 @@
+---
+import { ClientRouter } from "astro:transitions";
+import "@/styles/global.css";
+---
+
+<html lang="en" class="bg-background font-paragraph text-foreground">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <ClientRouter />
+  </head>
+  <body>
+    <nav class="grid h-screen w-screen place-content-center">
+      <h1 class="font-heading text-2xl">astro-blog-demo</h1>
+      <a class="text-primary" href="/astro-router/blog/">Astro Router</a>
+      <a class="text-primary" href="/react-router/blog/">React Router</a>
+    </nav>
+  </body>
+</html>

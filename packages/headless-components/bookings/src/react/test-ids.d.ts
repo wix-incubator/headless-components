@@ -1,0 +1,18 @@
+export declare enum TestIds {
+  servicesList = 'services-list',
+  servicesOptions = 'services-options',
+  serviceRepeater = 'service-repeater',
+  serviceRoot = 'service-root',
+  serviceName = 'service-name',
+  serviceDescription = 'service-description',
+  servicePrice = 'service-price',
+  serviceDuration = 'service-duration',
+  serviceImage = 'service-image',
+  serviceCategory = 'service-category',
+  serviceError = 'service-error',
+  serviceLoadMore = 'service-load-more',
+  serviceTotalsDisplayed = 'service-totals-displayed',
+  serviceSort = 'service-sort',
+  serviceFilter = 'service-filter',
+  serviceFilterResetTrigger = 'service-filter-reset-trigger',
+}

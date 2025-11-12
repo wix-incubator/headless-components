@@ -1,0 +1,7 @@
+{
+  "name": "@wix/headless-utils/react",
+  "private": true,
+  "main": "../cjs/dist/react/index.js",
+  "module": "../dist/react/index.js",
+  "types": "../dist/react/index.d.ts"
+}

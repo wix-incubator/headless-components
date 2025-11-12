@@ -1,0 +1,50 @@
+{
+  "name": "@wix/headless-cms",
+  "version": "0.0.16",
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "test": "vitest",
+    "lint:fix": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "lint:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\""
+  },
+  "files": [
+    "dist",
+    "cjs",
+    "react",
+    "services"
+  ],
+  "exports": {
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js",
+      "require": "./cjs/dist/react/index.js"
+    },
+    "./services": {
+      "types": "./dist/services/index.d.ts",
+      "import": "./dist/services/index.js",
+      "require": "./cjs/dist/services/index.js"
+    }
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@types/node": "^20.9.0",
+    "@vitest/ui": "^3.1.4",
+    "@wix/headless-components": "workspace:*",
+    "jsdom": "^26.1.0",
+    "prettier": "^3.4.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.4"
+  },
+  "dependencies": {
+    "@wix/data": "^1.0.0",
+    "@wix/headless-utils": "workspace:*",
+    "@wix/services-definitions": "^0.1.4",
+    "@wix/services-manager-react": "^0.1.26"
+  },
+  "peerDependencies": {
+    "@wix/headless-components": "workspace:*"
+  }
+}

@@ -1,0 +1,28 @@
+---
+import AppRouter from "@/components/Router";
+import { SEO } from "@wix/seo/components";
+import { loadSEOTagsServiceConfig } from "@wix/seo/services";
+
+import "@/styles/global.css";
+
+const seoTagsServiceConfig = await loadSEOTagsServiceConfig({
+  pageUrl: Astro.url.href,
+  itemData: {
+    pageName: "Home",
+  },
+});
+---
+
+<html lang="en" class="h-full w-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://static.parastorage.com" />
+    <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} />
+  </head>
+  <body class="h-full w-full">
+    <div id="root" class="h-full w-full">
+      <AppRouter client:only="react" />
+    </div>
+  </body>
+</html>

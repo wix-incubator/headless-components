@@ -1,0 +1,68 @@
+---
+import {
+  loadBlogFeedServiceConfig,
+  loadBlogPostServiceConfig,
+} from "@wix/blog/services";
+import { SEO } from "@wix/seo/components";
+import { loadSEOTagsServiceConfig } from "@wix/seo/services";
+import { ClientRouter } from "astro:transitions";
+import RoutePost from "./RoutePostWithProviders";
+
+import "@/styles/global.css";
+
+const { slug } = Astro.params;
+export const prerender = false;
+
+if (!slug) {
+  return Astro.redirect("/");
+}
+
+const blogPostServiceConfigResult = await loadBlogPostServiceConfig({
+  postSlug: slug,
+});
+
+if (blogPostServiceConfigResult.type === "notFound") {
+  return Astro.rewrite("/404");
+}
+
+const blogPostServiceConfig = blogPostServiceConfigResult.config;
+
+const [recentPostsServiceConfig, seoTagsServiceConfig] = await Promise.all([
+  loadBlogFeedServiceConfig({
+    pageSize: 3,
+    sort: [{ fieldName: "firstPublishedDate", order: "DESC" }],
+    postIds: blogPostServiceConfig.post.relatedPostIds,
+    excludePostIds: [blogPostServiceConfig.post._id],
+  }),
+  loadSEOTagsServiceConfig({
+    pageUrl: Astro.url.href,
+    itemData: {
+      slug,
+      pageName: blogPostServiceConfig.post.title || "Post",
+      seoData: blogPostServiceConfig.post.seoData,
+    },
+  }),
+]);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <ClientRouter />
+    <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} />
+  </head>
+  <body>
+    <RoutePost
+      client:load
+      blogPostServiceConfig={blogPostServiceConfig}
+      recentPostsServiceConfig={recentPostsServiceConfig}
+      feedPageHref="/astro-router/blog/"
+      categoryPageBaseUrl="/astro-router/blog/category/"
+      postPageBaseUrl="/astro-router/blog/post/"
+      uiLocale="en-US"
+    />
+  </body>
+</html>

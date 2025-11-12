@@ -1,0 +1,82 @@
+---
+import {
+  createCustomCategory,
+  loadBlogCategoriesServiceConfig,
+  loadBlogFeedServiceConfig,
+} from "@wix/blog/services";
+
+import { SEO } from "@wix/seo/components";
+import { loadSEOTagsServiceConfig } from "@wix/seo/services";
+import { ClientRouter } from "astro:transitions";
+
+import RouteFeed from "@/components/blog/RouteFeed";
+import "@/styles/global.css";
+
+const [
+  blogFeedServiceConfig,
+  blogCategoriesServiceConfig,
+  seoTagsServiceConfig,
+] = await Promise.all([
+  loadBlogFeedServiceConfig({
+    pageSize: 10,
+    showPinnedPostsFirst: true,
+    sort: [
+      {
+        fieldName: "firstPublishedDate",
+        order: "DESC",
+      },
+    ],
+  }),
+  loadBlogCategoriesServiceConfig(),
+  loadSEOTagsServiceConfig({
+    pageUrl: Astro.url.href,
+    itemData: {
+      pageName: "Blog",
+      seoData: {
+        tags: [
+          {
+            type: "meta",
+            props: {
+              name: "description",
+              content:
+                "Explore our blog featuring the latest insights on headless components, web development, and modern architecture.",
+            },
+          },
+        ],
+      },
+    },
+  }),
+]);
+
+const customCategoriesToPrepend = [
+  createCustomCategory({
+    label: "All posts",
+    slug: "/astro-router/blog",
+    description:
+      "Discover the latest insights, tutorials, and best practices for building modern web applications with headless components.",
+  }),
+];
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <ClientRouter />
+    <SEO.Tags seoTagsServiceConfig={seoTagsServiceConfig} />
+  </head>
+  <body>
+    <RouteFeed
+      client:load
+      pathname={Astro.url.pathname}
+      blogCategoriesServiceConfig={blogCategoriesServiceConfig}
+      customCategoriesToPrepend={customCategoriesToPrepend}
+      blogFeedServiceConfig={blogFeedServiceConfig}
+      postPageBaseUrl="/astro-router/blog/post/"
+      categoryPageBaseUrl="/astro-router/blog/category/"
+      uiLocale="en-US"
+    />
+  </body>
+</html>
