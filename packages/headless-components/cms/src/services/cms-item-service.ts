@@ -4,18 +4,10 @@ import {
   type Signal,
 } from '@wix/services-definitions/core-services/signals';
 import { items } from '@wix/data';
-import { type WixDataItem } from './cms-collection-service.js';
+import { LinkItemParams, type WixDataItem } from './cms-collection-service.js';
 
 // Re-export WixDataItem for consumers
 export type { WixDataItem };
-
-/**
- * Parameters for linking/unlinking items in a reference field
- */
-export interface ItemReferenceParams {
-  referenceFieldId: string;
-  referencedItemIds: string | string[];
-}
 
 /**
  * Utility function to extract error messages consistently
@@ -39,9 +31,9 @@ export const CmsItemServiceDefinition = defineService<{
   /** Function to delete the current item */
   deleteItem: () => Promise<void>;
   /** Function to link the current item to referenced items */
-  linkItem: (params: ItemReferenceParams) => Promise<void>;
+  linkItem: (params: LinkItemParams) => Promise<void>;
   /** Function to unlink the current item from referenced items */
-  unlinkItem: (params: ItemReferenceParams) => Promise<void>;
+  unlinkItem: (params: LinkItemParams) => Promise<void>;
 }>('CmsItem');
 
 /**
@@ -189,7 +181,7 @@ export const CmsItemServiceImplementation =
         }
       };
 
-      const linkItem = async (params: ItemReferenceParams): Promise<void> => {
+      const linkItem = async (params: LinkItemParams): Promise<void> => {
         loadingSignal.set(true);
         errorSignal.set(null);
 
@@ -215,7 +207,7 @@ export const CmsItemServiceImplementation =
         }
       };
 
-      const unlinkItem = async (params: ItemReferenceParams): Promise<void> => {
+      const unlinkItem = async (params: LinkItemParams): Promise<void> => {
         loadingSignal.set(true);
         errorSignal.set(null);
 
@@ -223,7 +215,7 @@ export const CmsItemServiceImplementation =
           await items.removeReference(
             config.collectionId,
             params.referenceFieldId,
-            config.itemId,
+            params.itemId,
             params.referencedItemIds,
           );
 
