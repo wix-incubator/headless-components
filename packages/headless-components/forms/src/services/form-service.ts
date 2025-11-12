@@ -52,19 +52,6 @@ type OnSubmit = (
 ) => Promise<SubmitResponse>;
 
 /**
- * Options for fetching forms with additional query parameters.
- * These parameters control how the form data is retrieved from the API.
- *
- * @internal
- */
-interface FormFetchOptions {
-  /** Namespace for the form */
-  namespace?: string;
-  /** Additional metadata to pass to the API */
-  additionalMetadata?: Record<string, string | string[]>;
-}
-
-/**
  * Configuration type for the Form service.
  * Supports two distinct patterns for providing form data:
  * - Pre-loaded form data (SSR/SSG scenarios)
@@ -75,7 +62,12 @@ interface FormFetchOptions {
  * @type {FormServiceConfig}
  */
 export type FormServiceConfig =
-  | { formId: string; onSubmit?: OnSubmit; fetchOptions?: FormFetchOptions }
+  | {
+      formId: string;
+      onSubmit?: OnSubmit;
+      namespace?: string;
+      additionalMetadata?: Record<string, string | string[]>;
+    }
   | { form: forms.Form; onSubmit?: OnSubmit };
 
 /**
@@ -118,20 +110,19 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
     );
 
     if (!hasSchema) {
-      const fetchOptions =
-        'fetchOptions' in config ? config.fetchOptions : undefined;
-      loadForm(config.formId, fetchOptions);
+      loadForm(config.formId, config.namespace, config.additionalMetadata);
     }
 
     async function loadForm(
       id: string,
-      fetchOptions?: FormFetchOptions,
+      namespace?: string,
+      additionalMetadata?: Record<string, string | string[]>,
     ): Promise<void> {
       isLoadingSignal.set(true);
       errorSignal.set(null);
 
       try {
-        const result = await fetchForm(id, fetchOptions);
+        const result = await fetchForm({ id, namespace, additionalMetadata });
 
         if (result) {
           formSignal.set(result);
@@ -201,41 +192,51 @@ export const FormService = implementService.withConfig<FormServiceConfig>()(
   },
 );
 
-function buildFormFetchQueryParams(
-  id: string,
-  fetchOptions?: FormFetchOptions,
-): URLSearchParams {
+function buildFormFetchQueryParams({
+  id,
+  namespace,
+  additionalMetadata,
+}: {
+  id: string;
+  namespace?: string;
+  additionalMetadata?: Record<string, string | string[]>;
+}): URLSearchParams {
   const params = new URLSearchParams();
 
   params.append('formId', id);
 
-  if (fetchOptions) {
-    if (fetchOptions.namespace) {
-      params.append('namespace', fetchOptions.namespace);
-    }
+  if (namespace) {
+    params.append('namespace', namespace);
+  }
 
-    if (fetchOptions.additionalMetadata) {
-      Object.entries(fetchOptions.additionalMetadata).forEach(
-        ([key, value]) => {
-          if (Array.isArray(value)) {
-            value.forEach((v) => params.append(key, v));
-          } else {
-            params.append(key, value);
-          }
-        },
-      );
-    }
+  if (additionalMetadata) {
+    Object.entries(additionalMetadata).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((v) => params.append(key, v));
+      } else {
+        params.append(key, value);
+      }
+    });
   }
 
   return params;
 }
 
-async function fetchForm(
-  id: string,
-  fetchOptions?: FormFetchOptions,
-): Promise<forms.Form> {
+async function fetchForm({
+  id,
+  namespace,
+  additionalMetadata,
+}: {
+  id: string;
+  namespace?: string;
+  additionalMetadata?: Record<string, string | string[]>;
+}): Promise<forms.Form> {
   try {
-    const params = buildFormFetchQueryParams(id, fetchOptions);
+    const params = buildFormFetchQueryParams({
+      id,
+      namespace,
+      additionalMetadata,
+    });
     const url = `https://edge.wixapis.com/form-schema-service/v4/forms/${id}?${params.toString()}`;
     const response = await httpClient.fetchWithAuth(url);
 
@@ -264,7 +265,8 @@ async function fetchForm(
  * a specific form by ID that will be used to configure the FormService.
  *
  * @param {string} formId - The unique identifier of the form to load
- * @param {FormFetchOptions} [fetchOptions] - Optional parameters for fetching the form (internal use only)
+ * @param {string} [namespace] - Optional namespace for the form
+ * @param {Record<string, string | string[]>} [additionalMetadata] - Optional additional metadata to pass to the API
  * @returns {Promise<FormServiceConfig>} Configuration object with pre-loaded form data
  * @throws {Error} When the form cannot be loaded
  *
@@ -277,8 +279,9 @@ async function fetchForm(
  */
 export async function loadFormServiceConfig(
   formId: string,
-  fetchOptions?: FormFetchOptions,
+  namespace?: string,
+  additionalMetadata?: Record<string, string | string[]>,
 ): Promise<FormServiceConfig> {
-  const form = await fetchForm(formId, fetchOptions);
+  const form = await fetchForm({ id: formId, namespace, additionalMetadata });
   return { form };
 }
