@@ -13,9 +13,9 @@ export type WixDataItem = items.WixDataItem;
 export type WixDataQueryResult = items.WixDataResult;
 
 /**
- * Parameters for inserting a reference between items
+ * Parameters for linking an item to another item
  */
-export interface InsertReferenceParams {
+export interface LinkItemParams {
   referenceFieldId: string;
   itemId: string;
   referencedItemIds: string | string[];
@@ -49,7 +49,7 @@ export const CmsCollectionServiceDefinition = defineService<{
   /** Function to create a new item in the collection */
   createItem: (itemData: Partial<WixDataItem>) => Promise<WixDataItem>;
   /** Function to insert a reference between items */
-  linkItem: (params: InsertReferenceParams) => Promise<void>;
+  linkItem: (params: LinkItemParams) => Promise<void>;
   /** Function to update an existing item in the collection */
   updateItem: (
     itemId: string,
@@ -58,7 +58,7 @@ export const CmsCollectionServiceDefinition = defineService<{
   /** Function to delete an item from the collection */
   deleteItem: (itemId: string) => Promise<void>;
   /** Function to remove a reference between items */
-  unlinkItem: (params: InsertReferenceParams) => Promise<void>;
+  unlinkItem: (params: LinkItemParams) => Promise<void>;
   /** Function to update the sort value */
   setSort: (sort: SortValue) => void;
   /** Function to update the filter value */
@@ -431,7 +431,7 @@ export const CmsCollectionServiceImplementation =
         }
       };
 
-      const linkItem = async (params: InsertReferenceParams): Promise<void> => {
+      const linkItem = async (params: LinkItemParams): Promise<void> => {
         loadingSignal.set(true);
         errorSignal.set(null);
 
@@ -507,9 +507,7 @@ export const CmsCollectionServiceImplementation =
         }
       };
 
-      const unlinkItem = async (
-        params: InsertReferenceParams,
-      ): Promise<void> => {
+      const unlinkItem = async (params: LinkItemParams): Promise<void> => {
         loadingSignal.set(true);
         errorSignal.set(null);
 

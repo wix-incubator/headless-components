@@ -5,9 +5,9 @@ import {
   CmsItemServiceConfig,
   CmsItemServiceImplementation,
   type WixDataItem,
-  type ItemReferenceParams,
 } from '../../services/cms-item-service.js';
 import { createServicesMap } from '@wix/services-manager';
+import { LinkItemParams } from '../../services/cms-collection-service.js';
 
 export interface RootProps {
   children: (props: RootRenderProps) => React.ReactNode;
@@ -29,9 +29,9 @@ export interface RootRenderProps {
   /** Function to delete the current item */
   deleteItem: () => Promise<void>;
   /** Function to insert a reference between the current item and other items */
-  linkItem: (params: ItemReferenceParams) => Promise<void>;
+  linkItem: (params: LinkItemParams) => Promise<void>;
   /** Function to remove a reference between the current item and other items */
-  unlinkItem: (params: ItemReferenceParams) => Promise<void>;
+  unlinkItem: (params: LinkItemParams) => Promise<void>;
 }
 
 /**
