@@ -366,18 +366,18 @@ function CustomFilters({ filter, onChange, onFilterChange, filterOptions }) {
           </Filter.FilterOption.SingleFilter>
 
           <Filter.FilterOption.MultiFilter asChild>
-            {({ value, onChange, validValues, valueFormatter }) => (
+            {({ values, onChange, validValues, valueFormatter }) => (
               <div className="grid grid-cols-2 gap-2">
                 {validValues?.map(option => (
                   <label key={option} className="flex items-center gap-2">
                     <input
                       type="checkbox"
-                      checked={value.includes(String(option))}
+                      checked={values.includes(String(option))}
                       onChange={(e) => {
                         const stringValue = String(option);
                         const newValue = e.target.checked
-                          ? [...value, stringValue]
-                          : value.filter(v => v !== stringValue);
+                          ? [...values, stringValue]
+                          : values.filter(v => v !== stringValue);
                         onChange(newValue);
                       }}
                       className="rounded"

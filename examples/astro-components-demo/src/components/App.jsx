@@ -1,5 +1,6 @@
 import "./App.css";
 import MySort from "./MySort";
+import MyFilter from "./MyFilter";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       </header>
       <main>
         <MySort />
+        <MyFilter />
       </main>
     </div>
   );
