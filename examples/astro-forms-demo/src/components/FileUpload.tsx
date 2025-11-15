@@ -46,7 +46,7 @@ const FileUpload = ({
   // Convert allowedFileFormats to accept string for HTML input
   const acceptString = allowedFileFormats
     ?.map(format =>
-      format.startsWith('.') ? format : `.${format.toLowerCase()}`
+      format.startsWith('.') ? format : `.${format.toLowerCase()}/*`
     )
     .join(',');
 

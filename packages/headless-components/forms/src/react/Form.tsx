@@ -853,12 +853,7 @@ interface FieldsProps {
  */
 export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
   (props, ref) => {
-    const [formValues, setFormValues] = useState<FormValues>({});
     const [formErrors, setFormErrors] = useState<FormError[]>([]);
-
-    const handleFormChange = useCallback((values: FormValues) => {
-      setFormValues(values);
-    }, []);
 
     const handleFormValidate = useCallback((errors: FormError[]) => {
       setFormErrors(errors);
@@ -866,7 +861,7 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
 
     return (
       <CoreFields>
-        {({ form, submitForm }) => {
+        {({ form, formValues, submitForm, handleForm }) => {
           if (!form) return null;
 
           return (
@@ -875,11 +870,11 @@ export const Fields = React.forwardRef<HTMLDivElement, FieldsProps>(
                 <FieldsWithForm
                   form={form}
                   values={formValues}
-                  onChange={handleFormChange}
+                  onChange={handleForm}
                   errors={formErrors}
                   onValidate={handleFormValidate}
                   fields={props.fieldMap}
-                  submitForm={() => submitForm(formValues)}
+                  submitForm={submitForm}
                   rowGapClassname={props.rowGapClassname}
                   columnGapClassname={props.columnGapClassname}
                 />
