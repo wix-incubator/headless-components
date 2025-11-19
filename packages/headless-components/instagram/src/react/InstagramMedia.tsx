@@ -6,16 +6,43 @@ import { createServicesMap } from '@wix/services-manager';
 import {
   InstagramMediaItemServiceDefinition,
   InstagramMediaItemService,
+  InstagramMediaItem,
 } from '../services/index.js';
 import * as CoreInstagramMedias from './core/InstagramMedias.js';
 import { MediaGallery } from '@wix/headless-media/react';
 
 export interface MediaGalleryRepeaterProps {
-  children: React.ReactNode;
+  children: (props: {
+    mediaItem: InstagramMediaItem;
+    index: number;
+  }) => React.ReactNode;
 }
 
 /**
  * Repeats children for each Instagram media item, providing a per-item service context.
+ * Uses render props pattern to provide mediaItem and index directly to children.
+ *
+ * @example
+ * ```tsx
+ * <InstagramMedia.MediaGalleryRepeater>
+ *   {({ mediaItem, index }) => (
+ *     <div>
+ *       <div>Post #{index + 1}</div>
+ *       <div>Type: {mediaItem.type}</div>
+ *       <MediaGallery.Viewport asChild>
+ *         {({ src, alt }) => (
+ *           <img src={src} alt={alt} />
+ *         )}
+ *       </MediaGallery.Viewport>
+ *       <InstagramMedia.Caption />
+ *     </div>
+ *   )}
+ * </InstagramMedia.MediaGalleryRepeater>
+ * ```
+ *
+ * @param props.children - Render prop function that receives:
+ *   - `mediaItem`: The Instagram media item object (id, type, mediaUrl, caption, timestamp, etc.)
+ *   - `index`: The zero-based index of the media item in the feed (useful for navigation and numbering)
  */
 export const MediaGalleryRepeater: React.FC<MediaGalleryRepeaterProps> = ({
   children,
@@ -23,13 +50,11 @@ export const MediaGalleryRepeater: React.FC<MediaGalleryRepeaterProps> = ({
   return (
     <CoreInstagramMedias.InstagramMedias>
       {({ hasItems, mediaItems }) => {
-        console.log('mediaItems', mediaItems);
         if (!hasItems) return null;
 
         return (
           <>
             {mediaItems.map((mediaItem, index) => {
-              console.log('mediaItem', mediaItem.mediaGalleryItems);
               return (
                 <WixServices
                   key={mediaItem.id || index}
@@ -44,7 +69,7 @@ export const MediaGalleryRepeater: React.FC<MediaGalleryRepeaterProps> = ({
                       media: mediaItem.mediaGalleryItems,
                     }}
                   >
-                    {children as React.ReactElement}
+                    {children({ mediaItem, index })}
                   </MediaGallery.Root>
                 </WixServices>
               );
